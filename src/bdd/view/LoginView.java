@@ -3,6 +3,8 @@ package bdd.view;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -14,9 +16,10 @@ import javax.swing.JTextField;
 public class LoginView extends JDialog {
 
     private JPanel mainPanel;
+    private JButton connectionButton;
     private JTextField emailTextField;
     private JTextField passwordTextField;
-    
+
     public LoginView() {
 	this.setTitle("Fenêtre d'authentification");
 	this.setSize(300, 200);
@@ -43,7 +46,7 @@ public class LoginView extends JDialog {
 	mainPanel.add(emailTextField, gbc);
 	gbc.gridx = 0;
 	gbc.gridy = 1;
-	
+
 	passwordTextField = new JPasswordField(10);
 	mainPanel.add(new JLabel("Mot de passe : "), gbc);
 	gbc.gridx = 1;
@@ -70,5 +73,22 @@ public class LoginView extends JDialog {
 	    emailTextField.setBackground(new Color(200, 0, 0));
 	    return false;
 	}
+    }
+
+    /**
+     * Method that will catch any user interaction with the window
+     */
+    public void createEvent() {
+	connectionButton.addActionListener(new ActionListener() {
+	    public void actionPerformed(ActionEvent e) {
+
+		boolean fieldOk = checkIfEmailFieldOk();
+		if (fieldOk) { // TODO
+		    System.out.println("Correct e-mail");
+		} else {
+		    System.out.println("Wrong e-mail");
+		}
+	    }
+	});
     }
 }
