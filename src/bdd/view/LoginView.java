@@ -1,4 +1,5 @@
 package bdd.view;
+import bdd.view.DialogBox;
 
 import java.awt.Color;
 import java.awt.GridBagConstraints;
@@ -19,13 +20,13 @@ public class LoginView extends JDialog {
     private JButton connectionButton;
     private JTextField emailTextField;
     private JTextField passwordTextField;
+    private DialogBox dialogBox;
 
     public LoginView() {
 	this.setTitle("Fenêtre d'authentification");
 	this.setSize(300, 200);
 	this.build();
-	this.setContentPane(this.mainPanel);
-	this.setVisible(true);
+	this.createEvent();
     }
 
     public void build() {
@@ -55,7 +56,10 @@ public class LoginView extends JDialog {
 	gbc.gridx = 0;
 	gbc.gridy = 2;
 	gbc.gridwidth = 2;
-	mainPanel.add(new JButton("Connexion"), gbc);
+	connectionButton = new JButton("Connexion");
+	mainPanel.add(connectionButton, gbc);
+	this.setContentPane(this.mainPanel);
+	this.setVisible(true);
     }
 
     /**
@@ -65,6 +69,7 @@ public class LoginView extends JDialog {
      */
     public boolean checkIfEmailFieldOk() {
 	String EMAIL_REGEX = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
+	emailTextField.setBackground(new Color(255, 255, 255));
 	if (emailTextField.getText().matches(EMAIL_REGEX)) {
 	    return true;
 	}
@@ -83,10 +88,15 @@ public class LoginView extends JDialog {
 	    public void actionPerformed(ActionEvent e) {
 
 		boolean fieldOk = checkIfEmailFieldOk();
-		if (fieldOk) { // TODO
-		    System.out.println("Correct e-mail");
-		} else {
-		    System.out.println("Wrong e-mail");
+		
+		// dialogBox = new DialogBox("Erreur", "Format de mail incorrect");
+		// dialogBox.setVisible(true);
+		
+		if (fieldOk) {
+		    System.out.println("Correct e-mail format");
+		}
+		else {
+		    System.out.println("Wrong e-mail format");
 		}
 	    }
 	});
