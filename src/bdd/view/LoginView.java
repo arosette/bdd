@@ -96,7 +96,8 @@ public class LoginView extends JDialog {
 		    System.out.println("Correct e-mail format");
 		}
 		else {
-		    System.out.println("Wrong e-mail format");
+		    dialogBox = new DialogBox("Erreur", "dans le format de mail");
+                    dialogBox.setVisible(true);
 		}
 	    }
 	});
