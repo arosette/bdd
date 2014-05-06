@@ -3,6 +3,7 @@ package bdd.view;
 import bdd.view.DialogBox;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -10,6 +11,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -26,6 +28,7 @@ public class LoginView extends JDialog {
     public LoginView() {
 	this.setTitle("Fenetre d'authentification");
 	this.setSize(300, 200);
+	this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	this.build();
 	this.createEvent();
     }
@@ -59,6 +62,7 @@ public class LoginView extends JDialog {
 	gbc.gridwidth = 2;
 	connectionButton = new JButton("Connexion");
 	mainPanel.add(connectionButton, gbc);
+
 	this.setContentPane(this.mainPanel);
 	this.setVisible(true);
     }
@@ -96,6 +100,8 @@ public class LoginView extends JDialog {
 
 		if (fieldOk) {
 		    System.out.println("Correct e-mail format");
+		    dispose();
+		    new MainFrame();
 		} else {
 		    dialogBox = new DialogBox("Erreur",
 			    "dans le format de mail");
