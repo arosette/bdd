@@ -18,7 +18,7 @@ public class User {
     public void setMail(String mail) {
 	this.mail = mail;
     }
-    
+
     public String getSurname() {
 	return surname;
     }
@@ -26,7 +26,7 @@ public class User {
     public void setSurname(String surname) {
 	this.surname = surname;
     }
-    
+
     public String getPassword() {
 	return password;
     }
@@ -34,7 +34,7 @@ public class User {
     public void setPassword(String password) {
 	this.password = password;
     }
-    
+
     public String getAvatar() {
 	return avatar;
     }
@@ -42,7 +42,7 @@ public class User {
     public void setAvatar(String avatar) {
 	this.avatar = avatar;
     }
-    
+
     public String getCountry() {
 	return country;
     }
@@ -50,7 +50,7 @@ public class User {
     public void setCountry(String country) {
 	this.avatar = country;
     }
-    
+
     public String getCity() {
 	return city;
     }
@@ -58,7 +58,7 @@ public class User {
     public void setCity(String city) {
 	this.city = city;
     }
-    
+
     public String getBiography() {
 	return biography;
     }
@@ -66,7 +66,7 @@ public class User {
     public void setBiography(String biography) {
 	this.biography = biography;
     }
-    
+
     public String getRegistrationDate() {
 	return registrationDate;
     }
