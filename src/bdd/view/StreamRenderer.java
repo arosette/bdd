@@ -19,6 +19,7 @@ public class StreamRenderer implements ListCellRenderer<Stream> {
 	    Stream value, int index, boolean isSelected, boolean cellHasFocus) {
 
 	JPanel panel = new JPanel();
+	
 	panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 
 	JLabel streamTitle = new JLabel(value.getName());
@@ -32,6 +33,11 @@ public class StreamRenderer implements ListCellRenderer<Stream> {
 	JLabel streamUrl = new JLabel(value.getUrl());
 	streamUrl.setForeground(Color.blue);
 	panel.add(streamUrl);
+	
+	if (isSelected) {
+	    panel.setBackground(Color.cyan);
+	}
+	
 
 	return panel;
     }

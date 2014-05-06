@@ -13,25 +13,27 @@ import javax.swing.ListCellRenderer;
 import bdd.model.Publication;
 import bdd.model.Stream;
 
-public class PublicationRenderer extends JPanel implements
+public class PublicationRenderer implements
 	ListCellRenderer<Publication> {
 
     @Override
     public Component getListCellRendererComponent(
 	    JList<? extends Publication> list, Publication value, int index,
 	    boolean isSelected, boolean cellHasFocus) {
+	
+	JPanel panel = new JPanel();
 
-	this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+	panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 
 	JLabel streamTitle = new JLabel(value.getTitle());
 	streamTitle.setFont(new Font(streamTitle.getName(), Font.BOLD, 20));
-	this.add(streamTitle);
+	panel.add(streamTitle);
 
 	JLabel streamDescription = new JLabel(value.getDescription());
 	streamDescription.setForeground(Color.gray);
-	this.add(streamDescription);
+	panel.add(streamDescription);
 
-	return this;
+	return panel;
     }
 
 }

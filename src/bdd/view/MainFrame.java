@@ -1,9 +1,18 @@
 package bdd.view;
 
+import java.awt.Component;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
@@ -13,8 +22,11 @@ import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 
 import bdd.model.Publication;
 import bdd.model.Stream;
@@ -57,6 +69,7 @@ public class MainFrame extends JFrame implements Observer {
 	streams.add(s3);
 
 	loadStreams(streams);
+
     }
 
     public void build() {
@@ -83,6 +96,7 @@ public class MainFrame extends JFrame implements Observer {
 	DefaultListModel<Stream> streamListModel = new DefaultListModel<Stream>();
 	streamList = new JList<Stream>(streamListModel);
 	streamList.setCellRenderer(new StreamRenderer());
+	streamList.addMouseListener(new PopupMenuMouseAdapter());
 	mainPanel.add(new JScrollPane(streamList), gbc);
 
 	// Construction de la liste contenant les publications au centre de la
@@ -108,7 +122,7 @@ public class MainFrame extends JFrame implements Observer {
     public void loadStreams(List<Stream> streams) {
 
 	DefaultListModel<Stream> streamListModel = new DefaultListModel<Stream>();
-	
+
 	for (Stream stream : streams) {
 	    streamListModel.addElement(stream);
 	}
@@ -125,6 +139,43 @@ public class MainFrame extends JFrame implements Observer {
 	}
 	publicationList.setModel(streamListModel);
 
+    }
+
+    private class PopupMenuMouseAdapter extends MouseAdapter {
+	private JPopupMenu menu;
+
+	public PopupMenuMouseAdapter() {
+	    menu = new JPopupMenu();
+	    JMenuItem openLink = new JMenuItem("Ouvirir le lien");
+	    openLink.addActionListener(new ActionListener() {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+		    System.out.println(streamList.getSelectedValue().getUrl());
+		    try {
+			Desktop.getDesktop().browse(new URI(streamList.getSelectedValue().getUrl()));
+		    } catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		    } catch (URISyntaxException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		    }
+		}
+	    });
+	    menu.add(openLink);
+
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+	    if (SwingUtilities.isRightMouseButton(e)) {
+		JList jlist = (JList) e.getSource();
+		int row = jlist.locationToIndex(e.getPoint());
+		jlist.setSelectedIndex(row);
+		menu.show(jlist, e.getX(), e.getY());
+	    }
+	}
     }
 
     @Override
