@@ -1,6 +1,8 @@
 package bdd.model;
 
-public class User {
+import java.util.Observable;
+
+public class User extends Observable {
 
     private String mail;
     private String surname;

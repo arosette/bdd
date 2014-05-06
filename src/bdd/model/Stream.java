@@ -1,6 +1,8 @@
 package bdd.model;
 
-public class Stream {
+import java.util.Observable;
+
+public class Stream extends Observable {
     private String url;
     private String name;
     private String description;
@@ -37,5 +39,5 @@ public class Stream {
     public void setWebLink(String webLink) {
 	this.webLink = webLink;
     }
-    
+
 }
