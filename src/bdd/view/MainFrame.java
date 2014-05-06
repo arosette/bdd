@@ -37,11 +37,14 @@ public class MainFrame extends JFrame {
 
 	DefaultListModel<Stream> streamListModel = new DefaultListModel<Stream>();
 	Stream testStream = new Stream();
-	testStream.setName("Test");
+	testStream.setName("Testeeeeeee");
+	testStream.setDescription("loloololo");
 	streamListModel.addElement(testStream);
 
 	JList<Stream> streamList = new JList<Stream>(streamListModel);
+	streamList.setCellRenderer(new StreamRenderer());
 	mainPanel.add(new JScrollPane(streamList));
+	
 
 	this.setContentPane(this.mainPanel);
 	this.setVisible(true);
