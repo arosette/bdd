@@ -16,23 +16,23 @@ public class DialogBox extends JDialog {
     protected JButton okButton;
 
     public DialogBox(String title, String text) {
-	
+
 	this.build(title, text);
 	this.createEvent();
     }
 
     public void build(String title, String text) {
-	
+
 	this.setTitle(title);
 	this.setSize(200, 100);
 	GridBagConstraints gbc = new GridBagConstraints();
-	
+
 	this.contentPanel = new JPanel();
 	this.contentPanel.setLayout(new GridBagLayout());
 
 	contentPanel.add(new JLabel(text), gbc);
 	gbc.gridx = 1;
-	
+
 	gbc.gridx = 0;
 	gbc.gridy = 2;
 	gbc.gridwidth = 2;
