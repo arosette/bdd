@@ -5,6 +5,7 @@ public class Publication {
     private String title;
     private String date;
     private String description;
+    private boolean red;
 
     public String getLink() {
 	return link;
@@ -36,5 +37,13 @@ public class Publication {
 
     public void setDescription(String description) {
 	this.description = description;
+    }
+
+    public void setRed(boolean red) {
+	this.red = red;
+    }
+
+    public boolean isRed() {
+	return red;
     }
 }

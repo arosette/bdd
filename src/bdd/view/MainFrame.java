@@ -3,12 +3,15 @@ package bdd.view;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -28,6 +31,32 @@ public class MainFrame extends JFrame implements Observer {
 	this.setMinimumSize(new Dimension(800, 600));
 	this.setResizable(true);
 	this.build();
+	this.populateWithTest();
+    }
+
+    private void populateWithTest() {
+	Stream s1 = new Stream();
+	s1.setName("RTBF");
+	s1.setDescription("Le flux d'info de la RTBF");
+	s1.setUrl("http://rtbf.be");
+
+	Stream s2 = new Stream();
+	s2.setName("RTL");
+	s2.setDescription("Le flux d'info de RTL");
+	s2.setUrl("http://rtl.be");
+
+	Stream s3 = new Stream();
+	s3.setName("DH");
+	s3.setDescription("Le flux d'info de la DH");
+	s3.setUrl("http://dh.be");
+
+	ArrayList<Stream> streams = new ArrayList<Stream>();
+
+	streams.add(s1);
+	streams.add(s2);
+	streams.add(s3);
+
+	loadStreams(streams);
     }
 
     public void build() {
@@ -40,21 +69,36 @@ public class MainFrame extends JFrame implements Observer {
 	gbc.gridy = 0;
 	gbc.gridheight = 1;
 	gbc.gridwidth = 1;
+	gbc.anchor = GridBagConstraints.WEST;
+	gbc.fill = GridBagConstraints.NONE;
+	gbc.insets = new Insets(0, 50, 0, 50);
 
 	// Construction de la liste contenant les flux à gauche de la fenetre
-	DefaultListModel<Stream> streamListModel = new DefaultListModel<Stream>();
 
+	// Le titre
+	mainPanel.add(new JLabel("Flux"), gbc);
+
+	// La liste
+	gbc.gridy = 1;
+	DefaultListModel<Stream> streamListModel = new DefaultListModel<Stream>();
 	streamList = new JList<Stream>(streamListModel);
 	streamList.setCellRenderer(new StreamRenderer());
 	mainPanel.add(new JScrollPane(streamList), gbc);
 
 	// Construction de la liste contenant les publications au centre de la
 	// fenetre
-	DefaultListModel<Publication> publicationListModel = new DefaultListModel<Publication>();
+	gbc.anchor = GridBagConstraints.CENTER;
+	gbc.gridx = 1;
+	gbc.gridy = 0;
 
+	// Le titre
+	mainPanel.add(new JLabel("Publications"), gbc);
+
+	// La liste
+	gbc.gridy = 1;
+	DefaultListModel<Publication> publicationListModel = new DefaultListModel<Publication>();
 	publicationList = new JList<Publication>(publicationListModel);
 	publicationList.setCellRenderer(new PublicationRenderer());
-	gbc.gridx = 1;
 	mainPanel.add(new JScrollPane(publicationList), gbc);
 
 	this.setContentPane(this.mainPanel);
@@ -64,9 +108,11 @@ public class MainFrame extends JFrame implements Observer {
     public void loadStreams(List<Stream> streams) {
 
 	DefaultListModel<Stream> streamListModel = new DefaultListModel<Stream>();
+	
 	for (Stream stream : streams) {
 	    streamListModel.addElement(stream);
 	}
+
 	streamList.setModel(streamListModel);
 
     }
