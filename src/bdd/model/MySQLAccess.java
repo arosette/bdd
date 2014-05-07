@@ -257,6 +257,69 @@ public class MySQLAccess {
 	}
     }
 
+    public void insertFriendship(Friendship friendship) throws SQLException {
+	try {
+	    insertStatement = connect
+		    .prepareStatement("INSERT INTO Friendship VALUES (?, ?, ?, ?, ?)");
+
+	    int i = 1;
+
+	    insertStatement.setString(i++, friendship.getMailUser1());
+	    insertStatement.setString(i++, friendship.getMailUser2());
+	    insertStatement.setBoolean(i++, friendship.getStatus());
+	    insertStatement.setString(i++, friendship.getDate());
+	    insertStatement.setString(i++, friendship.getAsker());
+
+	    insertStatement.executeUpdate();
+
+	} catch (SQLException e) {
+	    throw e;
+	}
+    }
+
+    public void deleteFriendship(Friendship friendship) throws SQLException {
+	try {
+	    deleteStatement = connect
+		    .prepareStatement("DELETE FROM bdd.Friendship WHERE mailUser1 = ? AND mailUser2 = ?;");
+	    deleteStatement.setString(1, friendship.getMailUser1());
+	    deleteStatement.setString(1, friendship.getMailUser2());
+	    deleteStatement.executeUpdate();
+	} catch (SQLException e) {
+	    throw e;
+	}
+    }
+    
+    public void insertComment(Comment comment) throws SQLException {
+	try {
+	    insertStatement = connect
+		    .prepareStatement("INSERT INTO Comment VALUES (?, ?, ?, ?)");
+
+	    int i = 1;
+
+	    insertStatement.setString(i++, comment.getMail());
+	    insertStatement.setString(i++, comment.getLink());
+	    insertStatement.setString(i++, comment.getContent());
+	    insertStatement.setString(i++, comment.getDate());
+
+	    insertStatement.executeUpdate();
+
+	} catch (SQLException e) {
+	    throw e;
+	}
+    }
+
+    public void deleteComment(Comment comment) throws SQLException {
+	try {
+	    deleteStatement = connect
+		    .prepareStatement("DELETE FROM bdd.Comment WHERE mail = ? AND link = ?;");
+	    deleteStatement.setString(1, comment.getMail());
+	    deleteStatement.setString(1, comment.getLink());
+	    deleteStatement.executeUpdate();
+	} catch (SQLException e) {
+	    throw e;
+	}
+    }
+    
     public void close() throws SQLException {
 	resultSet.close();
 	statement.close();
