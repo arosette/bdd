@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MySQLAccess {
     private static final String DRIVER = "com.mysql.jdbc.Driver";
@@ -14,6 +16,7 @@ public class MySQLAccess {
 
     private Connection connect = null;
     private Statement statement = null;
+    private PreparedStatement selectStatement = null;
     private PreparedStatement insertStatement = null;
     private PreparedStatement deleteStatement = null;
     private ResultSet resultSet = null;
@@ -78,6 +81,36 @@ public class MySQLAccess {
 	}
     }
 
+    public List<User> selectAllUsers() throws SQLException {
+	ResultSet res = null;
+	List<User> users = new ArrayList<User>();
+	selectStatement = connect.prepareStatement("SELECT * FROM User");
+	try {
+	    res = selectStatement.executeQuery();
+	    while (res.next()) {
+		User user = new User();
+		user.setMail(res.getString("mail"));
+		user.setSurname(res.getString("surname"));
+		user.setPassword(res.getString("password"));
+		user.setAvatar(res.getString("avatar"));
+		user.setCountry(res.getString("country"));
+		user.setCity(res.getString("city"));
+		user.setBiography(res.getString("biography"));
+		user.setRegistrationDate(res.getString("registrationDate"));
+		users.add(user);
+	    }
+	    return users;
+	} catch (SQLException e) {
+	    throw e;
+	} finally {
+	    try {
+		res.close();
+	    } catch (SQLException e) {
+		throw e;
+	    }
+	}
+    }
+
     public void insertUser(User user) throws SQLException {
 	try {
 	    insertStatement = connect
@@ -112,6 +145,32 @@ public class MySQLAccess {
 	}
     }
 
+    public List<Publication> selectAllPublications() throws SQLException {
+	ResultSet res = null;
+	List<Publication> publications = new ArrayList<Publication>();
+	selectStatement = connect.prepareStatement("SELECT * FROM Publication");
+	try {
+	    res = selectStatement.executeQuery();
+	    while (res.next()) {
+		Publication publication = new Publication();
+		publication.setLink(res.getString("link"));
+		publication.setTitle(res.getString("title"));
+		publication.setDescription(res.getString("date"));
+		publication.setDate(res.getString("description"));
+		publications.add(publication);
+	    }
+	    return publications;
+	} catch (SQLException e) {
+	    throw e;
+	} finally {
+	    try {
+		res.close();
+	    } catch (SQLException e) {
+		throw e;
+	    }
+	}
+    }
+
     public void insertPublication(Publication publication) throws SQLException {
 	try {
 	    insertStatement = connect
@@ -139,6 +198,32 @@ public class MySQLAccess {
 	    deleteStatement.executeUpdate();
 	} catch (SQLException e) {
 	    throw e;
+	}
+    }
+
+    public List<Stream> selectAllStreams() throws SQLException {
+	ResultSet res = null;
+	List<Stream> streams = new ArrayList<Stream>();
+	selectStatement = connect.prepareStatement("SELECT * FROM Stream");
+	try {
+	    res = selectStatement.executeQuery();
+	    while (res.next()) {
+		Stream stream = new Stream();
+		stream.setUrl(res.getString("url"));
+		stream.setName(res.getString("name"));
+		stream.setDescription(res.getString("description"));
+		stream.setWebLink(res.getString("webLink"));
+		streams.add(stream);
+	    }
+	    return streams;
+	} catch (SQLException e) {
+	    throw e;
+	} finally {
+	    try {
+		res.close();
+	    } catch (SQLException e) {
+		throw e;
+	    }
 	}
     }
 
