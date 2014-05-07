@@ -1,5 +1,6 @@
 package bdd.view;
 
+import bdd.controller.MainFrameController;
 import bdd.view.DialogBox;
 
 import java.awt.Color;
@@ -101,7 +102,7 @@ public class LoginView extends JDialog {
 		if (fieldOk) {
 		    System.out.println("Correct e-mail format");
 		    dispose();
-		    new MainFrame();
+		    new MainFrameController();
 		} else {
 		    dialogBox = new DialogBox("Erreur",
 			    "dans le format de mail");

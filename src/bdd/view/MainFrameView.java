@@ -1,6 +1,5 @@
 package bdd.view;
 
-import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -10,10 +9,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -30,46 +29,21 @@ import javax.swing.SwingUtilities;
 
 import bdd.model.Publication;
 import bdd.model.Stream;
+import bdd.view.renderer.PublicationRenderer;
+import bdd.view.renderer.StreamRenderer;
 
-public class MainFrame extends JFrame implements Observer {
+public class MainFrameView extends JFrame implements Observer {
 
     private JPanel mainPanel;
-    private JList<Stream> streamList;
-    private JList<Publication> publicationList;
+    private JList<Stream> streamJList;
+    private JList<Publication> publicationJList;
 
-    public MainFrame() {
+    public MainFrameView() {
 	this.setTitle("Flux RSS");
 	this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	this.setMinimumSize(new Dimension(800, 600));
 	this.setResizable(true);
 	this.build();
-	this.populateWithTest();
-    }
-
-    private void populateWithTest() {
-	Stream s1 = new Stream();
-	s1.setName("RTBF");
-	s1.setDescription("Le flux d'info de la RTBF");
-	s1.setUrl("http://rtbf.be");
-
-	Stream s2 = new Stream();
-	s2.setName("RTL");
-	s2.setDescription("Le flux d'info de RTL");
-	s2.setUrl("http://rtl.be");
-
-	Stream s3 = new Stream();
-	s3.setName("DH");
-	s3.setDescription("Le flux d'info de la DH");
-	s3.setUrl("http://dh.be");
-
-	ArrayList<Stream> streams = new ArrayList<Stream>();
-
-	streams.add(s1);
-	streams.add(s2);
-	streams.add(s3);
-
-	loadStreams(streams);
-
     }
 
     public void build() {
@@ -94,10 +68,9 @@ public class MainFrame extends JFrame implements Observer {
 	// La liste
 	gbc.gridy = 1;
 	DefaultListModel<Stream> streamListModel = new DefaultListModel<Stream>();
-	streamList = new JList<Stream>(streamListModel);
-	streamList.setCellRenderer(new StreamRenderer());
-	streamList.addMouseListener(new PopupMenuMouseAdapter());
-	mainPanel.add(new JScrollPane(streamList), gbc);
+	streamJList = new JList<Stream>(streamListModel);
+	streamJList.setCellRenderer(new StreamRenderer());
+	mainPanel.add(new JScrollPane(streamJList), gbc);
 
 	// Construction de la liste contenant les publications au centre de la
 	// fenetre
@@ -111,9 +84,9 @@ public class MainFrame extends JFrame implements Observer {
 	// La liste
 	gbc.gridy = 1;
 	DefaultListModel<Publication> publicationListModel = new DefaultListModel<Publication>();
-	publicationList = new JList<Publication>(publicationListModel);
-	publicationList.setCellRenderer(new PublicationRenderer());
-	mainPanel.add(new JScrollPane(publicationList), gbc);
+	publicationJList = new JList<Publication>(publicationListModel);
+	publicationJList.setCellRenderer(new PublicationRenderer());
+	mainPanel.add(new JScrollPane(publicationJList), gbc);
 
 	this.setContentPane(this.mainPanel);
 	this.setVisible(true);
@@ -127,7 +100,7 @@ public class MainFrame extends JFrame implements Observer {
 	    streamListModel.addElement(stream);
 	}
 
-	streamList.setModel(streamListModel);
+	streamJList.setModel(streamListModel);
 
     }
 
@@ -137,45 +110,16 @@ public class MainFrame extends JFrame implements Observer {
 	for (Publication publication : publications) {
 	    streamListModel.addElement(publication);
 	}
-	publicationList.setModel(streamListModel);
+	publicationJList.setModel(streamListModel);
 
     }
 
-    private class PopupMenuMouseAdapter extends MouseAdapter {
-	private JPopupMenu menu;
-
-	public PopupMenuMouseAdapter() {
-	    menu = new JPopupMenu();
-	    JMenuItem openLink = new JMenuItem("Ouvirir le lien");
-	    openLink.addActionListener(new ActionListener() {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-		    System.out.println(streamList.getSelectedValue().getUrl());
-		    try {
-			Desktop.getDesktop().browse(new URI(streamList.getSelectedValue().getUrl()));
-		    } catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		    } catch (URISyntaxException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		    }
-		}
-	    });
-	    menu.add(openLink);
-
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-	    if (SwingUtilities.isRightMouseButton(e)) {
-		JList jlist = (JList) e.getSource();
-		int row = jlist.locationToIndex(e.getPoint());
-		jlist.setSelectedIndex(row);
-		menu.show(jlist, e.getX(), e.getY());
-	    }
-	}
+    public Stream getSelectedStream() {
+	return streamJList.getSelectedValue();
+    }
+    
+    public void addListenerToStreamJList(MouseListener mouseListener) {
+	streamJList.addMouseListener(mouseListener);
     }
 
     @Override
