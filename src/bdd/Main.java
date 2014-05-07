@@ -1,10 +1,10 @@
 package bdd;
 
-import bdd.view.LoginView;
+import bdd.controller.LoginController;
 
 public class Main {
 
     public static void main(String[] args) {
-	new LoginView();
+	new LoginController();
     }
 }

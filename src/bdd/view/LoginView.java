@@ -1,13 +1,8 @@
 package bdd.view;
 
-import bdd.controller.MainFrameController;
-import bdd.view.DialogBox;
-
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
@@ -24,14 +19,12 @@ public class LoginView extends JDialog {
     private JButton connectionButton;
     private JTextField emailTextField;
     private JTextField passwordTextField;
-    private DialogBox dialogBox;
 
     public LoginView() {
 	this.setTitle("Fenetre d'authentification");
 	this.setSize(300, 200);
 	this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	this.build();
-	this.createEvent();
     }
 
     public void build() {
@@ -68,47 +61,16 @@ public class LoginView extends JDialog {
 	this.setVisible(true);
     }
 
-    /**
-     * Method to check if email text field is in correct email format
-     * 
-     * @return true if email field is in "someone@example.com" format
-     */
-    public boolean isEmailFieldOk() {
-	String EMAIL_REGEX = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
-	emailTextField.setBackground(new Color(255, 255, 255));
-	if (emailTextField.getText().matches(EMAIL_REGEX)) {
-	    return true;
-	}
-
-	else {
-	    emailTextField.setBackground(new Color(200, 0, 0));
-	    return false;
-	}
+    public String getEmail() {
+	return emailTextField.getText();
     }
 
-    /**
-     * Method that will catch any user interaction with the window
-     */
-    public void createEvent() {
-	connectionButton.addActionListener(new ActionListener() {
-	    public void actionPerformed(ActionEvent e) {
-
-		boolean fieldOk = isEmailFieldOk();
-
-		// dialogBox = new DialogBox("Erreur",
-		// "Format de mail incorrect");
-		// dialogBox.setVisible(true);
-
-		if (fieldOk) {
-		    System.out.println("Correct e-mail format");
-		    dispose();
-		    new MainFrameController();
-		} else {
-		    dialogBox = new DialogBox("Erreur",
-			    "dans le format de mail");
-		    dialogBox.setVisible(true);
-		}
-	    }
-	});
+    public void setEmailFieldBackground(Color color) {
+	emailTextField.setBackground(color);
     }
+
+    public void addConnectionListener(ActionListener connectionListener) {
+	connectionButton.addActionListener(connectionListener);
+    }
+
 }

@@ -1,18 +1,10 @@
 package bdd.view;
 
-import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -21,11 +13,8 @@ import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
 
 import bdd.model.Publication;
 import bdd.model.Stream;
@@ -117,7 +106,7 @@ public class MainFrameView extends JFrame implements Observer {
     public Stream getSelectedStream() {
 	return streamJList.getSelectedValue();
     }
-    
+
     public void addListenerToStreamJList(MouseListener mouseListener) {
 	streamJList.addMouseListener(mouseListener);
     }
