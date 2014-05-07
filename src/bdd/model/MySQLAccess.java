@@ -78,7 +78,7 @@ public class MySQLAccess {
 	}
     }
 
-    public void InsertUser(User user) throws SQLException {
+    public void insertUser(User user) throws SQLException {
 	try {
 	    insertStatement = connect
 		    .prepareStatement("INSERT INTO User VALUES (?, ?, ?, ?, ? , ?, ?, ?)");
@@ -106,6 +106,66 @@ public class MySQLAccess {
 	    deleteStatement = connect
 		    .prepareStatement("DELETE FROM bdd.User WHERE mail = ? ;");
 	    deleteStatement.setString(1, user.getMail());
+	    deleteStatement.executeUpdate();
+	} catch (SQLException e) {
+	    throw e;
+	}
+    }
+
+    public void insertPublication(Publication publication) throws SQLException {
+	try {
+	    insertStatement = connect
+		    .prepareStatement("INSERT INTO Publication VALUES (?, ?, ?, ?)");
+
+	    int i = 1;
+
+	    insertStatement.setString(i++, publication.getLink());
+	    insertStatement.setString(i++, publication.getTitle());
+	    insertStatement.setString(i++, publication.getDescription());
+	    insertStatement.setString(i++, publication.getDate());
+
+	    insertStatement.executeUpdate();
+
+	} catch (SQLException e) {
+	    throw e;
+	}
+    }
+
+    public void deletePublication(Publication publication) throws SQLException {
+	try {
+	    deleteStatement = connect
+		    .prepareStatement("DELETE FROM bdd.Publication WHERE link = ? ;");
+	    deleteStatement.setString(1, publication.getLink());
+	    deleteStatement.executeUpdate();
+	} catch (SQLException e) {
+	    throw e;
+	}
+    }
+
+    public void insertStream(Stream stream) throws SQLException {
+	try {
+	    insertStatement = connect
+		    .prepareStatement("INSERT INTO Stream VALUES (?, ?, ?, ?)");
+
+	    int i = 1;
+
+	    insertStatement.setString(i++, stream.getUrl());
+	    insertStatement.setString(i++, stream.getName());
+	    insertStatement.setString(i++, stream.getDescription());
+	    insertStatement.setString(i++, stream.getWebLink());
+
+	    insertStatement.executeUpdate();
+
+	} catch (SQLException e) {
+	    throw e;
+	}
+    }
+
+    public void deleteStream(Stream stream) throws SQLException {
+	try {
+	    deleteStatement = connect
+		    .prepareStatement("DELETE FROM bdd.Stream WHERE url = ? ;");
+	    deleteStatement.setString(1, stream.getUrl());
 	    deleteStatement.executeUpdate();
 	} catch (SQLException e) {
 	    throw e;
