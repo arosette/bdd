@@ -81,10 +81,44 @@ public class MySQLAccess {
 	}
     }
 
+    public User findUser(String mail) throws SQLException {
+	ResultSet res = null;
+	try {
+	    selectStatement = connect
+		    .prepareStatement("SELECT * FROM User WHERE mail = ? ;");
+	    selectStatement.setString(1, mail);
+	    res = selectStatement.executeQuery();
+	    if (res.next()) {
+		User user = new User();
+		user.setMail(res.getString("mail"));
+		user.setSurname(res.getString("surname"));
+		user.setPassword(res.getString("password"));
+		user.setAvatar(res.getString("avatar"));
+		user.setCountry(res.getString("country"));
+		user.setCity(res.getString("city"));
+		user.setBiography(res.getString("biography"));
+		user.setRegistrationDate(res.getString("registrationDate"));
+		return user;
+	    }
+	    return null;
+
+	} catch (SQLException e) {
+	    throw e;
+	} finally {
+	    try {
+		res.close();
+	    } catch (SQLException e) {
+		throw e;
+	    }
+	}
+    }
+
     public List<User> selectAllUsers() throws SQLException {
+
 	ResultSet res = null;
 	List<User> users = new ArrayList<User>();
 	selectStatement = connect.prepareStatement("SELECT * FROM User");
+
 	try {
 	    res = selectStatement.executeQuery();
 	    while (res.next()) {
@@ -145,6 +179,34 @@ public class MySQLAccess {
 	}
     }
 
+    public Publication findPublication(String link) throws SQLException {
+	ResultSet res = null;
+	try {
+	    selectStatement = connect
+		    .prepareStatement("SELECT * FROM Publication WHERE link = ? ;");
+	    selectStatement.setString(1, link);
+	    res = selectStatement.executeQuery();
+	    if (res.next()) {
+		Publication publication = new Publication();
+		publication.setUrl(res.getString("link"));
+		publication.setTitle(res.getString("title"));
+		publication.setDescription(res.getString("date"));
+		publication.setDate(res.getString("description"));
+		return publication;
+	    }
+	    return null;
+
+	} catch (SQLException e) {
+	    throw e;
+	} finally {
+	    try {
+		res.close();
+	    } catch (SQLException e) {
+		throw e;
+	    }
+	}
+    }
+
     public List<Publication> selectAllPublications() throws SQLException {
 	ResultSet res = null;
 	List<Publication> publications = new ArrayList<Publication>();
@@ -198,6 +260,34 @@ public class MySQLAccess {
 	    deleteStatement.executeUpdate();
 	} catch (SQLException e) {
 	    throw e;
+	}
+    }
+
+    public Stream findStream(String url) throws SQLException {
+	ResultSet res = null;
+	try {
+	    selectStatement = connect
+		    .prepareStatement("SELECT * FROM Stream WHERE url = ? ;");
+	    selectStatement.setString(1, url);
+	    res = selectStatement.executeQuery();
+	    if (res.next()) {
+		Stream stream = new Stream();
+		stream.setUrl(res.getString("url"));
+		stream.setName(res.getString("name"));
+		stream.setDescription(res.getString("description"));
+		stream.setWebLink(res.getString("webLink"));
+		return stream;
+	    }
+	    return null;
+
+	} catch (SQLException e) {
+	    throw e;
+	} finally {
+	    try {
+		res.close();
+	    } catch (SQLException e) {
+		throw e;
+	    }
 	}
     }
 
@@ -288,7 +378,7 @@ public class MySQLAccess {
 	    throw e;
 	}
     }
-    
+
     public void insertComment(Comment comment) throws SQLException {
 	try {
 	    insertStatement = connect
@@ -319,7 +409,7 @@ public class MySQLAccess {
 	    throw e;
 	}
     }
-    
+
     public void close() throws SQLException {
 	resultSet.close();
 	statement.close();
