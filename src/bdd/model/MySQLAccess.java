@@ -153,7 +153,7 @@ public class MySQLAccess {
 	    res = selectStatement.executeQuery();
 	    while (res.next()) {
 		Publication publication = new Publication();
-		publication.setLink(res.getString("link"));
+		publication.setUrl(res.getString("link"));
 		publication.setTitle(res.getString("title"));
 		publication.setDescription(res.getString("date"));
 		publication.setDate(res.getString("description"));
