@@ -178,7 +178,7 @@ public class MySQLAccess {
 
 	    int i = 1;
 
-	    insertStatement.setString(i++, publication.getLink());
+	    insertStatement.setString(i++, publication.getUrl());
 	    insertStatement.setString(i++, publication.getTitle());
 	    insertStatement.setString(i++, publication.getDescription());
 	    insertStatement.setString(i++, publication.getDate());
@@ -194,7 +194,7 @@ public class MySQLAccess {
 	try {
 	    deleteStatement = connect
 		    .prepareStatement("DELETE FROM bdd.Publication WHERE link = ? ;");
-	    deleteStatement.setString(1, publication.getLink());
+	    deleteStatement.setString(1, publication.getUrl());
 	    deleteStatement.executeUpdate();
 	} catch (SQLException e) {
 	    throw e;

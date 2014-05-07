@@ -1,18 +1,30 @@
 package bdd.model;
 
+import java.util.List;
+
 public class Publication {
-    private String link;
+    private String url;
     private String title;
     private String date;
     private String description;
+    private Stream stream;
+    private List<Comment> comments;
     private boolean red;
 
-    public String getLink() {
-	return link;
+    public Stream getStream() {
+	return stream;
     }
 
-    public void setLink(String link) {
-	this.link = link;
+    public void setStream(Stream stream) {
+	this.stream = stream;
+    }
+
+    public String getUrl() {
+	return url;
+    }
+
+    public void setUrl(String url) {
+	this.url = url;
     }
 
     public String getTitle() {
