@@ -3,6 +3,7 @@ package bdd.model;
 import java.util.List;
 
 public class Publication {
+
     private String url;
     private String title;
     private String date;
@@ -10,6 +11,14 @@ public class Publication {
     private Stream stream;
     private List<Comment> comments;
     private boolean red;
+
+    public List<Comment> getComments() {
+	return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+	this.comments = comments;
+    }
 
     public Stream getStream() {
 	return stream;

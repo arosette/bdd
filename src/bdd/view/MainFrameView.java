@@ -1,5 +1,6 @@
 package bdd.view;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -47,7 +48,7 @@ public class MainFrameView extends JFrame implements Observer {
 	gbc.gridwidth = 1;
 	gbc.anchor = GridBagConstraints.WEST;
 	gbc.fill = GridBagConstraints.NONE;
-	gbc.insets = new Insets(0, 50, 0, 50);
+	gbc.insets = new Insets(0, 10, 0, 10);
 
 	// Construction de la liste contenant les flux à gauche de la fenetre
 
@@ -95,11 +96,11 @@ public class MainFrameView extends JFrame implements Observer {
 
     public void loadPublications(List<Publication> publications) {
 
-	DefaultListModel<Publication> streamListModel = new DefaultListModel<Publication>();
+	DefaultListModel<Publication> publicationListModel = new DefaultListModel<Publication>();
 	for (Publication publication : publications) {
-	    streamListModel.addElement(publication);
+	    publicationListModel.addElement(publication);
 	}
-	publicationJList.setModel(streamListModel);
+	publicationJList.setModel(publicationListModel);
 
     }
 
@@ -109,6 +110,14 @@ public class MainFrameView extends JFrame implements Observer {
 
     public void addListenerToStreamJList(MouseListener mouseListener) {
 	streamJList.addMouseListener(mouseListener);
+    }
+    
+    public Publication getSelectedPublication() {
+	return publicationJList.getSelectedValue();
+    }
+    
+    public void addListenerToPublicationJList(MouseListener mouseListener) {
+	publicationJList.addMouseListener(mouseListener);
     }
 
     @Override

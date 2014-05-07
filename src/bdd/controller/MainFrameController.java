@@ -18,6 +18,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
+import bdd.model.Comment;
 import bdd.model.Publication;
 import bdd.model.Stream;
 
@@ -30,14 +31,16 @@ public class MainFrameController {
 	mainFrameView = new MainFrameView();
 	publications = new ArrayList<Publication>();
 	streams = new ArrayList<Stream>();
+	publications = createPublications();
 	streams = createStreams();
 	registerListeners();
 	mainFrameView.loadStreams(streams);
 	mainFrameView.loadPublications(publications);
     }
-    
+
     private void registerListeners() {
 	mainFrameView.addListenerToStreamJList(new StreamPopupMenuListener());
+	mainFrameView.addListenerToPublicationJList(new PublicationPopupMenuListener());
     }
 
     private List<Stream> createStreams() {
@@ -66,6 +69,51 @@ public class MainFrameController {
 
     }
 
+    private List<Publication> createPublications() {
+	Stream s1 = new Stream();
+	s1.setName("Stream test");
+
+	Comment c1 = new Comment();
+	c1.setMail("a@a.com");
+	c1.setContent("lolo");
+	c1.setDate("2014-05-07");
+	ArrayList<Comment> comments = new ArrayList<Comment>();
+	comments.add(c1);
+
+	Publication p1 = new Publication();
+	p1.setTitle("Etre un troll");
+	p1.setDescription("Trolololololo");
+	p1.setRed(false);
+	p1.setDate("2014-05-07");
+	p1.setUrl("http://trol.com/art1");
+	p1.setStream(s1);
+	p1.setComments(comments);
+
+	Publication p2 = new Publication();
+	p2.setTitle("Le troll, comment l'apprendre ?");
+	p2.setDescription("Trolololololo");
+	p2.setRed(true);
+	p2.setDate("2014-05-07");
+	p2.setUrl("http://trol.com/art2");
+	p2.setStream(s1);
+
+	ArrayList<Publication> publications = new ArrayList<Publication>();
+	publications.add(p1);
+	publications.add(p2);
+	publications.add(p1);
+	publications.add(p2);
+	publications.add(p1);
+	publications.add(p2);
+	publications.add(p1);
+	publications.add(p2);
+	publications.add(p1);
+	publications.add(p2);
+	publications.add(p1);
+	publications.add(p2);
+
+	return publications;
+    }
+
     private class StreamPopupMenuListener extends MouseAdapter {
 	private JPopupMenu menu;
 
@@ -92,6 +140,38 @@ public class MainFrameController {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		    }
+		}
+	    });
+	    menu.add(openLink);
+
+	}
+
+	// Ouverture du menu avec clic droit
+	@Override
+	public void mousePressed(MouseEvent e) {
+	    if (SwingUtilities.isRightMouseButton(e)) {
+		JList jlist = (JList) e.getSource();
+		int row = jlist.locationToIndex(e.getPoint());
+		jlist.setSelectedIndex(row);
+		menu.show(jlist, e.getX(), e.getY());
+	    }
+	}
+    }
+
+    private class PublicationPopupMenuListener extends MouseAdapter {
+	private JPopupMenu menu;
+
+	public PublicationPopupMenuListener() {
+	    menu = new JPopupMenu();
+	    JMenuItem openLink = new JMenuItem("Ouvrir...");
+
+	    // Creation du listener sur l'item qui permet d'ouvrir la
+	    // publication
+	    openLink.addActionListener(new ActionListener() {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+		    System.out.println(mainFrameView.getSelectedPublication().getTitle());
 		}
 	    });
 	    menu.add(openLink);

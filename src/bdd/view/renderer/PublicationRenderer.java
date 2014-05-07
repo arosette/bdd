@@ -3,13 +3,19 @@ package bdd.view.renderer;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 
+import bdd.model.Comment;
 import bdd.model.Publication;
 
 public class PublicationRenderer implements ListCellRenderer<Publication> {
@@ -20,16 +26,40 @@ public class PublicationRenderer implements ListCellRenderer<Publication> {
 	    boolean isSelected, boolean cellHasFocus) {
 
 	JPanel panel = new JPanel();
+	
+	
 
 	panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+	if ((index % 2) == 1) {
+	    panel.setBackground(Color.white);
+	}
+	
+	if (isSelected) {
+	    panel.setBackground(Color.cyan);
+	}
 
-	JLabel streamTitle = new JLabel(value.getTitle());
-	streamTitle.setFont(new Font(streamTitle.getName(), Font.BOLD, 20));
-	panel.add(streamTitle);
+	// Lecture
+	JCheckBox publicationRed = new JCheckBox("Lue");
+	publicationRed.setSelected(value.isRed());
+	publicationRed.setOpaque(false);
+	panel.add(publicationRed);
 
-	JLabel streamDescription = new JLabel(value.getDescription());
-	streamDescription.setForeground(Color.gray);
-	panel.add(streamDescription);
+	// Flux
+	JLabel associatedStreamName = new JLabel(value.getStream().getName());
+	associatedStreamName.setBackground(Color.green);
+	associatedStreamName.setOpaque(true);
+	panel.add(associatedStreamName);
+
+	// Titre
+	JLabel publicationTitle = new JLabel(value.getTitle());
+	publicationTitle.setFont(new Font(publicationTitle.getName(),
+		Font.BOLD, 14));
+	panel.add(publicationTitle);
+
+	// Contenu
+	JLabel publicationDescription = new JLabel(value.getDescription());
+	publicationDescription.setForeground(Color.gray);
+	panel.add(publicationDescription);
 
 	return panel;
     }
