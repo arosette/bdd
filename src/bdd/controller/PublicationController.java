@@ -11,6 +11,8 @@ public class PublicationController {
     
     public PublicationController(Publication publication, JFrame parentFrame) {
 	this.pulication = publication;
-	this.publicationView = new PublicationView(parentFrame);
+	this.publicationView = new PublicationView();
+	this.publicationView.loadPublication(publication);
+	this.publicationView.setVisible(true);
     }
 }

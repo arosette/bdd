@@ -84,7 +84,7 @@ public class MainFrameController {
 	Publication p1 = new Publication();
 	p1.setTitle("Etre un troll");
 	p1.setDescription("Trolololololo");
-	p1.setRed(false);
+	p1.setRead(false);
 	p1.setDate("2014-05-07");
 	p1.setUrl("http://trol.com/art1");
 	p1.setStream(s1);
@@ -93,7 +93,7 @@ public class MainFrameController {
 	Publication p2 = new Publication();
 	p2.setTitle("Le troll, comment l'apprendre ?");
 	p2.setDescription("Trolololololo");
-	p2.setRed(true);
+	p2.setRead(true);
 	p2.setDate("2014-05-07");
 	p2.setUrl("http://trol.com/art2");
 	p2.setStream(s1);

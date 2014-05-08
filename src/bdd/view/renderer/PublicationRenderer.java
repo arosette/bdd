@@ -40,7 +40,7 @@ public class PublicationRenderer implements ListCellRenderer<Publication> {
 
 	// Lecture
 	JCheckBox publicationRed = new JCheckBox("Lue");
-	publicationRed.setSelected(value.isRed());
+	publicationRed.setSelected(value.isRead());
 	publicationRed.setOpaque(false);
 	panel.add(publicationRed);
 
