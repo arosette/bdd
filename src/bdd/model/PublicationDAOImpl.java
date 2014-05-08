@@ -7,27 +7,27 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDAOImpl extends ConnectionMYSQL implements
-	GenericDAO<User, String> {
+public class PublicationDAOImpl extends ConnectionMYSQL implements
+	GenericDAO<Publication, String> {
 
     private PreparedStatement selectStatment = null;
     private PreparedStatement findStatement = null;
     private PreparedStatement insertStatement = null;
     private PreparedStatement deleteStatement = null;
 
-    public UserDAOImpl(ConnectionProvider connectionProvider)
+    public PublicationDAOImpl(ConnectionProvider connectionProvider)
 	    throws DAOException {
 	super(connectionProvider);
 	Connection connection = null;
 	try {
 	    connection = getConnection();
-	    selectStatment = connection.prepareStatement("SELECT * FROM User");
+	    selectStatment = connection.prepareStatement("SELECT * FROM Publication");
 	    findStatement = connection
-		    .prepareStatement("SELECT * FROM User WHERE mail = ? ;");
+		    .prepareStatement("SELECT * FROM Publication WHERE url = ? ;");
 	    insertStatement = connection
-		    .prepareStatement("INSERT INTO User VALUES (?, ?, ?, ?, ? , ?, ?, ?)");
+		    .prepareStatement("INSERT INTO Publication VALUES (?, ?, ?, ?, ?)");
 	    deleteStatement = connection
-		    .prepareStatement("DELETE FROM User WHERE mail = ?");
+		    .prepareStatement("DELETE FROM Publication WHERE url = ?");
 
 	} catch (SQLException e) {
 	    throw new DAOException(e);
@@ -41,24 +41,21 @@ public class UserDAOImpl extends ConnectionMYSQL implements
     }
 
     @Override
-    public List<User> selectAll() throws DAOException {
+    public List<Publication> selectAll() throws DAOException {
 	ResultSet res = null;
-	List<User> users = new ArrayList<User>();
+	List<Publication> publications = new ArrayList<Publication>();
 	try {
 	    res = selectStatment.executeQuery();
 	    while (res.next()) {
-		User user = new User();
-		user.setMail(res.getString("mail"));
-		user.setSurname(res.getString("surname"));
-		user.setPassword(res.getString("password"));
-		user.setAvatar(res.getString("avatar"));
-		user.setCountry(res.getString("country"));
-		user.setCity(res.getString("city"));
-		user.setBiography(res.getString("biography"));
-		user.setRegistrationDate(res.getString("registrationDate"));
-		users.add(user);
+		Publication publication = new Publication();
+		publication.setUrl(res.getString("link"));
+		publication.setTitle(res.getString("title"));
+		publication.setDescription(res.getString("date"));
+		publication.setDate(res.getString("description"));
+		publication.setRead(res.getBoolean("read"));
+		publications.add(publication);
 	    }
-	    return users;
+	    return publications;
 	} catch (SQLException e) {
 	    throw new DAOException(e);
 	} finally {
@@ -68,26 +65,22 @@ public class UserDAOImpl extends ConnectionMYSQL implements
 		throw new DAOException(e);
 	    }
 	}
-
     }
-
+    
     @Override
-    public User find(String mail) throws DAOException {
+    public Publication find(String link) throws DAOException {
 	ResultSet res = null;
 	try {
-	    findStatement.setString(1, mail);
+	    findStatement.setString(1, link);
 	    res = findStatement.executeQuery();
 	    if (res.next()) {
-		User user = new User();
-		user.setMail(res.getString("mail"));
-		user.setSurname(res.getString("surname"));
-		user.setPassword(res.getString("password"));
-		user.setAvatar(res.getString("avatar"));
-		user.setCountry(res.getString("country"));
-		user.setCity(res.getString("city"));
-		user.setBiography(res.getString("biography"));
-		user.setRegistrationDate(res.getString("registrationDate"));
-		return user;
+		Publication publication = new Publication();
+		publication.setUrl(res.getString("url"));
+		publication.setTitle(res.getString("title"));
+		publication.setDescription(res.getString("date"));
+		publication.setDate(res.getString("description"));
+		publication.setRead(res.getBoolean("read"));
+		return publication;
 	    }
 	    return null;
 
@@ -103,20 +96,17 @@ public class UserDAOImpl extends ConnectionMYSQL implements
     }
 
     @Override
-    public void insert(User user) throws DAOException {
+    public void insert(Publication publication) throws DAOException {
 	try {
 
 	    int i = 1;
 
-	    insertStatement.setString(i++, user.getMail());
-	    insertStatement.setString(i++, user.getSurname());
-	    insertStatement.setString(i++, user.getPassword());
-	    insertStatement.setString(i++, user.getAvatar());
-	    insertStatement.setString(i++, user.getCountry());
-	    insertStatement.setString(i++, user.getCity());
-	    insertStatement.setString(i++, user.getBiography());
-	    insertStatement.setString(i++, user.getRegistrationDate());
-
+	    insertStatement.setString(i++, publication.getUrl());
+	    insertStatement.setString(i++, publication.getTitle());
+	    insertStatement.setString(i++, publication.getDate());
+	    insertStatement.setString(i++, publication.getDescription());
+	    insertStatement.setBoolean(i++, publication.isRead());
+	   
 	    insertStatement.executeUpdate();
 
 	} catch (SQLException e) {
@@ -125,15 +115,15 @@ public class UserDAOImpl extends ConnectionMYSQL implements
     }
 
     @Override
-    public boolean delete(User user) throws DAOException {
+    public boolean delete(Publication publication) throws DAOException {
 	try {
-
-	    deleteStatement.setString(1, user.getMail());
+	    deleteStatement.setString(1, publication.getUrl());
 	    int affectedRows = deleteStatement.executeUpdate();
 	    if (affectedRows == 0) {
 		return false;
 	    }
 	    return true;
+
 	} catch (SQLException e) {
 	    throw new DAOException(e);
 	}

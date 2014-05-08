@@ -5,7 +5,7 @@ import java.util.Observable;
 public class Comment extends Observable {
 
     private String mail;
-    private String link;
+    private String url;
     private String content;
     private String date;
 
@@ -17,12 +17,12 @@ public class Comment extends Observable {
 	this.mail = mail;
     }
 
-    public String getLink() {
-	return link;
+    public String getUrl() {
+	return url;
     }
 
-    public void setLink(String link) {
-	this.link = link;
+    public void setUrl(String url) {
+	this.url = url;
     }
 
     public String getContent() {

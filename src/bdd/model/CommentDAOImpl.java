@@ -7,27 +7,27 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDAOImpl extends ConnectionMYSQL implements
-	GenericDAO<User, String> {
+public class CommentDAOImpl extends ConnectionMYSQL implements
+	GenericDAO<Comment, String> {
 
     private PreparedStatement selectStatment = null;
     private PreparedStatement findStatement = null;
     private PreparedStatement insertStatement = null;
     private PreparedStatement deleteStatement = null;
 
-    public UserDAOImpl(ConnectionProvider connectionProvider)
+    public CommentDAOImpl(ConnectionProvider connectionProvider)
 	    throws DAOException {
 	super(connectionProvider);
 	Connection connection = null;
 	try {
 	    connection = getConnection();
-	    selectStatment = connection.prepareStatement("SELECT * FROM User");
+	    selectStatment = connection.prepareStatement("SELECT * FROM Comment");
 	    findStatement = connection
-		    .prepareStatement("SELECT * FROM User WHERE mail = ? ;");
+		    .prepareStatement("SELECT * FROM Comment WHERE mail = ?");
 	    insertStatement = connection
-		    .prepareStatement("INSERT INTO User VALUES (?, ?, ?, ?, ? , ?, ?, ?)");
+		    .prepareStatement("INSERT INTO Comment VALUES (?, ?, ?, ?)");
 	    deleteStatement = connection
-		    .prepareStatement("DELETE FROM User WHERE mail = ?");
+		    .prepareStatement("DELETE FROM Comment WHERE mail = ?");
 
 	} catch (SQLException e) {
 	    throw new DAOException(e);
@@ -41,24 +41,20 @@ public class UserDAOImpl extends ConnectionMYSQL implements
     }
 
     @Override
-    public List<User> selectAll() throws DAOException {
+    public List<Comment> selectAll() throws DAOException {
 	ResultSet res = null;
-	List<User> users = new ArrayList<User>();
+	List<Comment> comments = new ArrayList<Comment>();
 	try {
 	    res = selectStatment.executeQuery();
 	    while (res.next()) {
-		User user = new User();
-		user.setMail(res.getString("mail"));
-		user.setSurname(res.getString("surname"));
-		user.setPassword(res.getString("password"));
-		user.setAvatar(res.getString("avatar"));
-		user.setCountry(res.getString("country"));
-		user.setCity(res.getString("city"));
-		user.setBiography(res.getString("biography"));
-		user.setRegistrationDate(res.getString("registrationDate"));
-		users.add(user);
+		Comment comment = new Comment();
+		comment.setMail(res.getString("mail"));
+		comment.setUrl(res.getString("url"));
+		comment.setContent(res.getString("content"));
+		comment.setDate(res.getString("date"));
+		comments.add(comment);
 	    }
-	    return users;
+	    return comments;
 	} catch (SQLException e) {
 	    throw new DAOException(e);
 	} finally {
@@ -68,26 +64,21 @@ public class UserDAOImpl extends ConnectionMYSQL implements
 		throw new DAOException(e);
 	    }
 	}
-
     }
-
+    
     @Override
-    public User find(String mail) throws DAOException {
+    public Comment find(String mail) throws DAOException {
 	ResultSet res = null;
 	try {
 	    findStatement.setString(1, mail);
 	    res = findStatement.executeQuery();
 	    if (res.next()) {
-		User user = new User();
-		user.setMail(res.getString("mail"));
-		user.setSurname(res.getString("surname"));
-		user.setPassword(res.getString("password"));
-		user.setAvatar(res.getString("avatar"));
-		user.setCountry(res.getString("country"));
-		user.setCity(res.getString("city"));
-		user.setBiography(res.getString("biography"));
-		user.setRegistrationDate(res.getString("registrationDate"));
-		return user;
+		Comment comment = new Comment();
+		comment.setMail(res.getString("mail"));
+		comment.setUrl(res.getString("url"));
+		comment.setContent(res.getString("content"));
+		comment.setDate(res.getString("date"));
+		return comment;
 	    }
 	    return null;
 
@@ -103,20 +94,16 @@ public class UserDAOImpl extends ConnectionMYSQL implements
     }
 
     @Override
-    public void insert(User user) throws DAOException {
+    public void insert(Comment comment) throws DAOException {
 	try {
 
 	    int i = 1;
 
-	    insertStatement.setString(i++, user.getMail());
-	    insertStatement.setString(i++, user.getSurname());
-	    insertStatement.setString(i++, user.getPassword());
-	    insertStatement.setString(i++, user.getAvatar());
-	    insertStatement.setString(i++, user.getCountry());
-	    insertStatement.setString(i++, user.getCity());
-	    insertStatement.setString(i++, user.getBiography());
-	    insertStatement.setString(i++, user.getRegistrationDate());
-
+	    insertStatement.setString(i++, comment.getMail());
+	    insertStatement.setString(i++, comment.getUrl());
+	    insertStatement.setString(i++, comment.getContent());
+	    insertStatement.setString(i++, comment.getDate());
+	   
 	    insertStatement.executeUpdate();
 
 	} catch (SQLException e) {
@@ -125,15 +112,15 @@ public class UserDAOImpl extends ConnectionMYSQL implements
     }
 
     @Override
-    public boolean delete(User user) throws DAOException {
+    public boolean delete(Comment comment) throws DAOException {
 	try {
-
-	    deleteStatement.setString(1, user.getMail());
+	    deleteStatement.setString(1, comment.getMail());
 	    int affectedRows = deleteStatement.executeUpdate();
 	    if (affectedRows == 0) {
 		return false;
 	    }
 	    return true;
+
 	} catch (SQLException e) {
 	    throw new DAOException(e);
 	}

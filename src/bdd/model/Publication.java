@@ -10,7 +10,7 @@ public class Publication {
     private String description;
     private Stream stream;
     private List<Comment> comments;
-    private boolean red;
+    private boolean read;
 
     public List<Comment> getComments() {
 	return comments;
@@ -60,11 +60,11 @@ public class Publication {
 	this.description = description;
     }
 
-    public void setRed(boolean red) {
-	this.red = red;
+    public void setRead(boolean read) {
+	this.read = read;
     }
 
-    public boolean isRed() {
-	return red;
+    public boolean isRead() {
+	return read;
     }
 }

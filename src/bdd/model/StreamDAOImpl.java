@@ -7,27 +7,27 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDAOImpl extends ConnectionMYSQL implements
-	GenericDAO<User, String> {
+public class StreamDAOImpl extends ConnectionMYSQL implements
+	GenericDAO<Stream, String> {
 
     private PreparedStatement selectStatment = null;
     private PreparedStatement findStatement = null;
     private PreparedStatement insertStatement = null;
     private PreparedStatement deleteStatement = null;
 
-    public UserDAOImpl(ConnectionProvider connectionProvider)
+    public StreamDAOImpl(ConnectionProvider connectionProvider)
 	    throws DAOException {
 	super(connectionProvider);
 	Connection connection = null;
 	try {
 	    connection = getConnection();
-	    selectStatment = connection.prepareStatement("SELECT * FROM User");
+	    selectStatment = connection.prepareStatement("SELECT * FROM Stream");
 	    findStatement = connection
-		    .prepareStatement("SELECT * FROM User WHERE mail = ? ;");
+		    .prepareStatement("SELECT * FROM Stream WHERE url = ? ;");
 	    insertStatement = connection
-		    .prepareStatement("INSERT INTO User VALUES (?, ?, ?, ?, ? , ?, ?, ?)");
+		    .prepareStatement("INSERT INTO Stream VALUES (?, ?, ?, ?)");
 	    deleteStatement = connection
-		    .prepareStatement("DELETE FROM User WHERE mail = ?");
+		    .prepareStatement("DELETE FROM Stream WHERE url = ?");
 
 	} catch (SQLException e) {
 	    throw new DAOException(e);
@@ -41,24 +41,20 @@ public class UserDAOImpl extends ConnectionMYSQL implements
     }
 
     @Override
-    public List<User> selectAll() throws DAOException {
+    public List<Stream> selectAll() throws DAOException {
 	ResultSet res = null;
-	List<User> users = new ArrayList<User>();
+	List<Stream> streams = new ArrayList<Stream>();
 	try {
 	    res = selectStatment.executeQuery();
 	    while (res.next()) {
-		User user = new User();
-		user.setMail(res.getString("mail"));
-		user.setSurname(res.getString("surname"));
-		user.setPassword(res.getString("password"));
-		user.setAvatar(res.getString("avatar"));
-		user.setCountry(res.getString("country"));
-		user.setCity(res.getString("city"));
-		user.setBiography(res.getString("biography"));
-		user.setRegistrationDate(res.getString("registrationDate"));
-		users.add(user);
+		Stream stream = new Stream();
+		stream.setUrl(res.getString("url"));
+		stream.setName(res.getString("name"));
+		stream.setDescription(res.getString("description"));
+		stream.setWebLink(res.getString("webLink"));
+		streams.add(stream);
 	    }
-	    return users;
+	    return streams;
 	} catch (SQLException e) {
 	    throw new DAOException(e);
 	} finally {
@@ -68,26 +64,21 @@ public class UserDAOImpl extends ConnectionMYSQL implements
 		throw new DAOException(e);
 	    }
 	}
-
     }
 
     @Override
-    public User find(String mail) throws DAOException {
+    public Stream find(String url) throws DAOException {
 	ResultSet res = null;
 	try {
-	    findStatement.setString(1, mail);
-	    res = findStatement.executeQuery();
+	    selectStatment.setString(1, url);
+	    res = selectStatment.executeQuery();
 	    if (res.next()) {
-		User user = new User();
-		user.setMail(res.getString("mail"));
-		user.setSurname(res.getString("surname"));
-		user.setPassword(res.getString("password"));
-		user.setAvatar(res.getString("avatar"));
-		user.setCountry(res.getString("country"));
-		user.setCity(res.getString("city"));
-		user.setBiography(res.getString("biography"));
-		user.setRegistrationDate(res.getString("registrationDate"));
-		return user;
+		Stream stream = new Stream();
+		stream.setUrl(res.getString("url"));
+		stream.setName(res.getString("name"));
+		stream.setDescription(res.getString("description"));
+		stream.setWebLink(res.getString("webLink"));
+		return stream;
 	    }
 	    return null;
 
@@ -103,19 +94,15 @@ public class UserDAOImpl extends ConnectionMYSQL implements
     }
 
     @Override
-    public void insert(User user) throws DAOException {
+    public void insert(Stream stream) throws DAOException {
 	try {
 
 	    int i = 1;
 
-	    insertStatement.setString(i++, user.getMail());
-	    insertStatement.setString(i++, user.getSurname());
-	    insertStatement.setString(i++, user.getPassword());
-	    insertStatement.setString(i++, user.getAvatar());
-	    insertStatement.setString(i++, user.getCountry());
-	    insertStatement.setString(i++, user.getCity());
-	    insertStatement.setString(i++, user.getBiography());
-	    insertStatement.setString(i++, user.getRegistrationDate());
+	    insertStatement.setString(i++, stream.getUrl());
+	    insertStatement.setString(i++, stream.getName());
+	    insertStatement.setString(i++, stream.getDescription());
+	    insertStatement.setString(i++, stream.getWebLink());
 
 	    insertStatement.executeUpdate();
 
@@ -125,15 +112,15 @@ public class UserDAOImpl extends ConnectionMYSQL implements
     }
 
     @Override
-    public boolean delete(User user) throws DAOException {
+    public boolean delete(Stream stream) throws DAOException {
 	try {
-
-	    deleteStatement.setString(1, user.getMail());
+	    deleteStatement.setString(1, stream.getUrl());
 	    int affectedRows = deleteStatement.executeUpdate();
 	    if (affectedRows == 0) {
 		return false;
 	    }
 	    return true;
+
 	} catch (SQLException e) {
 	    throw new DAOException(e);
 	}

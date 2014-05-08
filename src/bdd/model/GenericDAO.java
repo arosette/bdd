@@ -63,6 +63,6 @@ public interface GenericDAO<T, ID> {
 	 * @throws DAOException
 	 *             If something fails at database level.
 	 */
-	public void delete(T t) throws DAOException;
+	public boolean delete(T t) throws DAOException;
 
 }

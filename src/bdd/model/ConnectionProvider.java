@@ -1,7 +1,6 @@
 package bdd.model;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 
 /**
  * Interface that provides a method to be implemented in order to get a
@@ -19,5 +18,5 @@ public interface ConnectionProvider {
      *             If something fails at database level.
      */
 
-    Connection getConnection() throws SQLException;
+    Connection getConnection() throws DAOException;
 }
