@@ -38,10 +38,6 @@ public class MySQLAccess {
 	    resultSet = statement.executeQuery("SELECT * from bdd.User");
 	    displayMetaData(resultSet);
 
-	    // resultSet gets the result of the SQL query
-	    resultSet = statement.executeQuery("SELECT * from bdd.User");
-	    displayUserInfo(resultSet);
-
 	} catch (Exception e) {
 	    throw e;
 	}
@@ -58,126 +54,7 @@ public class MySQLAccess {
 	}
     }
 
-    public void displayUserInfo(ResultSet resultSet) throws SQLException {
-	try {
-	    while (resultSet.next()) {
-
-		System.out.println("mail = " + resultSet.getString("mail"));
-		System.out.println("surname = "
-			+ resultSet.getString("surname"));
-		System.out.println("password = "
-			+ resultSet.getString("password"));
-		System.out.println("avatar = " + resultSet.getString("avatar"));
-		System.out.println("country = "
-			+ resultSet.getString("country"));
-		System.out.println("city = " + resultSet.getString("city"));
-		System.out.println("biography = "
-			+ resultSet.getString("biography"));
-		System.out.println("registrationDate = "
-			+ resultSet.getString("registrationDate"));
-	    }
-	} catch (SQLException e) {
-	    throw e;
-	}
-    }
-
-    public User findUser(String mail) throws SQLException {
-	ResultSet res = null;
-	try {
-	    selectStatement = connect
-		    .prepareStatement("SELECT * FROM User WHERE mail = ? ;");
-	    selectStatement.setString(1, mail);
-	    res = selectStatement.executeQuery();
-	    if (res.next()) {
-		User user = new User();
-		user.setMail(res.getString("mail"));
-		user.setSurname(res.getString("surname"));
-		user.setPassword(res.getString("password"));
-		user.setAvatar(res.getString("avatar"));
-		user.setCountry(res.getString("country"));
-		user.setCity(res.getString("city"));
-		user.setBiography(res.getString("biography"));
-		user.setRegistrationDate(res.getString("registrationDate"));
-		return user;
-	    }
-	    return null;
-
-	} catch (SQLException e) {
-	    throw e;
-	} finally {
-	    try {
-		res.close();
-	    } catch (SQLException e) {
-		throw e;
-	    }
-	}
-    }
-
-    public List<User> selectAllUsers() throws SQLException {
-
-	ResultSet res = null;
-	List<User> users = new ArrayList<User>();
-	selectStatement = connect.prepareStatement("SELECT * FROM User");
-
-	try {
-	    res = selectStatement.executeQuery();
-	    while (res.next()) {
-		User user = new User();
-		user.setMail(res.getString("mail"));
-		user.setSurname(res.getString("surname"));
-		user.setPassword(res.getString("password"));
-		user.setAvatar(res.getString("avatar"));
-		user.setCountry(res.getString("country"));
-		user.setCity(res.getString("city"));
-		user.setBiography(res.getString("biography"));
-		user.setRegistrationDate(res.getString("registrationDate"));
-		users.add(user);
-	    }
-	    return users;
-	} catch (SQLException e) {
-	    throw e;
-	} finally {
-	    try {
-		res.close();
-	    } catch (SQLException e) {
-		throw e;
-	    }
-	}
-    }
-
-    public void insertUser(User user) throws SQLException {
-	try {
-	    insertStatement = connect
-		    .prepareStatement("INSERT INTO User VALUES (?, ?, ?, ?, ? , ?, ?, ?)");
-
-	    int i = 1;
-
-	    insertStatement.setString(i++, user.getMail());
-	    insertStatement.setString(i++, user.getSurname());
-	    insertStatement.setString(i++, user.getPassword());
-	    insertStatement.setString(i++, user.getAvatar());
-	    insertStatement.setString(i++, user.getCountry());
-	    insertStatement.setString(i++, user.getCity());
-	    insertStatement.setString(i++, user.getBiography());
-	    insertStatement.setString(i++, user.getRegistrationDate());
-
-	    insertStatement.executeUpdate();
-
-	} catch (SQLException e) {
-	    throw e;
-	}
-    }
-
-    public void deleteUser(User user) throws SQLException {
-	try {
-	    deleteStatement = connect
-		    .prepareStatement("DELETE FROM bdd.User WHERE mail = ? ;");
-	    deleteStatement.setString(1, user.getMail());
-	    deleteStatement.executeUpdate();
-	} catch (SQLException e) {
-	    throw e;
-	}
-    }
+    
 
     public Publication findPublication(String link) throws SQLException {
 	ResultSet res = null;
