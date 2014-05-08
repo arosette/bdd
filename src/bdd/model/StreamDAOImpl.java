@@ -10,9 +10,10 @@ import java.util.List;
 public class StreamDAOImpl extends ConnectionMYSQL implements
 	GenericDAO<Stream, String> {
 
-    private PreparedStatement selectStatment = null;
+    private PreparedStatement selectStatement = null;
     private PreparedStatement findStatement = null;
     private PreparedStatement insertStatement = null;
+    private PreparedStatement updateStatement = null;
     private PreparedStatement deleteStatement = null;
 
     public StreamDAOImpl(ConnectionProvider connectionProvider)
@@ -21,7 +22,8 @@ public class StreamDAOImpl extends ConnectionMYSQL implements
 	Connection connection = null;
 	try {
 	    connection = getConnection();
-	    selectStatment = connection.prepareStatement("SELECT * FROM Stream");
+	    selectStatement = connection
+		    .prepareStatement("SELECT * FROM Stream");
 	    findStatement = connection
 		    .prepareStatement("SELECT * FROM Stream WHERE url = ? ;");
 	    insertStatement = connection
@@ -45,7 +47,7 @@ public class StreamDAOImpl extends ConnectionMYSQL implements
 	ResultSet res = null;
 	List<Stream> streams = new ArrayList<Stream>();
 	try {
-	    res = selectStatment.executeQuery();
+	    res = selectStatement.executeQuery();
 	    while (res.next()) {
 		Stream stream = new Stream();
 		stream.setUrl(res.getString("url"));
@@ -70,8 +72,8 @@ public class StreamDAOImpl extends ConnectionMYSQL implements
     public Stream find(String url) throws DAOException {
 	ResultSet res = null;
 	try {
-	    selectStatment.setString(1, url);
-	    res = selectStatment.executeQuery();
+	    selectStatement.setString(1, url);
+	    res = selectStatement.executeQuery();
 	    if (res.next()) {
 		Stream stream = new Stream();
 		stream.setUrl(res.getString("url"));
@@ -112,6 +114,27 @@ public class StreamDAOImpl extends ConnectionMYSQL implements
     }
 
     @Override
+    public boolean update(Stream stream) throws DAOException {
+
+	try {
+	    int i = 1;
+
+	    updateStatement.setString(i++, stream.getUrl());
+	    updateStatement.setString(i++, stream.getName());
+	    updateStatement.setString(i++, stream.getDescription());
+	    updateStatement.setString(i++, stream.getWebLink());
+
+	    int affectedRows = updateStatement.executeUpdate();
+	    if (affectedRows == 0) {
+		return false;
+	    }
+	    return true;
+	} catch (SQLException e) {
+	    throw new DAOException(e);
+	}
+    }
+
+    @Override
     public boolean delete(Stream stream) throws DAOException {
 	try {
 	    deleteStatement.setString(1, stream.getUrl());
@@ -120,7 +143,6 @@ public class StreamDAOImpl extends ConnectionMYSQL implements
 		return false;
 	    }
 	    return true;
-
 	} catch (SQLException e) {
 	    throw new DAOException(e);
 	}
@@ -130,8 +152,8 @@ public class StreamDAOImpl extends ConnectionMYSQL implements
     protected void finalize() throws Throwable {
 	super.finalize();
 	try {
-	    if (selectStatment != null) {
-		selectStatment.close();
+	    if (selectStatement != null) {
+		selectStatement.close();
 	    }
 	    if (findStatement != null) {
 		findStatement.close();

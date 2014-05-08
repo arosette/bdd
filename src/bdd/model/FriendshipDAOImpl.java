@@ -10,9 +10,10 @@ import java.util.List;
 public class FriendshipDAOImpl extends ConnectionMYSQL implements
 	GenericDAO<Friendship, String> {
 
-    private PreparedStatement selectStatment = null;
+    private PreparedStatement selectStatement = null;
     private PreparedStatement findStatement = null;
     private PreparedStatement insertStatement = null;
+    private PreparedStatement updateStatement = null;
     private PreparedStatement deleteStatement = null;
 
     public FriendshipDAOImpl(ConnectionProvider connectionProvider)
@@ -21,7 +22,8 @@ public class FriendshipDAOImpl extends ConnectionMYSQL implements
 	Connection connection = null;
 	try {
 	    connection = getConnection();
-	    selectStatment = connection.prepareStatement("SELECT * FROM Friendship");
+	    selectStatement = connection
+		    .prepareStatement("SELECT * FROM Friendship");
 	    findStatement = connection
 		    .prepareStatement("SELECT * FROM Friendship WHERE mailUser1 = ? ;");
 	    insertStatement = connection
@@ -45,7 +47,7 @@ public class FriendshipDAOImpl extends ConnectionMYSQL implements
 	ResultSet res = null;
 	List<Friendship> friendships = new ArrayList<Friendship>();
 	try {
-	    res = selectStatment.executeQuery();
+	    res = selectStatement.executeQuery();
 	    while (res.next()) {
 		Friendship friendship = new Friendship();
 		friendship.setMailUser1(res.getString("mailUser1"));
@@ -107,7 +109,7 @@ public class FriendshipDAOImpl extends ConnectionMYSQL implements
 	    insertStatement.setBoolean(i++, friendship.getStatus());
 	    insertStatement.setString(i++, friendship.getDate());
 	    insertStatement.setString(i++, friendship.getAsker());
-	    
+
 	    insertStatement.executeUpdate();
 
 	} catch (SQLException e) {
@@ -116,9 +118,30 @@ public class FriendshipDAOImpl extends ConnectionMYSQL implements
     }
 
     @Override
+    public boolean update(Friendship friendship) throws DAOException {
+
+	try {
+	    int i = 1;
+
+	    updateStatement.setString(i++, friendship.getMailUser1());
+	    updateStatement.setString(i++, friendship.getMailUser2());
+	    updateStatement.setBoolean(i++, friendship.getStatus());
+	    updateStatement.setString(i++, friendship.getDate());
+	    updateStatement.setString(i++, friendship.getAsker());
+
+	    int affectedRows = updateStatement.executeUpdate();
+	    if (affectedRows == 0) {
+		return false;
+	    }
+	    return true;
+	} catch (SQLException e) {
+	    throw new DAOException(e);
+	}
+    }
+
+    @Override
     public boolean delete(Friendship friendship) throws DAOException {
 	try {
-
 	    deleteStatement.setString(1, friendship.getMailUser1());
 	    int affectedRows = deleteStatement.executeUpdate();
 	    if (affectedRows == 0) {
@@ -134,8 +157,8 @@ public class FriendshipDAOImpl extends ConnectionMYSQL implements
     protected void finalize() throws Throwable {
 	super.finalize();
 	try {
-	    if (selectStatment != null) {
-		selectStatment.close();
+	    if (selectStatement != null) {
+		selectStatement.close();
 	    }
 	    if (findStatement != null) {
 		findStatement.close();

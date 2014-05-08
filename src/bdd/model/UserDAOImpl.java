@@ -10,9 +10,10 @@ import java.util.List;
 public class UserDAOImpl extends ConnectionMYSQL implements
 	GenericDAO<User, String> {
 
-    private PreparedStatement selectStatment = null;
+    private PreparedStatement selectStatement = null;
     private PreparedStatement findStatement = null;
     private PreparedStatement insertStatement = null;
+    private PreparedStatement updateStatement = null;
     private PreparedStatement deleteStatement = null;
 
     public UserDAOImpl(ConnectionProvider connectionProvider)
@@ -21,7 +22,7 @@ public class UserDAOImpl extends ConnectionMYSQL implements
 	Connection connection = null;
 	try {
 	    connection = getConnection();
-	    selectStatment = connection.prepareStatement("SELECT * FROM User");
+	    selectStatement = connection.prepareStatement("SELECT * FROM User");
 	    findStatement = connection
 		    .prepareStatement("SELECT * FROM User WHERE mail = ? ;");
 	    insertStatement = connection
@@ -45,7 +46,7 @@ public class UserDAOImpl extends ConnectionMYSQL implements
 	ResultSet res = null;
 	List<User> users = new ArrayList<User>();
 	try {
-	    res = selectStatment.executeQuery();
+	    res = selectStatement.executeQuery();
 	    while (res.next()) {
 		User user = new User();
 		user.setMail(res.getString("mail"));
@@ -125,6 +126,31 @@ public class UserDAOImpl extends ConnectionMYSQL implements
     }
 
     @Override
+    public boolean update(User user) throws DAOException {
+
+	try {
+	    int i = 1;
+
+	    updateStatement.setString(i++, user.getMail());
+	    updateStatement.setString(i++, user.getSurname());
+	    updateStatement.setString(i++, user.getPassword());
+	    updateStatement.setString(i++, user.getAvatar());
+	    updateStatement.setString(i++, user.getCountry());
+	    updateStatement.setString(i++, user.getCity());
+	    updateStatement.setString(i++, user.getBiography());
+	    updateStatement.setString(i++, user.getRegistrationDate());
+
+	    int affectedRows = updateStatement.executeUpdate();
+	    if (affectedRows == 0) {
+		return false;
+	    }
+	    return true;
+	} catch (SQLException e) {
+	    throw new DAOException(e);
+	}
+    }
+
+    @Override
     public boolean delete(User user) throws DAOException {
 	try {
 
@@ -143,8 +169,8 @@ public class UserDAOImpl extends ConnectionMYSQL implements
     protected void finalize() throws Throwable {
 	super.finalize();
 	try {
-	    if (selectStatment != null) {
-		selectStatment.close();
+	    if (selectStatement != null) {
+		selectStatement.close();
 	    }
 	    if (findStatement != null) {
 		findStatement.close();

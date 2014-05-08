@@ -10,9 +10,10 @@ import java.util.List;
 public class PublicationDAOImpl extends ConnectionMYSQL implements
 	GenericDAO<Publication, String> {
 
-    private PreparedStatement selectStatment = null;
+    private PreparedStatement selectStatement = null;
     private PreparedStatement findStatement = null;
     private PreparedStatement insertStatement = null;
+    private PreparedStatement updateStatement = null;
     private PreparedStatement deleteStatement = null;
 
     public PublicationDAOImpl(ConnectionProvider connectionProvider)
@@ -21,7 +22,8 @@ public class PublicationDAOImpl extends ConnectionMYSQL implements
 	Connection connection = null;
 	try {
 	    connection = getConnection();
-	    selectStatment = connection.prepareStatement("SELECT * FROM Publication");
+	    selectStatement = connection
+		    .prepareStatement("SELECT * FROM Publication");
 	    findStatement = connection
 		    .prepareStatement("SELECT * FROM Publication WHERE url = ? ;");
 	    insertStatement = connection
@@ -45,7 +47,7 @@ public class PublicationDAOImpl extends ConnectionMYSQL implements
 	ResultSet res = null;
 	List<Publication> publications = new ArrayList<Publication>();
 	try {
-	    res = selectStatment.executeQuery();
+	    res = selectStatement.executeQuery();
 	    while (res.next()) {
 		Publication publication = new Publication();
 		publication.setUrl(res.getString("link"));
@@ -66,7 +68,7 @@ public class PublicationDAOImpl extends ConnectionMYSQL implements
 	    }
 	}
     }
-    
+
     @Override
     public Publication find(String link) throws DAOException {
 	ResultSet res = null;
@@ -106,9 +108,31 @@ public class PublicationDAOImpl extends ConnectionMYSQL implements
 	    insertStatement.setString(i++, publication.getDate());
 	    insertStatement.setString(i++, publication.getDescription());
 	    insertStatement.setBoolean(i++, publication.isRead());
-	   
+
 	    insertStatement.executeUpdate();
 
+	} catch (SQLException e) {
+	    throw new DAOException(e);
+	}
+    }
+
+    @Override
+    public boolean update(Publication publication) throws DAOException {
+
+	try {
+	    int i = 1;
+
+	    updateStatement.setString(i++, publication.getUrl());
+	    updateStatement.setString(i++, publication.getTitle());
+	    updateStatement.setString(i++, publication.getDate());
+	    updateStatement.setString(i++, publication.getDescription());
+	    updateStatement.setBoolean(i++, publication.isRead());
+
+	    int affectedRows = updateStatement.executeUpdate();
+	    if (affectedRows == 0) {
+		return false;
+	    }
+	    return true;
 	} catch (SQLException e) {
 	    throw new DAOException(e);
 	}
@@ -123,7 +147,6 @@ public class PublicationDAOImpl extends ConnectionMYSQL implements
 		return false;
 	    }
 	    return true;
-
 	} catch (SQLException e) {
 	    throw new DAOException(e);
 	}
@@ -133,8 +156,8 @@ public class PublicationDAOImpl extends ConnectionMYSQL implements
     protected void finalize() throws Throwable {
 	super.finalize();
 	try {
-	    if (selectStatment != null) {
-		selectStatment.close();
+	    if (selectStatement != null) {
+		selectStatement.close();
 	    }
 	    if (findStatement != null) {
 		findStatement.close();

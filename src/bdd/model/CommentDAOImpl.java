@@ -10,9 +10,10 @@ import java.util.List;
 public class CommentDAOImpl extends ConnectionMYSQL implements
 	GenericDAO<Comment, String> {
 
-    private PreparedStatement selectStatment = null;
+    private PreparedStatement selectStatement = null;
     private PreparedStatement findStatement = null;
     private PreparedStatement insertStatement = null;
+    private PreparedStatement updateStatement = null;
     private PreparedStatement deleteStatement = null;
 
     public CommentDAOImpl(ConnectionProvider connectionProvider)
@@ -21,7 +22,8 @@ public class CommentDAOImpl extends ConnectionMYSQL implements
 	Connection connection = null;
 	try {
 	    connection = getConnection();
-	    selectStatment = connection.prepareStatement("SELECT * FROM Comment");
+	    selectStatement = connection
+		    .prepareStatement("SELECT * FROM Comment");
 	    findStatement = connection
 		    .prepareStatement("SELECT * FROM Comment WHERE mail = ?");
 	    insertStatement = connection
@@ -45,7 +47,7 @@ public class CommentDAOImpl extends ConnectionMYSQL implements
 	ResultSet res = null;
 	List<Comment> comments = new ArrayList<Comment>();
 	try {
-	    res = selectStatment.executeQuery();
+	    res = selectStatement.executeQuery();
 	    while (res.next()) {
 		Comment comment = new Comment();
 		comment.setMail(res.getString("mail"));
@@ -65,7 +67,7 @@ public class CommentDAOImpl extends ConnectionMYSQL implements
 	    }
 	}
     }
-    
+
     @Override
     public Comment find(String mail) throws DAOException {
 	ResultSet res = null;
@@ -103,9 +105,30 @@ public class CommentDAOImpl extends ConnectionMYSQL implements
 	    insertStatement.setString(i++, comment.getUrl());
 	    insertStatement.setString(i++, comment.getContent());
 	    insertStatement.setString(i++, comment.getDate());
-	   
+
 	    insertStatement.executeUpdate();
 
+	} catch (SQLException e) {
+	    throw new DAOException(e);
+	}
+    }
+
+    @Override
+    public boolean update(Comment comment) throws DAOException {
+
+	try {
+	    int i = 1;
+
+	    insertStatement.setString(i++, comment.getMail());
+	    insertStatement.setString(i++, comment.getUrl());
+	    insertStatement.setString(i++, comment.getContent());
+	    insertStatement.setString(i++, comment.getDate());
+
+	    int affectedRows = updateStatement.executeUpdate();
+	    if (affectedRows == 0) {
+		return false;
+	    }
+	    return true;
 	} catch (SQLException e) {
 	    throw new DAOException(e);
 	}
@@ -120,7 +143,6 @@ public class CommentDAOImpl extends ConnectionMYSQL implements
 		return false;
 	    }
 	    return true;
-
 	} catch (SQLException e) {
 	    throw new DAOException(e);
 	}
@@ -130,8 +152,8 @@ public class CommentDAOImpl extends ConnectionMYSQL implements
     protected void finalize() throws Throwable {
 	super.finalize();
 	try {
-	    if (selectStatment != null) {
-		selectStatment.close();
+	    if (selectStatement != null) {
+		selectStatement.close();
 	    }
 	    if (findStatement != null) {
 		findStatement.close();

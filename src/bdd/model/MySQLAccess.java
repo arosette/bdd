@@ -9,17 +9,34 @@ import java.sql.Statement;
 
 public class MySQLAccess {
     private static final String DRIVER = "com.mysql.jdbc.Driver";
-    private static final String MYSQL = "jdbc:mysql://localhost/bdd?"
-	    + "user=test2user";
+    private static final String MYSQL = "jdbc:mysql://localhost/bdd?";
 
     private Connection connect = null;
     private Statement statement = null;
     private ResultSet resultSet = null;
 
-    public MySQLAccess() throws Exception {
+    static MySQLAccess instance;
+
+    public static MySQLAccess getInstance(String name, String password) {
+	if (instance == null) {
+	    try {
+		instance = new MySQLAccess(name, password);
+	    } catch (Exception e) {
+		e.printStackTrace();
+	    }
+	}
+	return instance;
+    }
+
+    public MySQLAccess(String name, String password) throws Exception {
 	try {
 	    Class.forName(DRIVER);
-	    connect = DriverManager.getConnection(MYSQL);
+	    if (password == "") {
+		connect = DriverManager.getConnection(MYSQL + "user=" + name);
+	    } else {
+		connect = DriverManager.getConnection(MYSQL + "user=" + name
+			+ "&" + password);
+	    }
 	} catch (Exception e) {
 	    throw e;
 	}
@@ -68,7 +85,7 @@ public class MySQLAccess {
 	    String tabStream = "CREATE TABLE Stream (url VARCHAR(100) NOT NULL, name VARCHAR(40), webLink VARCHAR (40), description TEXT, PRIMARY KEY(url))";
 	    stat.executeUpdate(tabStream);
 
-	    String tabPublication = "CREATE TABLE Publication (url VARCHAR(100) NOT NULL, title VARCHAR(40), description TEXT, date DATE, PRIMARY KEY(url))";
+	    String tabPublication = "CREATE TABLE Publication (url VARCHAR(100) NOT NULL, title VARCHAR(40), date DATE, description TEXT, `read` BOOLEAN, PRIMARY KEY(url))";
 	    stat.executeUpdate(tabPublication);
 
 	    String tabFriendship = "CREATE TABLE Friendship (mail_user_1 VARCHAR(100) NOT NULL, mail_user_2 VARCHAR(100) NOT NULL, status BOOLEAN, date DATE, asker VARCHAR(40), PRIMARY KEY(mail_user_1, mail_user_2))";
@@ -138,8 +155,8 @@ public class MySQLAccess {
 
     public void displayMetaData(ResultSet resultSet) throws SQLException {
 
-	System.out
-		.println("\nTable : " + resultSet.getMetaData().getTableName(1));
+	System.out.println("\nTable : "
+		+ resultSet.getMetaData().getTableName(1));
 	for (int i = 1; i <= resultSet.getMetaData().getColumnCount(); i++) {
 	    System.out.println("Column " + i + " "
 		    + resultSet.getMetaData().getColumnName(i));
