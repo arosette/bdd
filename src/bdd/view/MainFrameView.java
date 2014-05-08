@@ -29,9 +29,10 @@ public class MainFrameView extends JFrame implements Observer {
     private JList<Publication> publicationJList;
 
     public MainFrameView() {
+	super();
 	this.setTitle("Flux RSS");
 	this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	this.setMinimumSize(new Dimension(800, 600));
+	this.setMinimumSize(new Dimension(800, 700));
 	this.setResizable(true);
 	this.build();
     }

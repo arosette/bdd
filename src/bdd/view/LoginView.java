@@ -21,6 +21,7 @@ public class LoginView extends JDialog {
     private JTextField passwordTextField;
 
     public LoginView() {
+	super();
 	this.setTitle("Fenetre d'authentification");
 	this.setSize(300, 200);
 	this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

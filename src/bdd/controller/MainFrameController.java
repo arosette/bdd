@@ -40,7 +40,8 @@ public class MainFrameController {
 
     private void registerListeners() {
 	mainFrameView.addListenerToStreamJList(new StreamPopupMenuListener());
-	mainFrameView.addListenerToPublicationJList(new PublicationPopupMenuListener());
+	mainFrameView
+		.addListenerToPublicationJList(new PublicationPopupMenuListener());
     }
 
     private List<Stream> createStreams() {
@@ -171,7 +172,8 @@ public class MainFrameController {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    System.out.println(mainFrameView.getSelectedPublication().getTitle());
+		    new PublicationController(mainFrameView
+			    .getSelectedPublication(), mainFrameView);
 		}
 	    });
 	    menu.add(openLink);
