@@ -2,7 +2,6 @@ package bdd.model;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -14,8 +13,6 @@ public class MySQLAccess {
 
     private Connection connect = null;
     private Statement statement = null;
-    private PreparedStatement insertStatement = null;
-    private PreparedStatement deleteStatement = null;
     private ResultSet resultSet = null;
 
     public MySQLAccess() throws Exception {
@@ -48,38 +45,6 @@ public class MySQLAccess {
 	for (int i = 1; i <= resultSet.getMetaData().getColumnCount(); i++) {
 	    System.out.println("Column " + i + " "
 		    + resultSet.getMetaData().getColumnName(i));
-	}
-    }
-
-    public void insertFriendship(Friendship friendship) throws SQLException {
-	try {
-	    insertStatement = connect
-		    .prepareStatement("INSERT INTO Friendship VALUES (?, ?, ?, ?, ?)");
-
-	    int i = 1;
-
-	    insertStatement.setString(i++, friendship.getMailUser1());
-	    insertStatement.setString(i++, friendship.getMailUser2());
-	    insertStatement.setBoolean(i++, friendship.getStatus());
-	    insertStatement.setString(i++, friendship.getDate());
-	    insertStatement.setString(i++, friendship.getAsker());
-
-	    insertStatement.executeUpdate();
-
-	} catch (SQLException e) {
-	    throw e;
-	}
-    }
-
-    public void deleteFriendship(Friendship friendship) throws SQLException {
-	try {
-	    deleteStatement = connect
-		    .prepareStatement("DELETE FROM bdd.Friendship WHERE mailUser1 = ? AND mailUser2 = ?;");
-	    deleteStatement.setString(1, friendship.getMailUser1());
-	    deleteStatement.setString(1, friendship.getMailUser2());
-	    deleteStatement.executeUpdate();
-	} catch (SQLException e) {
-	    throw e;
 	}
     }
 
