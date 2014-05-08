@@ -3,19 +3,14 @@ package bdd.view.renderer;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 
 import javax.swing.BoxLayout;
-import javax.swing.DefaultListModel;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 
-import bdd.model.Comment;
 import bdd.model.Publication;
 
 public class PublicationRenderer implements ListCellRenderer<Publication> {
@@ -26,14 +21,12 @@ public class PublicationRenderer implements ListCellRenderer<Publication> {
 	    boolean isSelected, boolean cellHasFocus) {
 
 	JPanel panel = new JPanel();
-	
-	
 
 	panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 	if ((index % 2) == 1) {
 	    panel.setBackground(Color.white);
 	}
-	
+
 	if (isSelected) {
 	    panel.setBackground(Color.cyan);
 	}

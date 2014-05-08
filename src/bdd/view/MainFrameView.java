@@ -17,8 +17,11 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import bdd.model.Friendship;
 import bdd.model.Publication;
 import bdd.model.Stream;
+import bdd.model.User;
+import bdd.view.renderer.FriendRenderer;
 import bdd.view.renderer.PublicationRenderer;
 import bdd.view.renderer.StreamRenderer;
 
@@ -27,9 +30,12 @@ public class MainFrameView extends JFrame implements Observer {
     private JPanel mainPanel;
     private JList<Stream> streamJList;
     private JList<Publication> publicationJList;
+    private JList<Friendship> friendJList;
+    private User currentUser;
 
-    public MainFrameView() {
+    public MainFrameView(User currentUser) {
 	super();
+	this.currentUser = currentUser;
 	this.setTitle("Flux RSS");
 	this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	this.setMinimumSize(new Dimension(800, 700));
@@ -58,8 +64,7 @@ public class MainFrameView extends JFrame implements Observer {
 
 	// La liste
 	gbc.gridy = 1;
-	DefaultListModel<Stream> streamListModel = new DefaultListModel<Stream>();
-	streamJList = new JList<Stream>(streamListModel);
+	streamJList = new JList<Stream>();
 	streamJList.setCellRenderer(new StreamRenderer());
 	mainPanel.add(new JScrollPane(streamJList), gbc);
 
@@ -74,10 +79,20 @@ public class MainFrameView extends JFrame implements Observer {
 
 	// La liste
 	gbc.gridy = 1;
-	DefaultListModel<Publication> publicationListModel = new DefaultListModel<Publication>();
-	publicationJList = new JList<Publication>(publicationListModel);
+	publicationJList = new JList<Publication>();
 	publicationJList.setCellRenderer(new PublicationRenderer());
 	mainPanel.add(new JScrollPane(publicationJList), gbc);
+	
+	
+	gbc.anchor = GridBagConstraints.EAST;
+	gbc.gridx = 2;
+	gbc.gridy = 0;
+	mainPanel.add(new JLabel("Amis"), gbc);
+	
+	gbc.gridy = 1;
+	friendJList = new JList<Friendship>();
+	friendJList.setCellRenderer(new FriendRenderer(currentUser));
+	mainPanel.add(friendJList, gbc);
 
 	this.setContentPane(this.mainPanel);
 	this.setVisible(true);
@@ -102,6 +117,16 @@ public class MainFrameView extends JFrame implements Observer {
 	    publicationListModel.addElement(publication);
 	}
 	publicationJList.setModel(publicationListModel);
+
+    }
+    
+    public void loadFriendships(List<Friendship> friendships) {
+
+	DefaultListModel<Friendship> friendshipListModel = new DefaultListModel<Friendship>();
+	for (Friendship publication : friendships) {
+	    friendshipListModel.addElement(publication);
+	}
+	friendJList.setModel(friendshipListModel);
 
     }
 

@@ -19,23 +19,31 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
 import bdd.model.Comment;
+import bdd.model.Friendship;
 import bdd.model.Publication;
 import bdd.model.Stream;
+import bdd.model.User;
 
 public class MainFrameController {
     private MainFrameView mainFrameView;
     private List<Publication> publications;
     private List<Stream> streams;
+    private List<Friendship> friendships;
+    private User currentUser;
 
-    public MainFrameController() {
-	mainFrameView = new MainFrameView();
+    public MainFrameController(User loggedUser) {
+	mainFrameView = new MainFrameView(loggedUser);
 	publications = new ArrayList<Publication>();
 	streams = new ArrayList<Stream>();
+	friendships = new ArrayList<Friendship>();
+	this.currentUser = loggedUser;
 	publications = createPublications();
 	streams = createStreams();
+	friendships = createFriendship();
 	registerListeners();
 	mainFrameView.loadStreams(streams);
 	mainFrameView.loadPublications(publications);
+	mainFrameView.loadFriendships(friendships);
     }
 
     private void registerListeners() {
@@ -113,6 +121,33 @@ public class MainFrameController {
 	publications.add(p2);
 
 	return publications;
+    }
+    
+    private List<Friendship> createFriendship() {
+	Friendship f1 = new Friendship();
+	f1.setMailUser1(currentUser.getMail());
+	f1.setMailUser2("lol@lol.com");
+	f1.setStatus(false);
+	f1.setDate("2014-05-08");
+	
+	Friendship f2 = new Friendship();
+	f2.setMailUser2(currentUser.getMail());
+	f2.setMailUser1("hahah@coucou.com");
+	f2.setStatus(false);
+	f2.setDate("2014-05-08");
+	
+	Friendship f3 = new Friendship();
+	f3.setMailUser2(currentUser.getMail());
+	f3.setMailUser1("tit@tutu.com");
+	f3.setStatus(true);
+	f3.setDate("2014-05-08");
+	
+	ArrayList<Friendship> friendships = new ArrayList<Friendship>();
+	friendships.add(f1);
+	friendships.add(f2);
+	friendships.add(f3);
+	
+	return friendships;
     }
 
     private class StreamPopupMenuListener extends MouseAdapter {
