@@ -7,8 +7,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDAOImpl extends ConnectionMYSQL implements
-	GenericDAO<User, String> {
+public class UserDAOImpl implements GenericDAO<User, String> {
+
+    private MysqlConnection mysqlConnection = null;
 
     private PreparedStatement selectStatement = null;
     private PreparedStatement findStatement = null;
@@ -16,12 +17,10 @@ public class UserDAOImpl extends ConnectionMYSQL implements
     private PreparedStatement updateStatement = null;
     private PreparedStatement deleteStatement = null;
 
-    public UserDAOImpl(ConnectionProvider connectionProvider)
-	    throws DAOException {
-	super(connectionProvider);
-	Connection connection = null;
+    public UserDAOImpl() throws DAOException {
+	mysqlConnection = MysqlConnection.getInstance();
+	Connection connection = mysqlConnection.getConnection();
 	try {
-	    connection = getConnection();
 	    selectStatement = connection.prepareStatement("SELECT * FROM User");
 	    findStatement = connection
 		    .prepareStatement("SELECT * FROM User WHERE mail = ? ;");

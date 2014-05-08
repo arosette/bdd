@@ -7,20 +7,26 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class MySQLAccess {
+public class MysqlConnection {
     private static final String DRIVER = "com.mysql.jdbc.Driver";
     private static final String MYSQL = "jdbc:mysql://localhost/bdd?";
+    private static final String USER = "projet_bdd";
+    private static final String PASSWORD = "projet_bdd";
 
-    private Connection connect = null;
+    private Connection connection = null;
     private Statement statement = null;
     private ResultSet resultSet = null;
 
-    static MySQLAccess instance;
+    static MysqlConnection instance;
+    
+    public Connection getConnection() {
+	return connection;
+    }
 
-    public static MySQLAccess getInstance(String name, String password) {
+    public static MysqlConnection getInstance() {
 	if (instance == null) {
 	    try {
-		instance = new MySQLAccess(name, password);
+		instance = new MysqlConnection(USER, PASSWORD);
 	    } catch (Exception e) {
 		e.printStackTrace();
 	    }
@@ -28,13 +34,13 @@ public class MySQLAccess {
 	return instance;
     }
 
-    public MySQLAccess(String name, String password) throws Exception {
+    public MysqlConnection(String user, String password) throws Exception {
 	try {
 	    Class.forName(DRIVER);
 	    if (password == "") {
-		connect = DriverManager.getConnection(MYSQL + "user=" + name);
+		connection = DriverManager.getConnection(MYSQL + "user=" + user);
 	    } else {
-		connect = DriverManager.getConnection(MYSQL + "user=" + name
+		connection = DriverManager.getConnection(MYSQL + "user=" + user
 			+ "&" + password);
 	    }
 	} catch (Exception e) {
@@ -44,7 +50,7 @@ public class MySQLAccess {
 
     public void dataBaseExists() {
 	try {
-	    DatabaseMetaData databaseMetaData = connect.getMetaData();
+	    DatabaseMetaData databaseMetaData = connection.getMetaData();
 	    String catalog = null;
 	    String schemaPattern = null;
 	    String tableNamePattern = null;
@@ -67,7 +73,7 @@ public class MySQLAccess {
 		}
 	    }
 	    if (tablesNotExist) {
-		createTables(connect);
+		createTables(connection);
 	    }
 	} catch (SQLException e) {
 	    throw new DAOException(e);
@@ -103,7 +109,7 @@ public class MySQLAccess {
     public void deleteDataBase() throws DAOException {
 
 	try {
-	    Statement delStatement = connect.createStatement();
+	    Statement delStatement = connection.createStatement();
 
 	    String delUserQuery = "DROP TABLE User";
 	    delStatement.executeUpdate(delUserQuery);
@@ -128,7 +134,7 @@ public class MySQLAccess {
 
     public void showDataBase() throws DAOException {
 	try {
-	    statement = connect.createStatement();
+	    statement = connection.createStatement();
 	    ResultSet result = statement.executeQuery("SHOW TABLES");
 
 	    while (result.next()) {
@@ -143,7 +149,7 @@ public class MySQLAccess {
 
     public void readTable(String table) throws DAOException {
 	try {
-	    statement = connect.createStatement();
+	    statement = connection.createStatement();
 
 	    resultSet = statement.executeQuery("SELECT * from bdd." + table);
 	    displayMetaData(resultSet);
@@ -166,6 +172,6 @@ public class MySQLAccess {
     public void close() throws SQLException {
 	resultSet.close();
 	statement.close();
-	connect.close();
+	connection.close();
     }
 }

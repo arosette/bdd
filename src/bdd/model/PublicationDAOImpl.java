@@ -7,8 +7,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PublicationDAOImpl extends ConnectionMYSQL implements
-	GenericDAO<Publication, String> {
+public class PublicationDAOImpl implements GenericDAO<Publication, String> {
+
+    private MysqlConnection mysqlConnection = null;
 
     private PreparedStatement selectStatement = null;
     private PreparedStatement findStatement = null;
@@ -16,12 +17,10 @@ public class PublicationDAOImpl extends ConnectionMYSQL implements
     private PreparedStatement updateStatement = null;
     private PreparedStatement deleteStatement = null;
 
-    public PublicationDAOImpl(ConnectionProvider connectionProvider)
-	    throws DAOException {
-	super(connectionProvider);
-	Connection connection = null;
+    public PublicationDAOImpl() throws DAOException {
+	mysqlConnection = MysqlConnection.getInstance();
+	Connection connection = mysqlConnection.getConnection();
 	try {
-	    connection = getConnection();
 	    selectStatement = connection
 		    .prepareStatement("SELECT * FROM Publication");
 	    findStatement = connection

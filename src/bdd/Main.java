@@ -1,6 +1,6 @@
 package bdd;
 
-import bdd.model.MySQLAccess;
+import bdd.model.MysqlConnection;
 import bdd.controller.LoginController;
 
 public class Main {

@@ -7,8 +7,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FriendshipDAOImpl extends ConnectionMYSQL implements
-	GenericDAO<Friendship, String> {
+public class FriendshipDAOImpl implements GenericDAO<Friendship, String> {
+
+    private MysqlConnection mysqlConnection = null;
 
     private PreparedStatement selectStatement = null;
     private PreparedStatement findStatement = null;
@@ -16,12 +17,10 @@ public class FriendshipDAOImpl extends ConnectionMYSQL implements
     private PreparedStatement updateStatement = null;
     private PreparedStatement deleteStatement = null;
 
-    public FriendshipDAOImpl(ConnectionProvider connectionProvider)
-	    throws DAOException {
-	super(connectionProvider);
-	Connection connection = null;
+    public FriendshipDAOImpl() throws DAOException {
+	mysqlConnection = MysqlConnection.getInstance();
+	Connection connection = mysqlConnection.getConnection();
 	try {
-	    connection = getConnection();
 	    selectStatement = connection
 		    .prepareStatement("SELECT * FROM Friendship");
 	    findStatement = connection

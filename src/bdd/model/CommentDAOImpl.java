@@ -7,8 +7,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommentDAOImpl extends ConnectionMYSQL implements
-	GenericDAO<Comment, String> {
+public class CommentDAOImpl implements GenericDAO<Comment, String> {
+
+    private MysqlConnection mysqlConnection = null;
 
     private PreparedStatement selectStatement = null;
     private PreparedStatement findStatement = null;
@@ -16,12 +17,10 @@ public class CommentDAOImpl extends ConnectionMYSQL implements
     private PreparedStatement updateStatement = null;
     private PreparedStatement deleteStatement = null;
 
-    public CommentDAOImpl(ConnectionProvider connectionProvider)
-	    throws DAOException {
-	super(connectionProvider);
-	Connection connection = null;
+    public CommentDAOImpl() throws DAOException {
+	mysqlConnection = MysqlConnection.getInstance();
+	Connection connection = mysqlConnection.getConnection();
 	try {
-	    connection = getConnection();
 	    selectStatement = connection
 		    .prepareStatement("SELECT * FROM Comment");
 	    findStatement = connection
