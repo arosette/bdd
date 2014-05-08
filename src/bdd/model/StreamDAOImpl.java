@@ -24,7 +24,7 @@ public class StreamDAOImpl implements GenericDAO<Stream, String> {
 	    selectStatement = connection
 		    .prepareStatement("SELECT * FROM Stream");
 	    findStatement = connection
-		    .prepareStatement("SELECT * FROM Stream WHERE url = ? ;");
+		    .prepareStatement("SELECT * FROM Stream WHERE url = ?");
 	    insertStatement = connection
 		    .prepareStatement("INSERT INTO Stream VALUES (?, ?, ?, ?)");
 	    deleteStatement = connection

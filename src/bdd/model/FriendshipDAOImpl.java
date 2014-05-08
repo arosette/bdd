@@ -24,7 +24,7 @@ public class FriendshipDAOImpl implements GenericDAO<Friendship, String> {
 	    selectStatement = connection
 		    .prepareStatement("SELECT * FROM Friendship");
 	    findStatement = connection
-		    .prepareStatement("SELECT * FROM Friendship WHERE mailUser1 = ? ;");
+		    .prepareStatement("SELECT * FROM Friendship WHERE mailUser1 = ?");
 	    insertStatement = connection
 		    .prepareStatement("INSERT INTO Friendship VALUES (?, ?, ?, ?, ?)");
 	    deleteStatement = connection

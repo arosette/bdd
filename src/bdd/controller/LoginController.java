@@ -46,20 +46,16 @@ public class LoginController {
 
 	    boolean fieldOk = isEmailFieldOk();
 
-	    // dialogBox = new DialogBox("Erreur",
-	    // "Format de mail incorrect");
-	    // dialogBox.setVisible(true);
-
 	    if (fieldOk) {
 		loginView.dispose();
 		
 		UserDAOImpl userDAO = new UserDAOImpl();
 		User user = userDAO.find(loginView.getEmail());
-		// TODO vérification du mot de passe
+//		loginView.getPassword().equals(user.getPassword()) TODO Boolean check
 		
 		new MainFrameController(user);
 	    } else {
-		dialogBox = new DialogBox("Erreur", "dans le format de mail");
+		dialogBox = new DialogBox("Erreur", "Format de mail incorrect");
 		dialogBox.setVisible(true);
 	    }
 	}

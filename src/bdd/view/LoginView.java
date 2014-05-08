@@ -65,6 +65,10 @@ public class LoginView extends JDialog {
     public String getEmail() {
 	return emailTextField.getText();
     }
+    
+    public String getPassword() {
+	return passwordTextField.getText();
+    }
 
     public void setEmailFieldBackground(Color color) {
 	emailTextField.setBackground(color);
