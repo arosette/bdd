@@ -50,14 +50,14 @@ public class MySQLAccess {
 		}
 	    }
 	    if (tablesNotExist) {
-		createTable(connect);
+		createTables(connect);
 	    }
 	} catch (SQLException e) {
 	    throw new DAOException(e);
 	}
     }
 
-    private void createTable(Connection connection) throws DAOException {
+    private void createTables(Connection connection) throws DAOException {
 
 	try {
 	    Statement stat = connection.createStatement();
@@ -83,7 +83,7 @@ public class MySQLAccess {
 	}
     }
 
-    public void deleteDatabase() throws DAOException {
+    public void deleteDataBase() throws DAOException {
 
 	try {
 	    Statement delStatement = connect.createStatement();
@@ -112,19 +112,23 @@ public class MySQLAccess {
     public void showDataBase() throws DAOException {
 	try {
 	    statement = connect.createStatement();
-	    // TODO
-	    statement.executeQuery("SHOW TABLES");
+	    ResultSet result = statement.executeQuery("SHOW TABLES");
+
+	    while (result.next()) {
+		String table = result.getString(1);
+		readTable(table);
+	    }
 
 	} catch (SQLException e) {
 	    throw new DAOException(e);
 	}
     }
 
-    public void readDataBase() throws DAOException {
+    public void readTable(String table) throws DAOException {
 	try {
 	    statement = connect.createStatement();
 
-	    resultSet = statement.executeQuery("SELECT * from bdd.User");
+	    resultSet = statement.executeQuery("SELECT * from bdd." + table);
 	    displayMetaData(resultSet);
 
 	} catch (SQLException e) {
@@ -134,9 +138,8 @@ public class MySQLAccess {
 
     public void displayMetaData(ResultSet resultSet) throws SQLException {
 
-	System.out.println("The columns in the table are : ");
 	System.out
-		.println("Table : " + resultSet.getMetaData().getTableName(1));
+		.println("\nTable : " + resultSet.getMetaData().getTableName(1));
 	for (int i = 1; i <= resultSet.getMetaData().getColumnCount(); i++) {
 	    System.out.println("Column " + i + " "
 		    + resultSet.getMetaData().getColumnName(i));
