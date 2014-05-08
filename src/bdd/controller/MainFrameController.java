@@ -22,6 +22,7 @@ import bdd.model.Comment;
 import bdd.model.Friendship;
 import bdd.model.Publication;
 import bdd.model.Stream;
+import bdd.model.StreamDAOImpl;
 import bdd.model.User;
 
 public class MainFrameController {
@@ -38,7 +39,7 @@ public class MainFrameController {
 	friendships = new ArrayList<Friendship>();
 	this.currentUser = loggedUser;
 	publications = createPublications();
-	streams = createStreams();
+	streams = retrieveStreamsFromBdd();
 	friendships = createFriendship();
 	registerListeners();
 	mainFrameView.loadStreams(streams);
@@ -50,6 +51,11 @@ public class MainFrameController {
 	mainFrameView.addListenerToStreamJList(new StreamPopupMenuListener());
 	mainFrameView
 		.addListenerToPublicationJList(new PublicationPopupMenuListener());
+    }
+    
+    private List<Stream> retrieveStreamsFromBdd() {
+	StreamDAOImpl streamDAO = new StreamDAOImpl();
+	return streamDAO.selectAll();
     }
 
     private List<Stream> createStreams() {

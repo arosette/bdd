@@ -32,12 +32,6 @@ public class StreamDAOImpl implements GenericDAO<Stream, String> {
 
 	} catch (SQLException e) {
 	    throw new DAOException(e);
-	} finally {
-	    try {
-		connection.close();
-	    } catch (SQLException e) {
-		throw new DAOException(e);
-	    }
 	}
     }
 
