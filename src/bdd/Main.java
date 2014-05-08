@@ -5,12 +5,14 @@ import bdd.controller.LoginController;
 
 public class Main {
 
+    private static MysqlConnection mysqlConnection = null;
+
     public static void main(String[] args) {
 	try {
-	    MysqlConnection instance = MysqlConnection.getInstance();
-	    instance.dataBaseExists();
-	    instance.showDataBase();
-	    instance.deleteDataBase();
+	    mysqlConnection = MysqlConnection.getInstance();
+	    mysqlConnection.dataBaseExists();
+	    //mysqlConnection.showDataBase();
+	    //mysqlConnection.deleteDataBase();
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}

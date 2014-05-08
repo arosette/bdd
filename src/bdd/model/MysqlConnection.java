@@ -9,7 +9,7 @@ import java.sql.Statement;
 
 public class MysqlConnection {
     private static final String DRIVER = "com.mysql.jdbc.Driver";
-    private static final String URL = "jdbc:mysql://localhost:3306/bdd";
+    private static final String MYSQL = "jdbc:mysql://localhost/bdd?";
     private static final String USER = "projet_bdd";
     private static final String PASSWORD = "projet_bdd";
 
@@ -18,7 +18,7 @@ public class MysqlConnection {
     private ResultSet resultSet = null;
 
     static MysqlConnection instance;
-
+    
     public Connection getConnection() {
 	return connection;
     }
@@ -37,7 +37,12 @@ public class MysqlConnection {
     public MysqlConnection(String user, String password) throws Exception {
 	try {
 	    Class.forName(DRIVER);
-	    connection = DriverManager.getConnection(URL, USER, PASSWORD);
+	    if (password == "") {
+		connection = DriverManager.getConnection(MYSQL + "user=" + user);
+	    } else {
+		connection = DriverManager.getConnection(MYSQL + "user=" + user
+			+ "&" + password);
+	    }
 	} catch (Exception e) {
 	    throw e;
 	}

@@ -1,5 +1,6 @@
 package bdd.controller;
 
+import bdd.model.*;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -50,13 +51,13 @@ public class LoginController {
 	    // dialogBox.setVisible(true);
 
 	    if (fieldOk) {
-		System.out.println("Correct e-mail format");
 		loginView.dispose();
-		// TODO Retirer le dummy user et faire la connexion avec la bdd
-		User dummyUser = new User();
-		dummyUser.setMail("a@a.com");
-		dummyUser.setSurname("Aff0neur");
-		new MainFrameController(dummyUser);
+		
+		UserDAOImpl userDAO = new UserDAOImpl();
+		User user = userDAO.find(loginView.getEmail());
+		// TODO vérification du mot de passe
+		
+		new MainFrameController(user);
 	    } else {
 		dialogBox = new DialogBox("Erreur", "dans le format de mail");
 		dialogBox.setVisible(true);

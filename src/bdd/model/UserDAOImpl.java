@@ -23,7 +23,7 @@ public class UserDAOImpl implements GenericDAO<User, String> {
 	try {
 	    selectStatement = connection.prepareStatement("SELECT * FROM User");
 	    findStatement = connection
-		    .prepareStatement("SELECT * FROM User WHERE mail = ? ;");
+		    .prepareStatement("SELECT * FROM User WHERE mail = ?");
 	    insertStatement = connection
 		    .prepareStatement("INSERT INTO User VALUES (?, ?, ?, ?, ? , ?, ?, ?)");
 	    deleteStatement = connection
@@ -31,12 +31,6 @@ public class UserDAOImpl implements GenericDAO<User, String> {
 
 	} catch (SQLException e) {
 	    throw new DAOException(e);
-	} finally {
-	    try {
-		connection.close();
-	    } catch (SQLException e) {
-		throw new DAOException(e);
-	    }
 	}
     }
 
@@ -55,20 +49,13 @@ public class UserDAOImpl implements GenericDAO<User, String> {
 		user.setCountry(res.getString("country"));
 		user.setCity(res.getString("city"));
 		user.setBiography(res.getString("biography"));
-		user.setRegistrationDate(res.getString("registrationDate"));
+		user.setDate(res.getString("date"));
 		users.add(user);
 	    }
 	    return users;
 	} catch (SQLException e) {
 	    throw new DAOException(e);
-	} finally {
-	    try {
-		res.close();
-	    } catch (SQLException e) {
-		throw new DAOException(e);
-	    }
 	}
-
     }
 
     @Override
@@ -86,19 +73,13 @@ public class UserDAOImpl implements GenericDAO<User, String> {
 		user.setCountry(res.getString("country"));
 		user.setCity(res.getString("city"));
 		user.setBiography(res.getString("biography"));
-		user.setRegistrationDate(res.getString("registrationDate"));
+		user.setDate(res.getString("date"));
 		return user;
 	    }
 	    return null;
 
 	} catch (SQLException e) {
 	    throw new DAOException(e);
-	} finally {
-	    try {
-		res.close();
-	    } catch (SQLException e) {
-		throw new DAOException(e);
-	    }
 	}
     }
 
@@ -115,7 +96,7 @@ public class UserDAOImpl implements GenericDAO<User, String> {
 	    insertStatement.setString(i++, user.getCountry());
 	    insertStatement.setString(i++, user.getCity());
 	    insertStatement.setString(i++, user.getBiography());
-	    insertStatement.setString(i++, user.getRegistrationDate());
+	    insertStatement.setString(i++, user.getDate());
 
 	    insertStatement.executeUpdate();
 
@@ -137,7 +118,7 @@ public class UserDAOImpl implements GenericDAO<User, String> {
 	    updateStatement.setString(i++, user.getCountry());
 	    updateStatement.setString(i++, user.getCity());
 	    updateStatement.setString(i++, user.getBiography());
-	    updateStatement.setString(i++, user.getRegistrationDate());
+	    updateStatement.setString(i++, user.getDate());
 
 	    int affectedRows = updateStatement.executeUpdate();
 	    if (affectedRows == 0) {

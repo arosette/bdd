@@ -32,13 +32,7 @@ public class FriendshipDAOImpl implements GenericDAO<Friendship, String> {
 
 	} catch (SQLException e) {
 	    throw new DAOException(e);
-	} finally {
-	    try {
-		connection.close();
-	    } catch (SQLException e) {
-		throw new DAOException(e);
-	    }
-	}
+	} 
     }
 
     @Override
@@ -59,14 +53,7 @@ public class FriendshipDAOImpl implements GenericDAO<Friendship, String> {
 	    return friendships;
 	} catch (SQLException e) {
 	    throw new DAOException(e);
-	} finally {
-	    try {
-		res.close();
-	    } catch (SQLException e) {
-		throw new DAOException(e);
-	    }
-	}
-
+	} 
     }
 
     @Override
@@ -88,13 +75,7 @@ public class FriendshipDAOImpl implements GenericDAO<Friendship, String> {
 
 	} catch (SQLException e) {
 	    throw new DAOException(e);
-	} finally {
-	    try {
-		res.close();
-	    } catch (SQLException e) {
-		throw new DAOException(e);
-	    }
-	}
+	} 
     }
 
     @Override

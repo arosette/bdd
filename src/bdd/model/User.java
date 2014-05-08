@@ -11,7 +11,7 @@ public class User extends Observable {
     private String country;
     private String city;
     private String biography;
-    private String registrationDate;
+    private String date;
 
     public String getMail() {
 	return mail;
@@ -69,11 +69,11 @@ public class User extends Observable {
 	this.biography = biography;
     }
 
-    public String getRegistrationDate() {
-	return registrationDate;
+    public String getDate() {
+	return date;
     }
 
-    public void setRegistrationDate(String registrationDate) {
-	this.registrationDate = registrationDate;
+    public void setDate(String date) {
+	this.date = date;
     }
 }
