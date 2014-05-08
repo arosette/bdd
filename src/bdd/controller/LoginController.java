@@ -22,7 +22,7 @@ public class LoginController {
     private void registerListeners() {
 	loginView.addConnectionListener(new ConnectionListener());
     }
-    
+
     /**
      * Method to check if email text field is in correct email format
      * 
@@ -47,13 +47,24 @@ public class LoginController {
 	    boolean fieldOk = isEmailFieldOk();
 
 	    if (fieldOk) {
-		loginView.dispose();
-		
+
 		UserDAOImpl userDAO = new UserDAOImpl();
 		User user = userDAO.find(loginView.getEmail());
-//		loginView.getPassword().equals(user.getPassword()) TODO Boolean check
-		
-		new MainFrameController(user);
+		if (user != null) {
+		    if (loginView.getPassword().equals(user.getPassword())) {
+			loginView.dispose();
+			new MainFrameController(user);
+		    } else {
+			dialogBox = new DialogBox("Erreur",
+				"Mot de passe incorrect");
+			dialogBox.setVisible(true);
+		    }
+		} else {
+		    dialogBox = new DialogBox("Erreur",
+			    "Adresse mail pas en bdd");
+		    dialogBox.setVisible(true);
+		}
+
 	    } else {
 		dialogBox = new DialogBox("Erreur", "Format de mail incorrect");
 		dialogBox.setVisible(true);
