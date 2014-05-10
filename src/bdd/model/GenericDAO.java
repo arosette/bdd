@@ -8,7 +8,7 @@ public interface GenericDAO<T, ID> {
 
     public T find(ID id) throws DAOException;
 
-    public void insert(T t) throws DAOException;
+    public boolean insert(T t) throws DAOException;
 
     public boolean update(T t) throws DAOException;
 

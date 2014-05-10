@@ -101,7 +101,7 @@ public class FriendshipDAOImpl implements GenericDAO<Friendship, String> {
     }
 
     @Override
-    public void insert(Friendship friendship) throws DAOException {
+    public boolean insert(Friendship friendship) throws DAOException {
 	try {
 
 	    int i = 1;
@@ -111,7 +111,11 @@ public class FriendshipDAOImpl implements GenericDAO<Friendship, String> {
 	    insertStatement.setBoolean(i++, friendship.getStatus());
 	    insertStatement.setString(i++, friendship.getDate());
 
-	    insertStatement.executeUpdate();
+	    int affectedRows = insertStatement.executeUpdate();
+	    if (affectedRows == 0) {
+		return false;
+	    }
+	    return true;
 
 	} catch (SQLException e) {
 	    throw new DAOException(e);

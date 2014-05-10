@@ -35,7 +35,7 @@ public class CommentDAOImpl implements GenericDAO<Comment, String> {
 
 	} catch (SQLException e) {
 	    throw new DAOException(e);
-	} 
+	}
     }
 
     @Override
@@ -56,7 +56,7 @@ public class CommentDAOImpl implements GenericDAO<Comment, String> {
 	    return comments;
 	} catch (SQLException e) {
 	    throw new DAOException(e);
-	} 
+	}
     }
 
     @Override
@@ -78,10 +78,11 @@ public class CommentDAOImpl implements GenericDAO<Comment, String> {
 
 	} catch (SQLException e) {
 	    throw new DAOException(e);
-	} 
+	}
     }
-    
-    public Comment find(String user_mail, String publication_url, String stream_url) throws DAOException {
+
+    public Comment find(String user_mail, String publication_url,
+	    String stream_url) throws DAOException {
 	ResultSet res = null;
 	try {
 	    findStatementB.setString(1, user_mail);
@@ -101,11 +102,11 @@ public class CommentDAOImpl implements GenericDAO<Comment, String> {
 
 	} catch (SQLException e) {
 	    throw new DAOException(e);
-	} 
+	}
     }
 
     @Override
-    public void insert(Comment comment) throws DAOException {
+    public boolean insert(Comment comment) throws DAOException {
 	try {
 
 	    int i = 1;
@@ -116,7 +117,11 @@ public class CommentDAOImpl implements GenericDAO<Comment, String> {
 	    insertStatement.setString(i++, comment.getContent());
 	    insertStatement.setString(i++, comment.getDate());
 
-	    insertStatement.executeUpdate();
+	    int affectedRows = insertStatement.executeUpdate();
+	    if (affectedRows == 0) {
+		return false;
+	    }
+	    return true;
 
 	} catch (SQLException e) {
 	    throw new DAOException(e);
