@@ -62,7 +62,10 @@ public class MysqlConnection {
 		if ((tableName.equals("User") == true)
 			|| (tableName.equals("Comment") == true)
 			|| (tableName.equals("Friendship") == true)
+			|| (tableName.equals("Propose") == true)
 			|| (tableName.equals("Publication") == true)
+			|| (tableName.equals("Stream") == true)
+			|| (tableName.equals("Subscribe") == true)
 			|| (tableName.equals("Stream") == true)) {
 
 		    tablesNotExist = false;

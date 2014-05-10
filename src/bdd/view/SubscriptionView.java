@@ -86,14 +86,14 @@ public class SubscriptionView extends JDialog {
 	mainPanel.add(new JLabel("Pays : "), gbc);
 	
 	gbc.gridx = 1;
-	mainPanel.add(cityTextField, gbc);
+	mainPanel.add(countryTextField, gbc);
 	
 	gbc.gridx = 0;
 	gbc.gridy = 5;
 	mainPanel.add(new JLabel("Ville : "), gbc);
 	
 	gbc.gridx = 1;
-	mainPanel.add(countryTextField, gbc);
+	mainPanel.add(cityTextField, gbc);
 	
 	gbc.gridx = 0;
 	gbc.gridy = 6;

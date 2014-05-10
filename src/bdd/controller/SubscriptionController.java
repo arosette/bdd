@@ -64,6 +64,16 @@ public class SubscriptionController {
 		User user = userDAO.find(subscriptionView.getEmail());
 		if (user == null) {
 		    User userToAdd = new User();
+		    Stream streamToAdd = new Stream();
+		    StreamDAOImpl streamDAO = new StreamDAOImpl();
+		    
+		    streamToAdd.setUrl("http://personal_stream/"
+			    + subscriptionView.getEmail());
+		    streamToAdd.setName("addedStream");
+		    streamToAdd.setDescription("addedDescription");
+		    streamToAdd.setWebLink("addedWebLink");
+		    streamDAO.insert(streamToAdd);
+		    
 		    userToAdd.setMail(subscriptionView.getEmail());
 		    userToAdd.setSurname(subscriptionView.getSurname());
 		    userToAdd.setPassword(subscriptionView.getPassword());

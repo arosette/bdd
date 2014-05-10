@@ -51,7 +51,7 @@ public class User extends Observable {
     }
 
     public void setCountry(String country) {
-	this.avatar = country;
+	this.country = country;
     }
 
     public String getCity() {

@@ -28,7 +28,7 @@ public class UserDAOImpl implements GenericDAO<User, String> {
 	    friendStatement = connection
 		    .prepareStatement("SELECT * FROM Friendship WHERE Status = TRUE AND (mail_sender = ? OR mail_receiver = ?)");
 	    insertStatement = connection
-		    .prepareStatement("INSERT INTO User VALUES (?, ?, ?, ?, ? , ?, ?, ?, ?)");
+		    .prepareStatement("INSERT INTO User VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 	    deleteStatement = connection
 		    .prepareStatement("DELETE FROM User WHERE mail = ?");
 
