@@ -31,6 +31,9 @@ INSERT INTO User (mail, surname, password, avatar, country, city, biography, per
 
 INSERT INTO User (mail, surname, password, avatar, country, city, biography, personal_stream_url) VALUES ("lpostula@ulb.ac.be", "lpostula", "lpostula", "~/Images/lpostula.jpg", "Belgique", "Liege", "Je suis un etudiant qui etudie à l'ulb et vit à Liege", "http://personal_stream/lpostula@ulb.ac.be")
 
+INSERT INTO User (mail, surname, password, avatar, country, city, biography, personal_stream_url) VALUES ("sbeyen@ulb.ac.be", "sbeyen", "sbeyen", "~/Images/sbeyen.jpg", "Allemagne", "Berlin", "Je suis un etudiant qui etudie à l'ulb et vit à Berlin", "http://personal_stream/sbeyen@ulb.ac.be")
+
+INSERT INTO User (mail, surname, password, avatar, country, city, biography, personal_stream_url) VALUES ("spicard@ulb.ac.be", "spicard", "spicard", "~/Images/spicard.jpg", "Belgique", "Ostende", "Je suis un etudiant qui etudie à l'ulb et vit à Ostende", "http://personal_stream/spicard@ulb.ac.be")
 
 --> Flux
 -----------------
@@ -55,6 +58,10 @@ INSERT INTO Friendship (mail_sender, mail_receiver, status, date) VALUES ("pvera
 
 INSERT INTO Friendship (mail_sender, mail_receiver, status, date) VALUES ("arosette@ulb.ac.be", "pveranneman@ulb.ac.be", FALSE, '2013-10-14')
 
+INSERT INTO Friendship (mail_sender, mail_receiver, status, date) VALUES ("nomer@ulb.ac.be", "spicard@ulb.ac.be", TRUE, '2013-10-14')
+
+INSERT INTO Friendship (mail_sender, mail_receiver, status, date) VALUES ("sbeyen@ulb.ac.be", "spicard@ulb.ac.be", FALSE, '2011-12-14')
+
 Requetes de selection
 ----------------------
 
@@ -62,6 +69,23 @@ Requetes de selection
 -----------------------------------------
 <user>
 SELECT * FROM Friendship f WHERE f.Status = TRUE AND (mail_sender = <user> OR mail_receiver = <user>)
+
+--> Liste le nombre d'amis d'un utilisateur
+-----------------------------------------
+<user>
+SELECT COUNT(*) FROM Friendship f WHERE f.Status = TRUE AND (mail_sender = <user> OR mail_receiver = <user>)
+
+--> Liste toutes les amitiés existantes 
+-----------------------------------------
+SELECT DISTINCT f.mail_sender, f.mail_receiver FROM User u, Friendship f WHERE f.Status = TRUE AND (mail_sender = u.mail OR mail_receiver = u.mail)
+
+--> R1 Liste tous les utilisateurs qui ont au plus 2 amis (donc ceux qui n'ont pas d'amis ne sont pas comptabilisés)
+---------------------------------------------------------
+SELECT u.surname, count(*)
+FROM User u, Friendship f 
+WHERE (f.Status = TRUE AND (mail_sender = u.mail OR mail_receiver = u.mail))
+GROUP BY u.mail
+HAVING count(*) < 3;
 
 --> Liste tous les flux de l'utilisateur
 -----------------------------------------
