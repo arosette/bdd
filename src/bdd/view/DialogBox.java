@@ -24,7 +24,7 @@ public class DialogBox extends JDialog {
     public void build(String title, String text) {
 
 	this.setTitle(title);
-	this.setSize(200, 100);
+	this.setSize(350, 150);
 	GridBagConstraints gbc = new GridBagConstraints();
 
 	this.contentPanel = new JPanel();

@@ -88,7 +88,7 @@ public class UserDAOImpl implements GenericDAO<User, String> {
 	    throw new DAOException(e);
 	}
     }
-    
+
     @Override
     public User find(String mail) throws DAOException {
 	ResultSet res = null;
@@ -114,9 +114,9 @@ public class UserDAOImpl implements GenericDAO<User, String> {
 	    throw new DAOException(e);
 	}
     }
-    
+
     @Override
-    public void insert(User user) throws DAOException {
+    public boolean insert(User user) throws DAOException {
 	try {
 
 	    int i = 1;
@@ -131,7 +131,11 @@ public class UserDAOImpl implements GenericDAO<User, String> {
 	    insertStatement.setString(i++, user.getDate());
 	    insertStatement.setString(i++, user.getPersonalStream());
 
-	    insertStatement.executeUpdate();
+	    int affectedRows = insertStatement.executeUpdate();
+	    if (affectedRows == 0) {
+		return false;
+	    }
+	    return true;
 
 	} catch (SQLException e) {
 	    throw new DAOException(e);

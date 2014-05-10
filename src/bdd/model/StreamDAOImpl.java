@@ -60,8 +60,8 @@ public class StreamDAOImpl implements GenericDAO<Stream, String> {
 		Stream stream = new Stream();
 		stream.setUrl(res.getString("url"));
 		stream.setName(res.getString("name"));
-		stream.setDescription(res.getString("description"));
 		stream.setWebLink(res.getString("webLink"));
+		stream.setDescription(res.getString("description"));
 		return stream;
 	    }
 	    return null;
@@ -84,8 +84,8 @@ public class StreamDAOImpl implements GenericDAO<Stream, String> {
 		Stream stream = new Stream();
 		stream.setUrl(res.getString("url"));
 		stream.setName(res.getString("name"));
-		stream.setDescription(res.getString("description"));
 		stream.setWebLink(res.getString("webLink"));
+		stream.setDescription(res.getString("description"));
 		streams.add(stream);
 	    }
 
@@ -102,18 +102,22 @@ public class StreamDAOImpl implements GenericDAO<Stream, String> {
     }
 
     @Override
-    public void insert(Stream stream) throws DAOException {
+    public boolean insert(Stream stream) throws DAOException {
 	try {
 
 	    int i = 1;
 
 	    insertStatement.setString(i++, stream.getUrl());
 	    insertStatement.setString(i++, stream.getName());
-	    insertStatement.setString(i++, stream.getDescription());
 	    insertStatement.setString(i++, stream.getWebLink());
+	    insertStatement.setString(i++, stream.getDescription());
 
-	    insertStatement.executeUpdate();
-
+	    int affectedRows = insertStatement.executeUpdate();
+	    if (affectedRows == 0) {
+		return false;
+	    }
+	    return true;
+	    
 	} catch (SQLException e) {
 	    throw new DAOException(e);
 	}
@@ -127,8 +131,8 @@ public class StreamDAOImpl implements GenericDAO<Stream, String> {
 
 	    updateStatement.setString(i++, stream.getUrl());
 	    updateStatement.setString(i++, stream.getName());
-	    updateStatement.setString(i++, stream.getDescription());
 	    updateStatement.setString(i++, stream.getWebLink());
+	    updateStatement.setString(i++, stream.getDescription());
 
 	    int affectedRows = updateStatement.executeUpdate();
 	    if (affectedRows == 0) {

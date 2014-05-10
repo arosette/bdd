@@ -27,7 +27,7 @@ public class SubscriptionController {
     private void okListener() {
 	subscriptionView.addOkListener(new okListener());
     }
-    
+
     private void cancelListener() {
 	subscriptionView.addCancelListener(new CancelListener());
     }
@@ -66,14 +66,14 @@ public class SubscriptionController {
 		    User userToAdd = new User();
 		    Stream streamToAdd = new Stream();
 		    StreamDAOImpl streamDAO = new StreamDAOImpl();
-		    
+
 		    streamToAdd.setUrl("http://personal_stream/"
 			    + subscriptionView.getEmail());
-		    streamToAdd.setName("addedStream");
-		    streamToAdd.setDescription("addedDescription");
-		    streamToAdd.setWebLink("addedWebLink");
-		    streamDAO.insert(streamToAdd);
-		    
+		    streamToAdd.setName(subscriptionView.getStreamName());
+		    streamToAdd.setDescription(subscriptionView
+			    .getStreamDescription());
+		    streamToAdd.setWebLink(subscriptionView.getStreamWebLink());
+
 		    userToAdd.setMail(subscriptionView.getEmail());
 		    userToAdd.setSurname(subscriptionView.getSurname());
 		    userToAdd.setPassword(subscriptionView.getPassword());
@@ -84,16 +84,25 @@ public class SubscriptionController {
 		    userToAdd.setDate(getDate());
 		    userToAdd.setPersonalStream("http://personal_stream/"
 			    + subscriptionView.getEmail());
-		    userDAO.insert(userToAdd);
-
+		    if (streamDAO.insert(streamToAdd) && userDAO.insert(userToAdd)) {
+			subscriptionView.dispose();
+			dialogBox = new DialogBox("Enregistrement",
+				"vos informations ont été sauvegardées avec succès !");
+			dialogBox.setVisible(true);
+		    } else {
+			dialogBox = new DialogBox("Erreur",
+				"Un problème est survenu lors de l'enregistrement !");
+			dialogBox.setVisible(true);
+		    }
+		    
 		} else {
 		    dialogBox = new DialogBox("Erreur",
-			    "l'adresse mail existe déjà en bdd");
+			    "L'adresse mail existe déjà dans la base de données !");
 		    dialogBox.setVisible(true);
 		}
 
 	    } else {
-		dialogBox = new DialogBox("Erreur", "Format de mail incorrect");
+		dialogBox = new DialogBox("Erreur", "Le format de mail est incorrect !");
 		dialogBox.setVisible(true);
 	    }
 	}

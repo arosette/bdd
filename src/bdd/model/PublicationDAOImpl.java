@@ -86,7 +86,7 @@ public class PublicationDAOImpl implements GenericDAO<Publication, String> {
     }
 
     @Override
-    public void insert(Publication publication) throws DAOException {
+    public boolean insert(Publication publication) throws DAOException {
 	try {
 
 	    int i = 1;
@@ -97,7 +97,11 @@ public class PublicationDAOImpl implements GenericDAO<Publication, String> {
 	    insertStatement.setString(i++, publication.getDescription());
 	    insertStatement.setBoolean(i++, publication.isRead());
 
-	    insertStatement.executeUpdate();
+	    int affectedRows = insertStatement.executeUpdate();
+	    if (affectedRows == 0) {
+		return false;
+	    }
+	    return true;
 
 	} catch (SQLException e) {
 	    throw new DAOException(e);

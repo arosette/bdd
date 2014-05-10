@@ -24,7 +24,7 @@ public class LoginController {
     private void connectionListener() {
 	loginView.addConnectionListener(new ConnectionListener());
     }
-    
+
     private void registrationListener() {
 	loginView.addRegistrationListener(new RegistrationListener());
     }
@@ -67,12 +67,13 @@ public class LoginController {
 		}
 
 	    } else {
-		dialogBox = new DialogBox("Erreur", "Format de mail incorrect");
+		dialogBox = new DialogBox("Erreur",
+			"Le format de mail est incorrect !");
 		dialogBox.setVisible(true);
 	    }
 	}
     }
-    
+
     private class RegistrationListener implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 	    new SubscriptionController();

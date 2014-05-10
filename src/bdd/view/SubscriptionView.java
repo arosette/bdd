@@ -18,6 +18,7 @@ public class SubscriptionView extends JDialog {
     private JPanel mainPanel;
     private JButton okButton;
     private JButton cancelButton;
+    
     private JTextField emailTextField;
     private JTextField surnameTextField;
     private JTextField passwordTextField;
@@ -26,10 +27,14 @@ public class SubscriptionView extends JDialog {
     private JTextField cityTextField;
     private JTextField biographyTextField;
     
+    private JTextField streamNameTextField;
+    private JTextField streamDescriptionTextField;
+    private JTextField streamWebLinkTextField;
+    
     public SubscriptionView() {
 	super();
 	this.setTitle("Fenetre d'inscription");
-	this.setSize(450, 300);
+	this.setSize(450, 400);
 	this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	this.build();
     }
@@ -47,6 +52,9 @@ public class SubscriptionView extends JDialog {
 	countryTextField = new JTextField(10);
 	cityTextField = new JTextField(10);
 	biographyTextField = new JTextField(20);
+	streamNameTextField = new JTextField(10);
+	streamDescriptionTextField = new JTextField(20);
+	streamWebLinkTextField = new JTextField(10);
 	okButton = new JButton("Ok");
 	cancelButton = new JButton("Cancel");
 	
@@ -101,14 +109,35 @@ public class SubscriptionView extends JDialog {
 	
 	gbc.gridx = 1;
 	mainPanel.add(biographyTextField, gbc);
+	
+	gbc.gridx = 0;
+	gbc.gridy = 7;
+	mainPanel.add(new JLabel("Nom de votre flux : "), gbc);
+	
+	gbc.gridx = 1;
+	mainPanel.add(streamNameTextField, gbc);
+	
+	gbc.gridx = 0;
+	gbc.gridy = 8;
+	mainPanel.add(new JLabel("Lien Web de votre flux : "), gbc);
+	
+	gbc.gridx = 1;
+	mainPanel.add(streamWebLinkTextField, gbc);
+	
+	gbc.gridx = 0;
+	gbc.gridy = 9;
+	mainPanel.add(new JLabel("Description de votre flux : "), gbc);
+	
+	gbc.gridx = 1;
+	mainPanel.add(streamDescriptionTextField, gbc);
 
 	gbc.gridx = 1;
-	gbc.gridy = 7;
+	gbc.gridy = 10;
 	gbc.gridwidth = 2;
 	mainPanel.add(okButton, gbc);
 	
 	gbc.gridx = 1;
-	gbc.gridy = 8;
+	gbc.gridy = 11;
 	gbc.gridwidth = 2;
 	mainPanel.add(cancelButton, gbc);
 	
@@ -142,6 +171,18 @@ public class SubscriptionView extends JDialog {
     
     public String getBiography() {
 	return biographyTextField.getText();
+    }
+    
+    public String getStreamName() {
+	return streamNameTextField.getText();
+    }
+    
+    public String getStreamDescription() {
+	return streamDescriptionTextField.getText();
+    }
+    
+    public String getStreamWebLink() {
+	return streamWebLinkTextField.getText();
     }
     
     public void setEmailFieldBackground(Color color) {
