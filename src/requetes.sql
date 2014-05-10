@@ -157,8 +157,20 @@ SELECT u.surname, s.name FROM User u, Stream s WHERE s.url IN (
 --> R2 : La liste des flux auxquels a souscrit au moins un 
 -- utilisateur qui a souscrit à au moins deux flux auxquel X a souscrit
 -------------------------------------------------------------------------
+<user>
+CREATE TEMPORARY TABLE TMP_USER1_SUBSCRIPTIONS SELECT s.url FROM Stream s WHERE s.url IN (SELECT (sub.stream_url) FROM Subscribe sub WHERE sub.user_mail = <user>.mail)
+CREATE TEMPORARY TABLE TMP_USER2_SUBSCRIPTIONS SELECT u.mail, s.url FROM User u, Stream s WHERE s.url IN (SELECT (sub.stream_url) FROM Subscribe sub WHERE (sub.user_mail = u.mail AND sub.user_mail != <user>.mail))
 
-[TODO]
+SELECT s.url
+FROM Stream s 
+WHERE s.url IN (
+    SELECT (sub.stream_url) 
+    FROM Subscribe sub 
+    WHERE (sub.user_mail = (
+        SELECT mail 
+        FROM TMP_USER1_SUBSCRIPTIONS 
+        NATURAL JOIN TMP_USER2_SUBSCRIPTIONS 
+        GROUP BY mail HAVING count(*) >= 2)));
 
 --> Liste des publications partagées (obligatoirement commentées)
 ----------------------------------------------------------------
