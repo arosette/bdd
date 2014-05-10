@@ -44,6 +44,8 @@ INSERT INTO Stream (url, name, webLink, description) VALUES ("http://personal_st
 
 INSERT INTO Stream (url, name, webLink, description) VALUES ("http://personal_stream/lpostula@ulb.ac.be", "Flux personnel de lpostula", "http://personal_stream", "Voici le flux personnel de lpostula, c'est ici qu'il partage les publications qu'il aime")
 
+INSERT INTO Stream (url, name, webLink, description) VALUES ("http://personal_stream/sbeyen@ulb.ac.be", "Flux personnel de sbeyen", "http://personal_stream", "Voici le flux personnel de sbeyen, c'est ici qu'il partage les publications qu'il aime")
+
 INSERT INTO Stream (url, name, webLink, description) VALUES ("http://personal_stream/spicard@ulb.ac.be", "Flux personnel de spicard", "http://personal_stream", "Voici le flux personnel de spicard, c'est ici qu'il partage les publications qu'il aime")
 
 INSERT INTO Stream (url, name, webLink, description) VALUES ("http://www.jeuxvideo.com", "Flux de jeuxvideo", "http://jeuxvideo", "Voici le flux de jeux video, vous pouvez en suivre l'actualité")
