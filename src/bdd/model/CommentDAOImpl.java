@@ -12,7 +12,8 @@ public class CommentDAOImpl implements GenericDAO<Comment, String> {
     private MysqlConnection mysqlConnection = null;
 
     private PreparedStatement selectStatement = null;
-    private PreparedStatement findStatement = null;
+    private PreparedStatement findStatementA = null;
+    private PreparedStatement findStatementB = null;
     private PreparedStatement insertStatement = null;
     private PreparedStatement updateStatement = null;
     private PreparedStatement deleteStatement = null;
@@ -23,8 +24,10 @@ public class CommentDAOImpl implements GenericDAO<Comment, String> {
 	try {
 	    selectStatement = connection
 		    .prepareStatement("SELECT * FROM Comment");
-	    findStatement = connection
+	    findStatementA = connection
 		    .prepareStatement("SELECT * FROM Comment WHERE user_mail = ?");
+	    findStatementB = connection
+		    .prepareStatement("SELECT * FROM Comment WHERE user_mail = ? AND publication_url = ? AND stream_url = ?");
 	    insertStatement = connection
 		    .prepareStatement("INSERT INTO Comment VALUES (?, ?, ?, ?, ?)");
 	    deleteStatement = connection
@@ -60,8 +63,31 @@ public class CommentDAOImpl implements GenericDAO<Comment, String> {
     public Comment find(String user_mail) throws DAOException {
 	ResultSet res = null;
 	try {
-	    findStatement.setString(1, user_mail);
-	    res = findStatement.executeQuery();
+	    findStatementA.setString(1, user_mail);
+	    res = findStatementA.executeQuery();
+	    if (res.next()) {
+		Comment comment = new Comment();
+		comment.setUserMail(res.getString("user_mail"));
+		comment.setPublicationUrl(res.getString("publication_url"));
+		comment.setStreamUrl(res.getString("stream_url"));
+		comment.setContent(res.getString("content"));
+		comment.setDate(res.getString("date"));
+		return comment;
+	    }
+	    return null;
+
+	} catch (SQLException e) {
+	    throw new DAOException(e);
+	} 
+    }
+    
+    public Comment find(String user_mail, String publication_url, String stream_url) throws DAOException {
+	ResultSet res = null;
+	try {
+	    findStatementB.setString(1, user_mail);
+	    findStatementB.setString(2, publication_url);
+	    findStatementB.setString(3, stream_url);
+	    res = findStatementB.executeQuery();
 	    if (res.next()) {
 		Comment comment = new Comment();
 		comment.setUserMail(res.getString("user_mail"));
@@ -142,11 +168,17 @@ public class CommentDAOImpl implements GenericDAO<Comment, String> {
 	    if (selectStatement != null) {
 		selectStatement.close();
 	    }
-	    if (findStatement != null) {
-		findStatement.close();
+	    if (findStatementA != null) {
+		findStatementA.close();
+	    }
+	    if (findStatementB != null) {
+		findStatementB.close();
 	    }
 	    if (insertStatement != null) {
 		insertStatement.close();
+	    }
+	    if (updateStatement != null) {
+		updateStatement.close();
 	    }
 	    if (deleteStatement != null) {
 		deleteStatement.close();

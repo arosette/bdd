@@ -12,7 +12,8 @@ public class FriendshipDAOImpl implements GenericDAO<Friendship, String> {
     private MysqlConnection mysqlConnection = null;
 
     private PreparedStatement selectStatement = null;
-    private PreparedStatement findStatement = null;
+    private PreparedStatement findStatementA = null;
+    private PreparedStatement findStatementB = null;
     private PreparedStatement insertStatement = null;
     private PreparedStatement updateStatement = null;
     private PreparedStatement deleteStatement = null;
@@ -23,8 +24,10 @@ public class FriendshipDAOImpl implements GenericDAO<Friendship, String> {
 	try {
 	    selectStatement = connection
 		    .prepareStatement("SELECT * FROM Friendship");
-	    findStatement = connection
+	    findStatementA = connection
 		    .prepareStatement("SELECT * FROM Friendship WHERE mail_sender = ?");
+	    findStatementB = connection
+		    .prepareStatement("SELECT * FROM Friendship WHERE mail_sender = ? AND mail_receiver = ?");
 	    insertStatement = connection
 		    .prepareStatement("INSERT INTO Friendship VALUES (?, ?, ?, ?)");
 	    deleteStatement = connection
@@ -59,8 +62,29 @@ public class FriendshipDAOImpl implements GenericDAO<Friendship, String> {
     public Friendship find(String mail_sender) throws DAOException {
 	ResultSet res = null;
 	try {
-	    findStatement.setString(1, mail_sender);
-	    res = findStatement.executeQuery();
+	    findStatementA.setString(1, mail_sender);
+	    res = findStatementA.executeQuery();
+	    if (res.next()) {
+		Friendship friendship = new Friendship();
+		friendship.setSenderMail(res.getString("mail_sender"));
+		friendship.setReceiverMail(res.getString("mail_receiver"));
+		friendship.setStatus(res.getBoolean("status"));
+		friendship.setDate(res.getString("date"));
+		return friendship;
+	    }
+	    return null;
+
+	} catch (SQLException e) {
+	    throw new DAOException(e);
+	} 
+    }
+    
+    public Friendship find(String mail_sender, String mail_receiver) throws DAOException {
+	ResultSet res = null;
+	try {
+	    findStatementB.setString(1, mail_sender);
+	    findStatementB.setString(2, mail_receiver);
+	    res = findStatementB.executeQuery();
 	    if (res.next()) {
 		Friendship friendship = new Friendship();
 		friendship.setSenderMail(res.getString("mail_sender"));
@@ -137,11 +161,17 @@ public class FriendshipDAOImpl implements GenericDAO<Friendship, String> {
 	    if (selectStatement != null) {
 		selectStatement.close();
 	    }
-	    if (findStatement != null) {
-		findStatement.close();
+	    if (findStatementA != null) {
+		findStatementA.close();
+	    }
+	    if (findStatementB != null) {
+		findStatementB.close();
 	    }
 	    if (insertStatement != null) {
 		insertStatement.close();
+	    }
+	    if (updateStatement != null) {
+		updateStatement.close();
 	    }
 	    if (deleteStatement != null) {
 		deleteStatement.close();

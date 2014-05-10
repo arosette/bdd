@@ -146,6 +146,9 @@ public class PublicationDAOImpl implements GenericDAO<Publication, String> {
 	    if (insertStatement != null) {
 		insertStatement.close();
 	    }
+	    if (updateStatement != null) {
+		updateStatement.close();
+	    }
 	    if (deleteStatement != null) {
 		deleteStatement.close();
 	    }

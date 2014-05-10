@@ -154,6 +154,9 @@ public class StreamDAOImpl implements GenericDAO<Stream, String> {
 	    if (insertStatement != null) {
 		insertStatement.close();
 	    }
+	    if (updateStatement != null) {
+		updateStatement.close();
+	    }
 	    if (deleteStatement != null) {
 		deleteStatement.close();
 	    }
