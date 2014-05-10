@@ -21,6 +21,7 @@ import javax.swing.SwingUtilities;
 import bdd.model.Comment;
 import bdd.model.Friendship;
 import bdd.model.Publication;
+import bdd.model.PublicationDAOImpl;
 import bdd.model.Stream;
 import bdd.model.StreamDAOImpl;
 import bdd.model.User;
@@ -38,7 +39,7 @@ public class MainFrameController {
 	streams = new ArrayList<Stream>();
 	friendships = new ArrayList<Friendship>();
 	this.currentUser = loggedUser;
-	publications = createPublications();
+	publications = retrievePublicationsFromBdd();
 	streams = retrieveStreamsFromBdd();
 	friendships = createFriendship();
 	registerListeners();
@@ -56,6 +57,11 @@ public class MainFrameController {
     private List<Stream> retrieveStreamsFromBdd() {
 	StreamDAOImpl streamDAO = new StreamDAOImpl();
 	return streamDAO.streamsOfUser(currentUser);
+    }
+    
+    private List<Publication> retrievePublicationsFromBdd() {
+	PublicationDAOImpl publicationDAO = new PublicationDAOImpl();
+	return publicationDAO.publicationsOfUser(currentUser);
     }
 
     private List<Stream> createStreams() {

@@ -220,6 +220,11 @@ HAVING count(*) >= 3;
 --------------------------------------------
 <user>
 SELECT * FROM Publication pub WHERE pub.url IN (
-    SELECT DISTINCT FROM Propose prop WHERE prop.stream_url IN (
+    SELECT DISTINCT prop.publication_url Propose prop WHERE prop.stream_url IN (
         SELECT s.url FROM Stream s WHERE s.url IN (
             SELECT (sub.stream_url) FROM Subscribe sub WHERE sub.user_mail = <user>)))
+            
+--> Savoir si une publication est lue par un utilisateur
+---------------------------------------------------------
+<user>, <publication>
+SELECT COUNT(*) FROM `Read` WHERE user_mail = <user> AND publication_url = <publication>
