@@ -116,6 +116,8 @@ INSERT INTO Comment (user_mail, publication_url, stream_url, content, date) VALU
 
 INSERT INTO Comment (user_mail, publication_url, stream_url, content, date) VALUES ("arosette@ulb.ac.be", "http://www.retrouve.com", "http://www.facebook.com", "Vous êtes ici", '2011-01-11')
 
+INSERT INTO Comment (user_mail, publication_url, stream_url, content, date) VALUES ("pveranneman@ulb.ac.be", "http://www.perdu.com", "http://www.facebook.com", "C'est malin !", '2009-01-13')
+
 Requetes de selection
 ----------------------
 
@@ -149,7 +151,8 @@ HAVING count(*) < 3
 SELECT * FROM Stream s WHERE s.url IN (
     SELECT (sub.stream_url) FROM Subscribe sub WHERE sub.user_mail = <user>)
     
-SELECT u.surname, s.name FROM User u, Stream s WHERE s.url IN (SELECT (sub.stream_url) FROM Subscribe sub WHERE sub.user_mail = u.mail)
+SELECT u.surname, s.name FROM User u, Stream s WHERE s.url IN (
+    SELECT (sub.stream_url) FROM Subscribe sub WHERE sub.user_mail = u.mail)
 
 --> R2 : La liste des flux auxquels a souscrit au moins un 
 -- utilisateur qui a souscrit à au moins deux flux auxquel X a souscrit
@@ -161,3 +164,16 @@ SELECT u.surname, s.name FROM User u, Stream s WHERE s.url IN (SELECT (sub.strea
 ----------------------------------------------------------------
 <user>
 SELECT c.publication_url FROM Comment c WHERE c.user_mail = <user>
+
+--> R4 : La liste des utilisateurs qui ont 
+-- partagé au moins 3 publications que X a partagé
+---------------------------------------------------
+<user>
+SELECT DISTINCT u.*
+FROM User u, Comment c1, Comment c2
+WHERE c1.user_mail = <user>
+AND c2.user_mail != <user>
+AND c1.publication_url = c2.publication_url
+AND c2.user_mail = u.mail
+GROUP BY u.mail
+HAVING count(*) >= 3;
