@@ -13,6 +13,7 @@ public class UserDAOImpl implements GenericDAO<User, String> {
 
     private PreparedStatement selectStatement = null;
     private PreparedStatement findStatement = null;
+    private PreparedStatement friendStatement = null;
     private PreparedStatement insertStatement = null;
     private PreparedStatement updateStatement = null;
     private PreparedStatement deleteStatement = null;
@@ -24,6 +25,8 @@ public class UserDAOImpl implements GenericDAO<User, String> {
 	    selectStatement = connection.prepareStatement("SELECT * FROM User");
 	    findStatement = connection
 		    .prepareStatement("SELECT * FROM User WHERE mail = ?");
+	    friendStatement = connection
+		    .prepareStatement("SELECT * FROM Friendship WHERE Status = TRUE AND (mail_sender = ? OR mail_receiver = ?)");
 	    insertStatement = connection
 		    .prepareStatement("INSERT INTO User VALUES (?, ?, ?, ?, ? , ?, ?, ?, ?)");
 	    deleteStatement = connection
@@ -59,6 +62,33 @@ public class UserDAOImpl implements GenericDAO<User, String> {
 	}
     }
 
+    public List<User> listFriend(User user) throws DAOException {
+	ResultSet res = null;
+	List<User> friends = new ArrayList<User>();
+	try {
+	    friendStatement.setString(1, user.getMail());
+	    friendStatement.setString(2, user.getMail());
+	    res = friendStatement.executeQuery();
+	    if (res.next()) {
+		User friend = new User();
+		friend.setMail(res.getString("mail"));
+		friend.setSurname(res.getString("surname"));
+		friend.setPassword(res.getString("password"));
+		friend.setAvatar(res.getString("avatar"));
+		friend.setCountry(res.getString("country"));
+		friend.setCity(res.getString("city"));
+		friend.setBiography(res.getString("biography"));
+		friend.setDate(res.getString("date"));
+		friend.setPersonalStream(res.getString("personal_stream_url"));
+		friends.add(friend);
+	    }
+	    return friends;
+
+	} catch (SQLException e) {
+	    throw new DAOException(e);
+	}
+    }
+    
     @Override
     public User find(String mail) throws DAOException {
 	ResultSet res = null;
@@ -84,7 +114,7 @@ public class UserDAOImpl implements GenericDAO<User, String> {
 	    throw new DAOException(e);
 	}
     }
-
+    
     @Override
     public void insert(User user) throws DAOException {
 	try {
