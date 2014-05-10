@@ -14,6 +14,9 @@ import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -94,6 +97,15 @@ public class MainFrameView extends JFrame implements Observer {
 	friendJList.setCellRenderer(new FriendRenderer(currentUser));
 	mainPanel.add(friendJList, gbc);
 
+	// Menu
+	JMenuBar menuBar = new JMenuBar();
+	JMenu menuStream = new JMenu("Flux");
+	JMenuItem itemAddStream = new JMenuItem("Ajouter un flux...");
+	
+	menuStream.add(itemAddStream);
+	menuBar.add(menuStream);
+	
+	this.setJMenuBar(menuBar);
 	this.setContentPane(this.mainPanel);
 	this.setVisible(true);
     }
