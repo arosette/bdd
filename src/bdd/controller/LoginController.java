@@ -1,6 +1,7 @@
 package bdd.controller;
 
 import bdd.model.*;
+
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,11 +24,6 @@ public class LoginController {
 	loginView.addConnectionListener(new ConnectionListener());
     }
 
-    /**
-     * Method to check if email text field is in correct email format
-     * 
-     * @return true if email field is in "someone@example.com" format
-     */
     private boolean isEmailFieldOk() {
 	String EMAIL_REGEX = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
 	loginView.setEmailFieldBackground(new Color(255, 255, 255));

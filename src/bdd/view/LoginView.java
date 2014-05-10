@@ -17,6 +17,7 @@ public class LoginView extends JDialog {
 
     private JPanel mainPanel;
     private JButton connectionButton;
+    private JButton registerButton;
     private JTextField emailTextField;
     private JTextField passwordTextField;
 
@@ -77,5 +78,8 @@ public class LoginView extends JDialog {
     public void addConnectionListener(ActionListener connectionListener) {
 	connectionButton.addActionListener(connectionListener);
     }
-
+    
+    public void addRegistrationListener(ActionListener registrationListener) {
+	registerButton.addActionListener(registrationListener);
+    }
 }
