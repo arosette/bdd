@@ -8,7 +8,6 @@ public class Publication {
     private String title;
     private String date;
     private String description;
-    private String stream;
     private List<Comment> comments;
     private boolean read;
 
@@ -18,14 +17,6 @@ public class Publication {
 
     public void setComments(List<Comment> comments) {
 	this.comments = comments;
-    }
-
-    public String getStream() {
-	return stream;
-    }
-
-    public void setStream(String stream) {
-	this.stream = stream;
     }
 
     public String getUrl() {

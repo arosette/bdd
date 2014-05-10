@@ -31,8 +31,6 @@ public class PublicationView extends JDialog {
     private JTextField dateTextfield;
     private JTextField titleTextfield;
     private JList<Comment> commentList;
-    private JLabel streamLabel;
-    private JTextField associatedStreamTextfield;
 
     /**
      * Create the dialog.
@@ -58,24 +56,6 @@ public class PublicationView extends JDialog {
 	gbc_publicationReadCheckBox.gridy = 0;
 	getContentPane().add(publicationReadCheckBox,
 		gbc_publicationReadCheckBox);
-	
-	streamLabel = new JLabel("Flux : ");
-	GridBagConstraints gbc_streamLabel = new GridBagConstraints();
-	gbc_streamLabel.anchor = GridBagConstraints.WEST;
-	gbc_streamLabel.insets = new Insets(0, 0, 5, 5);
-	gbc_streamLabel.gridx = 0;
-	gbc_streamLabel.gridy = 1;
-	getContentPane().add(streamLabel, gbc_streamLabel);
-	
-	associatedStreamTextfield = new JTextField();
-	associatedStreamTextfield.setEditable(false);
-	GridBagConstraints gbc_associatedStreamTextfield = new GridBagConstraints();
-	gbc_associatedStreamTextfield.insets = new Insets(0, 0, 5, 0);
-	gbc_associatedStreamTextfield.fill = GridBagConstraints.HORIZONTAL;
-	gbc_associatedStreamTextfield.gridx = 1;
-	gbc_associatedStreamTextfield.gridy = 1;
-	getContentPane().add(associatedStreamTextfield, gbc_associatedStreamTextfield);
-	associatedStreamTextfield.setColumns(10);
 
 	JLabel titleLabel = new JLabel("Titre : ");
 	GridBagConstraints gbc_titleLabel = new GridBagConstraints();
@@ -172,7 +152,6 @@ public class PublicationView extends JDialog {
 
     public void loadPublication(Publication publication) {
 	this.publicationReadCheckBox.setSelected(publication.isRead());
-	this.associatedStreamTextfield.setText(publication.getStream());
 	this.titleTextfield.setText(publication.getTitle());
 	this.descriptionTextArea.setText(publication.getDescription());
 	this.urlTextfield.setText(publication.getUrl());
