@@ -59,6 +59,12 @@ public class LoginView extends JDialog {
 	connectionButton = new JButton("Connexion");
 	mainPanel.add(connectionButton, gbc);
 
+	gbc.gridx = 0;
+	gbc.gridy = 3;
+	gbc.gridwidth = 2;
+	registerButton = new JButton("Inscription");
+	mainPanel.add(registerButton, gbc);
+	
 	this.setContentPane(this.mainPanel);
 	this.setVisible(true);
     }

@@ -9,8 +9,8 @@ public class Main {
 
     public static void main(String[] args) {
 	try {
-	    mysqlConnection = MysqlConnection.getInstance();
-	    mysqlConnection.dataBaseExists();
+	    //mysqlConnection = MysqlConnection.getInstance();
+	    //mysqlConnection.dataBaseExists();
 	    //mysqlConnection.showDataBase();
 	    //mysqlConnection.deleteDataBase();
 	} catch (Exception e) {

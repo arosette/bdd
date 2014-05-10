@@ -6,6 +6,9 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import bdd.model.User;
 import bdd.view.DialogBox;
 import bdd.view.SubscriptionView;
@@ -17,12 +20,16 @@ public class SubscriptionController {
 
     public SubscriptionController() {
 	subscriptionView = new SubscriptionView();
-	registerListeners();
+	okListener();
+	cancelListener();
     }
 
-    private void registerListeners() {
-	subscriptionView.addOkListener(new ConnectionListener());
-	subscriptionView.addCancelListener(new ConnectionListener());
+    private void okListener() {
+	subscriptionView.addOkListener(new okListener());
+    }
+    
+    private void cancelListener() {
+	subscriptionView.addCancelListener(new CancelListener());
     }
 
     private boolean isEmailFieldOk() {
@@ -38,7 +45,15 @@ public class SubscriptionController {
 	}
     }
 
-    private class ConnectionListener implements ActionListener {
+    private String getDate() {
+	Date currentDate = new Date();
+	DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	String date = dateFormat.format(currentDate);
+
+	return date;
+    }
+
+    private class okListener implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 
 	    boolean fieldOk = isEmailFieldOk();
@@ -55,6 +70,10 @@ public class SubscriptionController {
 		    userToAdd.setAvatar(subscriptionView.getAvatar());
 		    userToAdd.setCountry(subscriptionView.getCountry());
 		    userToAdd.setCity(subscriptionView.getCity());
+		    userToAdd.setBiography(subscriptionView.getBiography());
+		    userToAdd.setDate(getDate());
+		    userToAdd.setPersonalStream("http://personal_stream/"
+			    + subscriptionView.getEmail());
 		    userDAO.insert(userToAdd);
 
 		} else {
@@ -67,6 +86,12 @@ public class SubscriptionController {
 		dialogBox = new DialogBox("Erreur", "Format de mail incorrect");
 		dialogBox.setVisible(true);
 	    }
+	}
+    }
+
+    private class CancelListener implements ActionListener {
+	public void actionPerformed(ActionEvent e) {
+	    subscriptionView.dispose();
 	}
     }
 }
