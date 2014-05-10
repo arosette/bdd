@@ -103,7 +103,7 @@ public class MysqlConnection {
 	    String tabSubscribe = "CREATE TABLE Subscribe (user_mail VARCHAR(100) NOT NULL, stream_url VARCHAR(100) NOT NULL, date DATE, PRIMARY KEY(user_mail, stream_url), FOREIGN KEY(user_mail) REFERENCES User(mail), FOREIGN KEY(stream_url) REFERENCES Stream(url))";
 	    stat.executeUpdate(tabSubscribe);
 
-	    String tabPropose = "CREATE TABLE Propose (stream_url VARCHAR(100) NOT NULL, user_mail VARCHAR(100) NOT NULL, PRIMARY KEY(stream_url, user_mail), FOREIGN KEY(stream_url) REFERENCES Stream(url), FOREIGN KEY(user_mail) REFERENCES User(mail))";
+	    String tabPropose = "CREATE TABLE Propose (stream_url VARCHAR(100) NOT NULL, publication_url VARCHAR(100) NOT NULL, PRIMARY KEY(stream_url, publication_url), FOREIGN KEY(stream_url) REFERENCES Stream(url), FOREIGN KEY(publication_url) REFERENCES Publication(url))";
 	    stat.executeUpdate(tabPropose);
 
 	    stat.close();

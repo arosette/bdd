@@ -15,7 +15,7 @@ CREATE TABLE `Read` (user_mail VARCHAR(100) NOT NULL, publication_url VARCHAR(10
 
 CREATE TABLE Subscribe (user_mail VARCHAR(100) NOT NULL, stream_url VARCHAR(100) NOT NULL, date DATE, PRIMARY KEY(user_mail, stream_url), FOREIGN KEY(user_mail) REFERENCES User(mail), FOREIGN KEY(stream_url) REFERENCES Stream(url))
 
-CREATE TABLE Propose (stream_url VARCHAR(100) NOT NULL, user_mail VARCHAR(100) NOT NULL, PRIMARY KEY(stream_url, user_mail), FOREIGN KEY(stream_url) REFERENCES Stream(url), FOREIGN KEY(user_mail) REFERENCES User(mail))
+CREATE TABLE Propose (stream_url VARCHAR(100) NOT NULL, publication_url VARCHAR(100) NOT NULL, PRIMARY KEY(stream_url, publication_url), FOREIGN KEY(stream_url) REFERENCES Stream(url), FOREIGN KEY(publication_url) REFERENCES Publication(url))
 
 Insertion des donnees de test
 ------------------------------
@@ -123,7 +123,7 @@ INSERT INTO Comment (user_mail, publication_url, stream_url, content, date) VALU
 Requetes de selection
 ----------------------
 
---> Liste tous les amis de l'utilisateur
+--> Liste toutes les demandes d'amitie
 -----------------------------------------
 <user>
 SELECT * FROM Friendship f WHERE f.Status = TRUE AND (mail_sender = <user> OR mail_receiver = <user>)
@@ -215,3 +215,10 @@ HAVING count(*) >= 3;
 -------------------------------------------------------------------------
 
 [TODO]
+
+--> Liste des publications de l'utilisateur
+--------------------------------------------
+<user>
+SELECT DISTINCT FROM Propose prop WHERE prop.
+SELECT s.url FROM Stream s WHERE s.url IN (
+    SELECT (sub.stream_url) FROM Subscribe sub WHERE sub.user_mail = <user>)
