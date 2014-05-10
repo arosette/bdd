@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 import java.util.List;
 import java.util.Observable;
@@ -35,6 +36,7 @@ public class MainFrameView extends JFrame implements Observer {
     private JList<Publication> publicationJList;
     private JList<Friendship> friendJList;
     private User currentUser;
+    private JMenuItem addStreamItem;
 
     public MainFrameView(User currentUser) {
 	super();
@@ -99,11 +101,11 @@ public class MainFrameView extends JFrame implements Observer {
 
 	// Menu
 	JMenuBar menuBar = new JMenuBar();
-	JMenu menuStream = new JMenu("Flux");
-	JMenuItem itemAddStream = new JMenuItem("Ajouter un flux...");
+	JMenu streamMenu = new JMenu("Flux");
+	addStreamItem = new JMenuItem("Ajouter un flux...");
 	
-	menuStream.add(itemAddStream);
-	menuBar.add(menuStream);
+	streamMenu.add(addStreamItem);
+	menuBar.add(streamMenu);
 	
 	this.setJMenuBar(menuBar);
 	this.setContentPane(this.mainPanel);
@@ -156,6 +158,10 @@ public class MainFrameView extends JFrame implements Observer {
     
     public void addListenerToPublicationJList(MouseListener mouseListener) {
 	publicationJList.addMouseListener(mouseListener);
+    }
+    
+    public void addListenerToAddStreamItem(ActionListener actionListener) {
+	addStreamItem.addActionListener(actionListener);
     }
 
     @Override

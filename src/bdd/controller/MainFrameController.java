@@ -52,13 +52,14 @@ public class MainFrameController {
 	mainFrameView.addListenerToStreamJList(new StreamPopupMenuListener());
 	mainFrameView
 		.addListenerToPublicationJList(new PublicationPopupMenuListener());
+	mainFrameView.addListenerToAddStreamItem(new AddStreamItemListener());
     }
 
     private List<Stream> retrieveStreamsFromBdd() {
 	StreamDAOImpl streamDAO = new StreamDAOImpl();
 	return streamDAO.streamsOfUser(currentUser);
     }
-    
+
     private List<Publication> retrievePublicationsFromBdd() {
 	PublicationDAOImpl publicationDAO = new PublicationDAOImpl();
 	return publicationDAO.publicationsOfUser(currentUser);
@@ -233,5 +234,14 @@ public class MainFrameController {
 		menu.show(jlist, e.getX(), e.getY());
 	    }
 	}
+    }
+
+    private class AddStreamItemListener implements ActionListener {
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+	    System.out.println("Menu : ok");
+	}
+
     }
 }
