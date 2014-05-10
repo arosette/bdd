@@ -17,7 +17,6 @@ CREATE TABLE Subscribe (user_mail VARCHAR(100) NOT NULL, stream_url VARCHAR(100)
 
 CREATE TABLE Propose (stream_url VARCHAR(100) NOT NULL, user_mail VARCHAR(100) NOT NULL, PRIMARY KEY(stream_url, user_mail))
 
-
 Insertion des donnees de test
 ------------------------------
 
@@ -45,6 +44,14 @@ INSERT INTO Stream (url, name, webLink, description) VALUES ("http://personal_st
 
 INSERT INTO Stream (url, name, webLink, description) VALUES ("http://personal_stream/lpostula@ulb.ac.be", "Flux personnel de lpostula", "http://personal_stream", "Voici le flux personnel de lpostula, c'est ici qu'il partage les publications qu'il aime")
 
+INSERT INTO Stream (url, name, webLink, description) VALUES ("http://personal_stream/spicard@ulb.ac.be", "Flux personnel de spicard", "http://personal_stream", "Voici le flux personnel de spicard, c'est ici qu'il partage les publications qu'il aime")
+
+INSERT INTO Stream (url, name, webLink, description) VALUES ("http://www.jeuxvideo.com", "Flux de jeuxvideo", "http://jeuxvideo", "Voici le flux de jeux video, vous pouvez en suivre l'actualité")
+
+INSERT INTO Stream (url, name, webLink, description) VALUES ("http://www.youtube.com", "Flux de youtube", "http://youtube", "Voici le flux de youtube, vous pouvez en suivre l'actualité")
+
+INSERT INTO Stream (url, name, webLink, description) VALUES ("http://www.facebook.com", "Flux de facebook", "http://facebook", "Voici le flux de facebook, vous pouvez en suivre l'actualité")
+
 --> Amitiés
 -----------------
 
@@ -62,6 +69,29 @@ INSERT INTO Friendship (mail_sender, mail_receiver, status, date) VALUES ("nomer
 
 INSERT INTO Friendship (mail_sender, mail_receiver, status, date) VALUES ("sbeyen@ulb.ac.be", "spicard@ulb.ac.be", FALSE, '2011-12-14')
 
+--> Souscriptions
+-----------------
+
+INSERT INTO Subscribe (user_mail, stream_url, date) VALUES ("nomer@ulb.ac.be", "http://www.jeuxvideo.com", '2008-09-21');
+
+INSERT INTO Subscribe (user_mail, stream_url, date) VALUES ("nomer@ulb.ac.be", "http://www.youtube.com", '2006-09-23');
+
+INSERT INTO Subscribe (user_mail, stream_url, date) VALUES ("nomer@ulb.ac.be", "http://www.facebook.com", '2009-09-22');
+
+INSERT INTO Subscribe (user_mail, stream_url, date) VALUES ("nomer@ulb.ac.be", "http://personal_stream/arosette@ulb.ac.be", '2012-11-21');
+
+INSERT INTO Subscribe (user_mail, stream_url, date) VALUES ("sbeyen@ulb.ac.be", "http://www.youtube.com", '2007-01-22');
+
+INSERT INTO Subscribe (user_mail, stream_url, date) VALUES ("sbeyen@ulb.ac.be", "http://personal_stream/arosette@ulb.ac.be", '2001-02-22');
+
+INSERT INTO Subscribe (user_mail, stream_url, date) VALUES ("pveranneman@ulb.ac.be", "http://www.jeuxvideo.com", '2000-01-21');
+
+INSERT INTO Subscribe (user_mail, stream_url, date) VALUES ("pveranneman@ulb.ac.be", "http://www.youtube.com", '2002-02-23');
+
+INSERT INTO Subscribe (user_mail, stream_url, date) VALUES ("pveranneman@ulb.ac.be", "http://personal_stream/lpostula@ulb.ac.be", '2001-09-22');
+
+INSERT INTO Subscribe (user_mail, stream_url, date) VALUES ("pveranneman@ulb.ac.be", "http://personal_stream/spicard@ulb.ac.be", '2006-09-22');
+
 Requetes de selection
 ----------------------
 
@@ -77,18 +107,24 @@ SELECT COUNT(*) FROM Friendship f WHERE f.Status = TRUE AND (mail_sender = <user
 
 --> Liste toutes les amitiés existantes 
 -----------------------------------------
-SELECT DISTINCT f.mail_sender, f.mail_receiver FROM User u, Friendship f WHERE f.Status = TRUE AND (mail_sender = u.mail OR mail_receiver = u.mail)
+SELECT DISTINCT f.mail_sender, f.mail_receiver FROM User u, Friendship f 
+WHERE f.Status = TRUE AND (mail_sender = u.mail OR mail_receiver = u.mail)
 
---> R1 Liste tous les utilisateurs qui ont au plus 2 amis (donc ceux qui n'ont pas d'amis ne sont pas comptabilisés)
----------------------------------------------------------
+--> R1 Liste tous les utilisateurs qui ont au plus 2 amis
+-- (et ceux qui n'ont pas d'amis ne sont pas comptabilisés)
+------------------------------------------------------------
 SELECT u.surname, count(*)
 FROM User u, Friendship f 
 WHERE (f.Status = TRUE AND (mail_sender = u.mail OR mail_receiver = u.mail))
 GROUP BY u.mail
-HAVING count(*) < 3;
+HAVING count(*) < 3
 
 --> Liste tous les flux de l'utilisateur
 -----------------------------------------
 <user>
-SELECT * FROM Stream s WHERE s.stream_url IN (
+SELECT * FROM Stream s WHERE s.url IN (
     SELECT (sub.stream_url) FROM Subscribe sub WHERE sub.user_mail = <user>)
+    
+--> R2 : La liste des flux auxquels a souscrit au moins un 
+-- utilisateur qui a souscrit à au moins deux flux auxquel X a souscrit
+-------------------------------------------------------------------------
