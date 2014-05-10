@@ -81,40 +81,28 @@ public class MysqlConnection {
 	try {
 	    Statement stat = connection.createStatement();
 
-	    String tabUser = "CREATE TABLE User (mail VARCHAR(100) NOT NULL, "
-		    + "surname VARCHAR(40) NOT NULL, password VARCHAR(40), "
-		    + "avatar VARCHAR(100), country VARCHAR(40), city VARCHAR(40), biography TEXT, "
-		    + "date DATE, personal_stream_url VARCHAR(100) NOT NULL, PRIMARY KEY(mail))";
-	    stat.executeUpdate(tabUser);
-
-	    String tabStream = "CREATE TABLE Stream (url VARCHAR(100) NOT NULL, name VARCHAR(40) "
-		    + "NOT NULL, webLink VARCHAR (40), description TEXT, PRIMARY KEY(url))";
+	    String tabStream = "CREATE TABLE Stream (url VARCHAR(100) NOT NULL, name VARCHAR(40) NOT NULL, webLink VARCHAR (40), description TEXT, PRIMARY KEY(url))";
 	    stat.executeUpdate(tabStream);
 
-	    String tabPublication = "CREATE TABLE Publication (url VARCHAR(100) NOT NULL, title "
-		    + "VARCHAR(40) NOT NULL, date DATE, description TEXT, `read` BOOLEAN, PRIMARY KEY(url))";
+	    String tabUser = "CREATE TABLE User (mail VARCHAR(100) NOT NULL, surname VARCHAR(40) NOT NULL, password VARCHAR(40), avatar VARCHAR(100), country VARCHAR(40), city VARCHAR(40), biography TEXT, date DATE, personal_stream_url VARCHAR(100) NOT NULL, PRIMARY KEY(mail), FOREIGN KEY(personal_stream_url) REFERENCES Stream(url))";
+	    stat.executeUpdate(tabUser);
+
+	    String tabPublication = "CREATE TABLE Publication (url VARCHAR(100) NOT NULL, title VARCHAR(40) NOT NULL, date DATE, description TEXT, `read` BOOLEAN, PRIMARY KEY(url))";
 	    stat.executeUpdate(tabPublication);
 
-	    String tabFriendship = "CREATE TABLE Friendship (mail_sender VARCHAR(100) "
-		    + "NOT NULL, mail_receiver VARCHAR(100) NOT NULL, status BOOLEAN, "
-		    + "date DATE, PRIMARY KEY(mail_sender, mail_receiver))";
+	    String tabFriendship = "CREATE TABLE Friendship (mail_sender VARCHAR(100) NOT NULL, mail_receiver VARCHAR(100) NOT NULL, status BOOLEAN, date DATE, PRIMARY KEY(mail_sender, mail_receiver), FOREIGN KEY(mail_sender) REFERENCES User(mail), FOREIGN KEY(mail_receiver) REFERENCES User(mail))";
 	    stat.executeUpdate(tabFriendship);
 
-	    String tabComment = "CREATE TABLE Comment (user_mail VARCHAR(100) NOT NULL, "
-		    + "publication_url VARCHAR(100) NOT NULL, stream_url VARCHAR(100), "
-		    + "content TEXT, date DATE, PRIMARY KEY(user_mail, publication_url, stream_url))";
+	    String tabComment = "CREATE TABLE Comment (user_mail VARCHAR(100) NOT NULL, publication_url VARCHAR(100) NOT NULL, stream_url VARCHAR(100), content TEXT, date DATE, PRIMARY KEY(user_mail, publication_url, stream_url), FOREIGN KEY(user_mail) REFERENCES User(mail), FOREIGN KEY(publication_url) REFERENCES Publication(url), FOREIGN KEY(stream_url) REFERENCES Stream(url))";
 	    stat.executeUpdate(tabComment);
 
-	    String tabRead = "CREATE TABLE `Read` (user_mail VARCHAR(100) NOT NULL, publication_url "
-		    + "VARCHAR(100) NOT NULL, date DATE, PRIMARY KEY(user_mail, publication_url))";
+	    String tabRead = "CREATE TABLE `Read` (user_mail VARCHAR(100) NOT NULL, publication_url VARCHAR(100) NOT NULL, date DATE, PRIMARY KEY(user_mail, publication_url), FOREIGN KEY(user_mail) REFERENCES User(mail), FOREIGN KEY(publication_url) REFERENCES Publication(url))";
 	    stat.executeUpdate(tabRead);
 
-	    String tabSubscribe = "CREATE TABLE Subscribe (user_mail VARCHAR(100) NOT NULL, "
-		    + "stream_url VARCHAR(100) NOT NULL, date DATE, PRIMARY KEY(user_mail, stream_url))";
+	    String tabSubscribe = "CREATE TABLE Subscribe (user_mail VARCHAR(100) NOT NULL, stream_url VARCHAR(100) NOT NULL, date DATE, PRIMARY KEY(user_mail, stream_url), FOREIGN KEY(user_mail) REFERENCES User(mail), FOREIGN KEY(stream_url) REFERENCES Stream(url))";
 	    stat.executeUpdate(tabSubscribe);
 
-	    String tabPropose = "CREATE TABLE Propose (stream_url VARCHAR(100) NOT NULL, "
-		    + "user_mail VARCHAR(100) NOT NULL, PRIMARY KEY(stream_url, user_mail))";
+	    String tabPropose = "CREATE TABLE Propose (stream_url VARCHAR(100) NOT NULL, user_mail VARCHAR(100) NOT NULL, PRIMARY KEY(stream_url, user_mail), FOREIGN KEY(stream_url) REFERENCES Stream(url), FOREIGN KEY(user_mail) REFERENCES User(mail))";
 	    stat.executeUpdate(tabPropose);
 
 	    stat.close();
