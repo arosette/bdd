@@ -24,11 +24,11 @@ public class CommentDAOImpl implements GenericDAO<Comment, String> {
 	    selectStatement = connection
 		    .prepareStatement("SELECT * FROM Comment");
 	    findStatement = connection
-		    .prepareStatement("SELECT * FROM Comment WHERE mail = ?");
+		    .prepareStatement("SELECT * FROM Comment WHERE user_mail = ?");
 	    insertStatement = connection
-		    .prepareStatement("INSERT INTO Comment VALUES (?, ?, ?, ?)");
+		    .prepareStatement("INSERT INTO Comment VALUES (?, ?, ?, ?, ?)");
 	    deleteStatement = connection
-		    .prepareStatement("DELETE FROM Comment WHERE mail = ?");
+		    .prepareStatement("DELETE FROM Comment WHERE user_mail = ? AND publication_url = ? AND stream_url = ?");
 
 	} catch (SQLException e) {
 	    throw new DAOException(e);
@@ -43,8 +43,9 @@ public class CommentDAOImpl implements GenericDAO<Comment, String> {
 	    res = selectStatement.executeQuery();
 	    while (res.next()) {
 		Comment comment = new Comment();
-		comment.setMail(res.getString("mail"));
-		comment.setUrl(res.getString("url"));
+		comment.setUserMail(res.getString("user_mail"));
+		comment.setPublicationUrl(res.getString("publication_url"));
+		comment.setStreamUrl(res.getString("stream_url"));
 		comment.setContent(res.getString("content"));
 		comment.setDate(res.getString("date"));
 		comments.add(comment);
@@ -56,15 +57,16 @@ public class CommentDAOImpl implements GenericDAO<Comment, String> {
     }
 
     @Override
-    public Comment find(String mail) throws DAOException {
+    public Comment find(String user_mail) throws DAOException {
 	ResultSet res = null;
 	try {
-	    findStatement.setString(1, mail);
+	    findStatement.setString(1, user_mail);
 	    res = findStatement.executeQuery();
 	    if (res.next()) {
 		Comment comment = new Comment();
-		comment.setMail(res.getString("mail"));
-		comment.setUrl(res.getString("url"));
+		comment.setUserMail(res.getString("user_mail"));
+		comment.setPublicationUrl(res.getString("publication_url"));
+		comment.setStreamUrl(res.getString("stream_url"));
 		comment.setContent(res.getString("content"));
 		comment.setDate(res.getString("date"));
 		return comment;
@@ -82,8 +84,9 @@ public class CommentDAOImpl implements GenericDAO<Comment, String> {
 
 	    int i = 1;
 
-	    insertStatement.setString(i++, comment.getMail());
-	    insertStatement.setString(i++, comment.getUrl());
+	    insertStatement.setString(i++, comment.getUserMail());
+	    insertStatement.setString(i++, comment.getPublicationUrl());
+	    insertStatement.setString(i++, comment.getStreamUrl());
 	    insertStatement.setString(i++, comment.getContent());
 	    insertStatement.setString(i++, comment.getDate());
 
@@ -100,8 +103,9 @@ public class CommentDAOImpl implements GenericDAO<Comment, String> {
 	try {
 	    int i = 1;
 
-	    insertStatement.setString(i++, comment.getMail());
-	    insertStatement.setString(i++, comment.getUrl());
+	    insertStatement.setString(i++, comment.getUserMail());
+	    insertStatement.setString(i++, comment.getPublicationUrl());
+	    insertStatement.setString(i++, comment.getStreamUrl());
 	    insertStatement.setString(i++, comment.getContent());
 	    insertStatement.setString(i++, comment.getDate());
 
@@ -118,7 +122,9 @@ public class CommentDAOImpl implements GenericDAO<Comment, String> {
     @Override
     public boolean delete(Comment comment) throws DAOException {
 	try {
-	    deleteStatement.setString(1, comment.getMail());
+	    deleteStatement.setString(1, comment.getUserMail());
+	    deleteStatement.setString(1, comment.getPublicationUrl());
+	    deleteStatement.setString(1, comment.getStreamUrl());
 	    int affectedRows = deleteStatement.executeUpdate();
 	    if (affectedRows == 0) {
 		return false;

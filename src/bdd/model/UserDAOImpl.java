@@ -25,7 +25,7 @@ public class UserDAOImpl implements GenericDAO<User, String> {
 	    findStatement = connection
 		    .prepareStatement("SELECT * FROM User WHERE mail = ?");
 	    insertStatement = connection
-		    .prepareStatement("INSERT INTO User VALUES (?, ?, ?, ?, ? , ?, ?, ?)");
+		    .prepareStatement("INSERT INTO User VALUES (?, ?, ?, ?, ? , ?, ?, ?, ?)");
 	    deleteStatement = connection
 		    .prepareStatement("DELETE FROM User WHERE mail = ?");
 
@@ -50,6 +50,7 @@ public class UserDAOImpl implements GenericDAO<User, String> {
 		user.setCity(res.getString("city"));
 		user.setBiography(res.getString("biography"));
 		user.setDate(res.getString("date"));
+		user.setPersonalStream(res.getString("personal_stream_url"));
 		users.add(user);
 	    }
 	    return users;
@@ -74,6 +75,7 @@ public class UserDAOImpl implements GenericDAO<User, String> {
 		user.setCity(res.getString("city"));
 		user.setBiography(res.getString("biography"));
 		user.setDate(res.getString("date"));
+		user.setPersonalStream(res.getString("personal_stream_url"));
 		return user;
 	    }
 	    return null;
@@ -97,6 +99,7 @@ public class UserDAOImpl implements GenericDAO<User, String> {
 	    insertStatement.setString(i++, user.getCity());
 	    insertStatement.setString(i++, user.getBiography());
 	    insertStatement.setString(i++, user.getDate());
+	    insertStatement.setString(i++, user.getPersonalStream());
 
 	    insertStatement.executeUpdate();
 
@@ -119,6 +122,7 @@ public class UserDAOImpl implements GenericDAO<User, String> {
 	    updateStatement.setString(i++, user.getCity());
 	    updateStatement.setString(i++, user.getBiography());
 	    updateStatement.setString(i++, user.getDate());
+	    insertStatement.setString(i++, user.getPersonalStream());
 
 	    int affectedRows = updateStatement.executeUpdate();
 	    if (affectedRows == 0) {

@@ -52,7 +52,7 @@ public class MainFrameController {
 	mainFrameView
 		.addListenerToPublicationJList(new PublicationPopupMenuListener());
     }
-    
+
     private List<Stream> retrieveStreamsFromBdd() {
 	StreamDAOImpl streamDAO = new StreamDAOImpl();
 	return streamDAO.selectAll();
@@ -89,7 +89,7 @@ public class MainFrameController {
 	s1.setName("Stream test");
 
 	Comment c1 = new Comment();
-	c1.setMail("a@a.com");
+	c1.setUserMail("a@a.com");
 	c1.setContent("lolo");
 	c1.setDate("2014-05-07");
 	ArrayList<Comment> comments = new ArrayList<Comment>();
@@ -128,31 +128,31 @@ public class MainFrameController {
 
 	return publications;
     }
-    
+
     private List<Friendship> createFriendship() {
 	Friendship f1 = new Friendship();
-	f1.setMailUser1(currentUser.getMail());
-	f1.setMailUser2("lol@lol.com");
+	f1.setSenderMail(currentUser.getMail());
+	f1.setReceiverMail("lol@lol.com");
 	f1.setStatus(false);
 	f1.setDate("2014-05-08");
-	
+
 	Friendship f2 = new Friendship();
-	f2.setMailUser2(currentUser.getMail());
-	f2.setMailUser1("hahah@coucou.com");
+	f2.setReceiverMail(currentUser.getMail());
+	f2.setSenderMail("hahah@coucou.com");
 	f2.setStatus(false);
 	f2.setDate("2014-05-08");
-	
+
 	Friendship f3 = new Friendship();
-	f3.setMailUser2(currentUser.getMail());
-	f3.setMailUser1("tit@tutu.com");
+	f3.setReceiverMail(currentUser.getMail());
+	f3.setSenderMail("tit@tutu.com");
 	f3.setStatus(true);
 	f3.setDate("2014-05-08");
-	
+
 	ArrayList<Friendship> friendships = new ArrayList<Friendship>();
 	friendships.add(f1);
 	friendships.add(f2);
 	friendships.add(f3);
-	
+
 	return friendships;
     }
 

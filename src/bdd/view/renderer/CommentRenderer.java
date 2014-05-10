@@ -19,7 +19,7 @@ public class CommentRenderer implements ListCellRenderer<Comment> {
 	JPanel panel = new JPanel();
 	panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 	
-	JLabel authorLabel = new JLabel(value.getMail());
+	JLabel authorLabel = new JLabel(value.getUserMail());
 	panel.add(authorLabel);
 	
 	JLabel contentLabel = new JLabel(value.getContent());

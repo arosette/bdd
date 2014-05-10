@@ -24,11 +24,11 @@ public class FriendshipDAOImpl implements GenericDAO<Friendship, String> {
 	    selectStatement = connection
 		    .prepareStatement("SELECT * FROM Friendship");
 	    findStatement = connection
-		    .prepareStatement("SELECT * FROM Friendship WHERE mailUser1 = ?");
+		    .prepareStatement("SELECT * FROM Friendship WHERE mail_sender = ?");
 	    insertStatement = connection
-		    .prepareStatement("INSERT INTO Friendship VALUES (?, ?, ?, ?, ?)");
+		    .prepareStatement("INSERT INTO Friendship VALUES (?, ?, ?, ?)");
 	    deleteStatement = connection
-		    .prepareStatement("DELETE FROM Friendship WHERE mailUser1 = ?");
+		    .prepareStatement("DELETE FROM Friendship WHERE mail_sender = ? AND mail_receiver = ?");
 
 	} catch (SQLException e) {
 	    throw new DAOException(e);
@@ -43,11 +43,10 @@ public class FriendshipDAOImpl implements GenericDAO<Friendship, String> {
 	    res = selectStatement.executeQuery();
 	    while (res.next()) {
 		Friendship friendship = new Friendship();
-		friendship.setMailUser1(res.getString("mailUser1"));
-		friendship.setMailUser2(res.getString("mailUser2"));
+		friendship.setSenderMail(res.getString("mail_sender"));
+		friendship.setReceiverMail(res.getString("mail_receiver"));
 		friendship.setStatus(res.getBoolean("status"));
 		friendship.setDate(res.getString("date"));
-		friendship.setAsker(res.getString("asker"));
 		friendships.add(friendship);
 	    }
 	    return friendships;
@@ -57,18 +56,17 @@ public class FriendshipDAOImpl implements GenericDAO<Friendship, String> {
     }
 
     @Override
-    public Friendship find(String mailUser1) throws DAOException {
+    public Friendship find(String mail_sender) throws DAOException {
 	ResultSet res = null;
 	try {
-	    findStatement.setString(1, mailUser1);
+	    findStatement.setString(1, mail_sender);
 	    res = findStatement.executeQuery();
 	    if (res.next()) {
 		Friendship friendship = new Friendship();
-		friendship.setMailUser1(res.getString("mailUser1"));
-		friendship.setMailUser2(res.getString("mailUser2"));
+		friendship.setSenderMail(res.getString("mail_sender"));
+		friendship.setReceiverMail(res.getString("mail_receiver"));
 		friendship.setStatus(res.getBoolean("status"));
 		friendship.setDate(res.getString("date"));
-		friendship.setAsker(res.getString("asker"));
 		return friendship;
 	    }
 	    return null;
@@ -84,11 +82,10 @@ public class FriendshipDAOImpl implements GenericDAO<Friendship, String> {
 
 	    int i = 1;
 
-	    insertStatement.setString(i++, friendship.getMailUser1());
-	    insertStatement.setString(i++, friendship.getMailUser2());
+	    insertStatement.setString(i++, friendship.getSenderMail());
+	    insertStatement.setString(i++, friendship.getReceiverMail());
 	    insertStatement.setBoolean(i++, friendship.getStatus());
 	    insertStatement.setString(i++, friendship.getDate());
-	    insertStatement.setString(i++, friendship.getAsker());
 
 	    insertStatement.executeUpdate();
 
@@ -103,11 +100,10 @@ public class FriendshipDAOImpl implements GenericDAO<Friendship, String> {
 	try {
 	    int i = 1;
 
-	    updateStatement.setString(i++, friendship.getMailUser1());
-	    updateStatement.setString(i++, friendship.getMailUser2());
+	    insertStatement.setString(i++, friendship.getSenderMail());
+	    insertStatement.setString(i++, friendship.getReceiverMail());
 	    updateStatement.setBoolean(i++, friendship.getStatus());
 	    updateStatement.setString(i++, friendship.getDate());
-	    updateStatement.setString(i++, friendship.getAsker());
 
 	    int affectedRows = updateStatement.executeUpdate();
 	    if (affectedRows == 0) {
@@ -122,7 +118,8 @@ public class FriendshipDAOImpl implements GenericDAO<Friendship, String> {
     @Override
     public boolean delete(Friendship friendship) throws DAOException {
 	try {
-	    deleteStatement.setString(1, friendship.getMailUser1());
+	    deleteStatement.setString(1, friendship.getSenderMail());
+	    deleteStatement.setString(2, friendship.getReceiverMail());
 	    int affectedRows = deleteStatement.executeUpdate();
 	    if (affectedRows == 0) {
 		return false;

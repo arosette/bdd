@@ -7,10 +7,10 @@ import bdd.view.PublicationView;
 
 public class PublicationController {
     private PublicationView publicationView;
-    private Publication pulication;
-    
+    private Publication publication;
+
     public PublicationController(Publication publication, JFrame parentFrame) {
-	this.pulication = publication;
+	this.publication = publication;
 	this.publicationView = new PublicationView();
 	this.publicationView.loadPublication(publication);
 	this.publicationView.setVisible(true);

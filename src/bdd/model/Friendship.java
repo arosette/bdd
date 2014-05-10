@@ -3,26 +3,25 @@ package bdd.model;
 import java.util.Observable;
 
 public class Friendship extends Observable {
-    private String mailUser1;
-    private String mailUser2;
+    private String mail_sender;
+    private String mail_receiver;
     private Boolean status;
     private String date;
-    private String asker;
 
-    public String getMailUser1() {
-	return mailUser1;
+    public String getSenderMail() {
+	return mail_sender;
     }
 
-    public void setMailUser1(String mailUser1) {
-	this.mailUser1 = mailUser1;
+    public void setSenderMail(String mail_sender) {
+	this.mail_sender = mail_sender;
     }
 
-    public String getMailUser2() {
-	return mailUser2;
+    public String getReceiverMail() {
+	return mail_receiver;
     }
 
-    public void setMailUser2(String mailUser2) {
-	this.mailUser2 = mailUser2;
+    public void setReceiverMail(String mail_receiver) {
+	this.mail_receiver = mail_receiver;
     }
 
     public Boolean getStatus() {
@@ -39,13 +38,5 @@ public class Friendship extends Observable {
 
     public void setDate(String date) {
 	this.date = date;
-    }
-
-    public String getAsker() {
-	return asker;
-    }
-
-    public void setAsker(String asker) {
-	this.asker = asker;
     }
 }

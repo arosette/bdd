@@ -12,6 +12,7 @@ public class User extends Observable {
     private String city;
     private String biography;
     private String date;
+    private String personal_stream_url;
 
     public String getMail() {
 	return mail;
@@ -75,5 +76,13 @@ public class User extends Observable {
 
     public void setDate(String date) {
 	this.date = date;
+    }
+    
+    public String getPersonalStream() {
+	return personal_stream_url;
+    }
+
+    public void setPersonalStream(String personal_stream_url) {
+	this.personal_stream_url = personal_stream_url;
     }
 }

@@ -31,10 +31,10 @@ public class FriendRenderer implements ListCellRenderer<Friendship> {
 	
 	String mailOfFriend = new String("Error");
 	
-	if (value.getMailUser1() == currentUser.getMail()) {
-	    mailOfFriend = value.getMailUser2();
-	} else if (value.getMailUser2() == currentUser.getMail()) {
-	    mailOfFriend = value.getMailUser1();
+	if (value.getSenderMail() == currentUser.getMail()) {
+	    mailOfFriend = value.getReceiverMail();
+	} else if (value.getReceiverMail() == currentUser.getMail()) {
+	    mailOfFriend = value.getSenderMail();
 	} else {
 	    System.out
 		    .println("Probleme : l'utilisateur actuel ne se trouve pas dans la relation d'amitié");
@@ -57,7 +57,7 @@ public class FriendRenderer implements ListCellRenderer<Friendship> {
 	JButton acceptButton = new JButton("Accepter");
 	boolean isButtonEnabled;
 	
-	if ((value.getMailUser2() == currentUser.getMail()) && !value.getStatus()) {
+	if ((value.getReceiverMail() == currentUser.getMail()) && !value.getStatus()) {
 	    isButtonEnabled = true;
 	}
 	else {

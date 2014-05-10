@@ -32,7 +32,7 @@ public class PublicationDAOImpl implements GenericDAO<Publication, String> {
 
 	} catch (SQLException e) {
 	    throw new DAOException(e);
-	} 
+	}
     }
 
     @Override
@@ -53,7 +53,7 @@ public class PublicationDAOImpl implements GenericDAO<Publication, String> {
 	    return publications;
 	} catch (SQLException e) {
 	    throw new DAOException(e);
-	} 
+	}
     }
 
     @Override
@@ -75,7 +75,7 @@ public class PublicationDAOImpl implements GenericDAO<Publication, String> {
 
 	} catch (SQLException e) {
 	    throw new DAOException(e);
-	} 
+	}
     }
 
     @Override
