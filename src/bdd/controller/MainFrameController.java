@@ -55,7 +55,7 @@ public class MainFrameController {
 
     private List<Stream> retrieveStreamsFromBdd() {
 	StreamDAOImpl streamDAO = new StreamDAOImpl();
-	return streamDAO.selectAll();
+	return streamDAO.streamsOfUser(currentUser);
     }
 
     private List<Stream> createStreams() {

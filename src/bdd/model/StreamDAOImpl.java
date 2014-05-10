@@ -16,6 +16,7 @@ public class StreamDAOImpl implements GenericDAO<Stream, String> {
     private PreparedStatement insertStatement = null;
     private PreparedStatement updateStatement = null;
     private PreparedStatement deleteStatement = null;
+    private PreparedStatement streamsOfUser = null;
 
     public StreamDAOImpl() throws DAOException {
 	mysqlConnection = MysqlConnection.getInstance();
@@ -30,6 +31,9 @@ public class StreamDAOImpl implements GenericDAO<Stream, String> {
 	    deleteStatement = connection
 		    .prepareStatement("DELETE FROM Stream WHERE url = ?");
 
+	    streamsOfUser = connection
+		    .prepareStatement("SELECT * FROM Stream s WHERE s.url IN (SELECT (sub.stream_url) FROM Subscribe sub WHERE sub.user_mail = ?)");
+
 	} catch (SQLException e) {
 	    throw new DAOException(e);
 	}
@@ -38,35 +42,20 @@ public class StreamDAOImpl implements GenericDAO<Stream, String> {
     @Override
     public List<Stream> selectAll() throws DAOException {
 	ResultSet res = null;
-	List<Stream> streams = new ArrayList<Stream>();
 	try {
 	    res = selectStatement.executeQuery();
-	    while (res.next()) {
-		Stream stream = new Stream();
-		stream.setUrl(res.getString("url"));
-		stream.setName(res.getString("name"));
-		stream.setDescription(res.getString("description"));
-		stream.setWebLink(res.getString("webLink"));
-		streams.add(stream);
-	    }
-	    return streams;
 	} catch (SQLException e) {
 	    throw new DAOException(e);
-	} finally {
-	    try {
-		res.close();
-	    } catch (SQLException e) {
-		throw new DAOException(e);
-	    }
 	}
+	return convertResultSetToStream(res);
     }
 
     @Override
     public Stream find(String url) throws DAOException {
 	ResultSet res = null;
 	try {
-	    selectStatement.setString(1, url);
-	    res = selectStatement.executeQuery();
+	    findStatement.setString(1, url);
+	    res = findStatement.executeQuery();
 	    if (res.next()) {
 		Stream stream = new Stream();
 		stream.setUrl(res.getString("url"));
@@ -86,6 +75,30 @@ public class StreamDAOImpl implements GenericDAO<Stream, String> {
 		throw new DAOException(e);
 	    }
 	}
+    }
+
+    private List<Stream> convertResultSetToStream(ResultSet res) {
+	List<Stream> streams = new ArrayList<Stream>();
+	try {
+	    while (res.next()) {
+		Stream stream = new Stream();
+		stream.setUrl(res.getString("url"));
+		stream.setName(res.getString("name"));
+		stream.setDescription(res.getString("description"));
+		stream.setWebLink(res.getString("webLink"));
+		streams.add(stream);
+	    }
+
+	} catch (SQLException e) {
+	    throw new DAOException(e);
+	} finally {
+	    try {
+		res.close();
+	    } catch (SQLException e) {
+		throw new DAOException(e);
+	    }
+	}
+	return streams;
     }
 
     @Override
@@ -141,6 +154,17 @@ public class StreamDAOImpl implements GenericDAO<Stream, String> {
 	}
     }
 
+    public List<Stream> streamsOfUser(User user) {
+	ResultSet res = null;
+	try {
+	    streamsOfUser.setString(1, user.getMail());
+	    res = streamsOfUser.executeQuery();
+	} catch (SQLException e) {
+	    throw new DAOException(e);
+	}
+	return convertResultSetToStream(res);
+    }
+
     @Override
     protected void finalize() throws Throwable {
 	super.finalize();
@@ -159,6 +183,9 @@ public class StreamDAOImpl implements GenericDAO<Stream, String> {
 	    }
 	    if (deleteStatement != null) {
 		deleteStatement.close();
+	    }
+	    if (streamsOfUser != null) {
+		streamsOfUser.close();
 	    }
 
 	} catch (Throwable t) {
