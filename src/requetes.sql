@@ -219,6 +219,7 @@ HAVING count(*) >= 3;
 --> Liste des publications de l'utilisateur
 --------------------------------------------
 <user>
-SELECT DISTINCT FROM Propose prop WHERE prop.
-SELECT s.url FROM Stream s WHERE s.url IN (
-    SELECT (sub.stream_url) FROM Subscribe sub WHERE sub.user_mail = <user>)
+SELECT * FROM Publication pub WHERE pub.url IN (
+    SELECT DISTINCT FROM Propose prop WHERE prop.stream_url IN (
+        SELECT s.url FROM Stream s WHERE s.url IN (
+            SELECT (sub.stream_url) FROM Subscribe sub WHERE sub.user_mail = <user>)))
