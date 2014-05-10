@@ -52,6 +52,15 @@ INSERT INTO Stream (url, name, webLink, description) VALUES ("http://www.youtube
 
 INSERT INTO Stream (url, name, webLink, description) VALUES ("http://www.facebook.com", "Flux de facebook", "http://facebook", "Voici le flux de facebook, vous pouvez en suivre l'actualité")
 
+--> Publications
+-----------------
+
+INSERT INTO Publication (url, title, date, description, `read`) VALUES ("http://www.perdu.com", "Perdu", '2010-11-02', "Vous vous êtes perdu ?", FALSE)
+
+INSERT INTO Publication (url, title, date, description, `read`) VALUES ("http://www.recherche.com", "Recherche", '2011-11-02', "Vous êtes recherché !", FALSE)
+
+INSERT INTO Publication (url, title, date, description, `read`) VALUES ("http://www.retrouve.com", "Retrouve", '2012-11-02', "Vous êtes retrouvé !", FALSE)
+
 --> Amitiés
 -----------------
 
@@ -72,25 +81,40 @@ INSERT INTO Friendship (mail_sender, mail_receiver, status, date) VALUES ("sbeye
 --> Souscriptions
 -----------------
 
-INSERT INTO Subscribe (user_mail, stream_url, date) VALUES ("nomer@ulb.ac.be", "http://www.jeuxvideo.com", '2008-09-21');
+INSERT INTO Subscribe (user_mail, stream_url, date) VALUES ("nomer@ulb.ac.be", "http://www.jeuxvideo.com", '2008-09-21')
 
-INSERT INTO Subscribe (user_mail, stream_url, date) VALUES ("nomer@ulb.ac.be", "http://www.youtube.com", '2006-09-23');
+INSERT INTO Subscribe (user_mail, stream_url, date) VALUES ("nomer@ulb.ac.be", "http://www.youtube.com", '2006-09-23')
 
-INSERT INTO Subscribe (user_mail, stream_url, date) VALUES ("nomer@ulb.ac.be", "http://www.facebook.com", '2009-09-22');
+INSERT INTO Subscribe (user_mail, stream_url, date) VALUES ("nomer@ulb.ac.be", "http://www.facebook.com", '2009-09-22')
 
-INSERT INTO Subscribe (user_mail, stream_url, date) VALUES ("nomer@ulb.ac.be", "http://personal_stream/arosette@ulb.ac.be", '2012-11-21');
+INSERT INTO Subscribe (user_mail, stream_url, date) VALUES ("nomer@ulb.ac.be", "http://personal_stream/arosette@ulb.ac.be", '2012-11-21')
 
-INSERT INTO Subscribe (user_mail, stream_url, date) VALUES ("sbeyen@ulb.ac.be", "http://www.youtube.com", '2007-01-22');
+INSERT INTO Subscribe (user_mail, stream_url, date) VALUES ("sbeyen@ulb.ac.be", "http://www.youtube.com", '2007-01-22')
 
-INSERT INTO Subscribe (user_mail, stream_url, date) VALUES ("sbeyen@ulb.ac.be", "http://personal_stream/arosette@ulb.ac.be", '2001-02-22');
+INSERT INTO Subscribe (user_mail, stream_url, date) VALUES ("sbeyen@ulb.ac.be", "http://personal_stream/arosette@ulb.ac.be", '2001-02-22')
 
-INSERT INTO Subscribe (user_mail, stream_url, date) VALUES ("pveranneman@ulb.ac.be", "http://www.jeuxvideo.com", '2000-01-21');
+INSERT INTO Subscribe (user_mail, stream_url, date) VALUES ("pveranneman@ulb.ac.be", "http://www.jeuxvideo.com", '2000-01-21')
 
-INSERT INTO Subscribe (user_mail, stream_url, date) VALUES ("pveranneman@ulb.ac.be", "http://www.youtube.com", '2002-02-23');
+INSERT INTO Subscribe (user_mail, stream_url, date) VALUES ("pveranneman@ulb.ac.be", "http://www.youtube.com", '2002-02-23')
 
-INSERT INTO Subscribe (user_mail, stream_url, date) VALUES ("pveranneman@ulb.ac.be", "http://personal_stream/lpostula@ulb.ac.be", '2001-09-22');
+INSERT INTO Subscribe (user_mail, stream_url, date) VALUES ("pveranneman@ulb.ac.be", "http://personal_stream/lpostula@ulb.ac.be", '2001-09-22')
 
-INSERT INTO Subscribe (user_mail, stream_url, date) VALUES ("pveranneman@ulb.ac.be", "http://personal_stream/spicard@ulb.ac.be", '2006-09-22');
+INSERT INTO Subscribe (user_mail, stream_url, date) VALUES ("pveranneman@ulb.ac.be", "http://personal_stream/spicard@ulb.ac.be", '2006-09-22')
+
+--> Commentaires
+-----------------
+
+INSERT INTO Comment (user_mail, publication_url, stream_url, content, date) VALUES ("nomer@ulb.ac.be", "http://www.perdu.com", "http://www.facebook.com", "Non je suis où ?", '2009-01-12')
+
+INSERT INTO Comment (user_mail, publication_url, stream_url, content, date) VALUES ("nomer@ulb.ac.be", "http://www.recherche.com", "http://www.facebook.com", "Vous arrivez bientôt ?", '2010-01-12')
+
+INSERT INTO Comment (user_mail, publication_url, stream_url, content, date) VALUES ("nomer@ulb.ac.be", "http://www.retrouve.com", "http://www.facebook.com", "Cool !", '2011-01-12')
+
+INSERT INTO Comment (user_mail, publication_url, stream_url, content, date) VALUES ("arosette@ulb.ac.be", "http://www.perdu.com", "http://www.facebook.com", "Tu es perdu !", '2009-01-13')
+
+INSERT INTO Comment (user_mail, publication_url, stream_url, content, date) VALUES ("arosette@ulb.ac.be", "http://www.recherche.com", "http://www.facebook.com", "On fait ce qu'on peut !", '2010-01-13')
+
+INSERT INTO Comment (user_mail, publication_url, stream_url, content, date) VALUES ("arosette@ulb.ac.be", "http://www.retrouve.com", "http://www.facebook.com", "Vous êtes ici", '2011-01-11')
 
 Requetes de selection
 ----------------------
@@ -125,6 +149,15 @@ HAVING count(*) < 3
 SELECT * FROM Stream s WHERE s.url IN (
     SELECT (sub.stream_url) FROM Subscribe sub WHERE sub.user_mail = <user>)
     
+SELECT u.surname, s.name FROM User u, Stream s WHERE s.url IN (SELECT (sub.stream_url) FROM Subscribe sub WHERE sub.user_mail = u.mail)
+
 --> R2 : La liste des flux auxquels a souscrit au moins un 
 -- utilisateur qui a souscrit à au moins deux flux auxquel X a souscrit
 -------------------------------------------------------------------------
+
+[TODO]
+
+--> Liste des publications partagées (obligatoirement commentées)
+----------------------------------------------------------------
+<user>
+SELECT c.publication_url FROM Comment c WHERE c.user_mail = <user>
