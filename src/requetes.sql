@@ -173,6 +173,15 @@ WHERE s.url IN (
         FROM TMP_USER1_SUBSCRIPTIONS 
         NATURAL JOIN TMP_USER2_SUBSCRIPTIONS 
         GROUP BY mail HAVING count(*) >= 2)));
+        
+DROP TABLE TMP_USER1_SUBSCRIPTIONS
+DROP TABLE TMP_USER2_SUBSCRIPTIONS
+
+--> R3 : La liste des flux auxquels X a souscrit, auxquels aucun de 
+-- ses amis n’a souscrit et duquel il n’a partagé aucune publication
+---------------------------------------------------------------------
+
+[TODO]
 
 --> Liste des publications partagées (obligatoirement commentées)
 ----------------------------------------------------------------
@@ -191,3 +200,18 @@ AND c1.publication_url = c2.publication_url
 AND c2.user_mail = u.mail
 GROUP BY u.mail
 HAVING count(*) >= 3;
+
+--> R5 : La liste des flux auquel un utilisateur est inscrit avec le 
+-- nombre de publications lues, le nombre de publications partagées, le 
+-- pourcentage de ces dernières par rapport aux premières, cela pour les 
+-- 30 derniers jours et ordonnée par le nombre de publications partagées
+-------------------------------------------------------------------------
+
+[TODO]
+
+--> R6 : La liste des amis d’un utilisateur avec pour chacun le nombre 
+-- de publications lues par jour et le nombre d’amis, ordonnée par la 
+-- moyenne des lectures par jour depuis la date d’inscription de cet ami
+-------------------------------------------------------------------------
+
+[TODO]
