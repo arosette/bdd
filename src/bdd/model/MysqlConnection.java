@@ -70,6 +70,7 @@ public class MysqlConnection {
 	    }
 	    if (tablesNotExist) {
 		createTables(connection);
+		createUsers(connection);
 	    }
 	} catch (SQLException e) {
 	    throw new DAOException(e);
@@ -111,34 +112,58 @@ public class MysqlConnection {
 	}
     }
 
+    public void createUsers(Connection connection) {
+	try {
+	    Statement stat = connection.createStatement();
+
+	    String personalStream1 = "INSERT INTO Stream (url, name, webLink, description) VALUES (\"http://personal_stream/arosette@ulb.ac.be\", \"Flux personnel de arosette\", \"http://personal_stream\", \"Voici le flux personnel de arosette, c'est ici qu'il partage les publications qu'il aime\")";
+	    stat.executeUpdate(personalStream1);
+
+	    String user1 = "INSERT INTO User (mail, surname, password, avatar, country, city, biography, personal_stream_url) VALUES (\"arosette@ulb.ac.be\", \"arosette\", \"arosette\", \"~/Images/arosette.jpg\", \"Belgique\", \"Theux\", \"Je suis un etudiant qui etudie à l'ulb et vit à Theux\", \"http://personal_stream/arosette@ulb.ac.be\")";
+	    stat.executeUpdate(user1);
+
+	    String personalStream2 = "INSERT INTO Stream (url, name, webLink, description) VALUES (\"http://personal_stream/nomer@ulb.ac.be\", \"Flux personnel de nomer\", \"http://personal_stream\", \"Voici le flux personnel de nomer, c'est ici qu'il partage les publications qu'il aime\")";
+	    stat.executeUpdate(personalStream2);
+
+	    String user2 = "INSERT INTO User (mail, surname, password, avatar, country, city, biography, personal_stream_url) VALUES (\"nomer@ulb.ac.be\", \"nomer\", \"nomer\", \"~/Images/nomer.jpg\", \"Belgique\", \"Bruxelles\", \"Je suis un etudiant qui etudie à l'ulb et vit à Bruxelles\", \"http://personal_stream/nomer@ulb.ac.be\")";
+	    stat.executeUpdate(user2);
+
+	    stat.close();
+	}
+
+	catch (SQLException e) {
+	    throw new DAOException(e);
+	}
+    }
+
     public void deleteDataBase() throws DAOException {
 
 	try {
 	    Statement delStatement = connection.createStatement();
+
+	    String delProposeQuery = "DROP TABLE Propose";
+	    delStatement.executeUpdate(delProposeQuery);
+
+	    String delSubscribeQuery = "DROP TABLE Subscribe";
+	    delStatement.executeUpdate(delSubscribeQuery);
+
+	    String delReadQuery = "DROP TABLE `Read`";
+	    delStatement.executeUpdate(delReadQuery);
+
+	    String delCommentQuery = "DROP TABLE Comment";
+	    delStatement.executeUpdate(delCommentQuery);
+
+	    String delFriendshipQuery = "DROP TABLE Friendship";
+	    delStatement.executeUpdate(delFriendshipQuery);
+
+	    String delPublicationQuery = "DROP TABLE Publication";
+	    delStatement.executeUpdate(delPublicationQuery);
 
 	    String delUserQuery = "DROP TABLE User";
 	    delStatement.executeUpdate(delUserQuery);
 
 	    String delStreamQuery = "DROP TABLE Stream";
 	    delStatement.executeUpdate(delStreamQuery);
-
-	    String delPublicationQuery = "DROP TABLE Publication";
-	    delStatement.executeUpdate(delPublicationQuery);
-
-	    String delFriendshipQuery = "DROP TABLE Friendship";
-	    delStatement.executeUpdate(delFriendshipQuery);
-
-	    String delCommentQuery = "DROP TABLE Comment";
-	    delStatement.executeUpdate(delCommentQuery);
-
-	    String delReadQuery = "DROP TABLE `Read`";
-	    delStatement.executeUpdate(delReadQuery);
-
-	    String delSubscribeQuery = "DROP TABLE Subscribe";
-	    delStatement.executeUpdate(delSubscribeQuery);
-
-	    String delProposeQuery = "DROP TABLE Propose";
-	    delStatement.executeUpdate(delProposeQuery);
 
 	    delStatement.close();
 	} catch (SQLException e) {
