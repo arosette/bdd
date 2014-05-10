@@ -85,8 +85,6 @@ public class MainFrameController {
     }
 
     private List<Publication> createPublications() {
-	Stream s1 = new Stream();
-	s1.setName("Stream test");
 
 	Comment c1 = new Comment();
 	c1.setUserMail("a@a.com");
@@ -101,7 +99,7 @@ public class MainFrameController {
 	p1.setRead(false);
 	p1.setDate("2014-05-07");
 	p1.setUrl("http://trol.com/art1");
-	p1.setStream(s1);
+	p1.setStream("http://unstream");
 	p1.setComments(comments);
 
 	Publication p2 = new Publication();
@@ -110,7 +108,7 @@ public class MainFrameController {
 	p2.setRead(true);
 	p2.setDate("2014-05-07");
 	p2.setUrl("http://trol.com/art2");
-	p2.setStream(s1);
+	p2.setStream("http://unstream");
 
 	ArrayList<Publication> publications = new ArrayList<Publication>();
 	publications.add(p1);

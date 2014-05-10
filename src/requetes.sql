@@ -5,7 +5,7 @@ CREATE TABLE Stream (url VARCHAR(100) NOT NULL, name VARCHAR(40) NOT NULL, webLi
 
 CREATE TABLE User (mail VARCHAR(100) NOT NULL, surname VARCHAR(40) NOT NULL, password VARCHAR(40), avatar VARCHAR(100), country VARCHAR(40), city VARCHAR(40), biography TEXT, date DATE, personal_stream_url VARCHAR(100) NOT NULL, PRIMARY KEY(mail), FOREIGN KEY(personal_stream_url) REFERENCES Stream(url))
 
-CREATE TABLE Publication (url VARCHAR(100) NOT NULL, title VARCHAR(40) NOT NULL, date DATE, description TEXT, `read` BOOLEAN, PRIMARY KEY(url))
+CREATE TABLE Publication (url VARCHAR(100) NOT NULL, title VARCHAR(40) NOT NULL, date DATE, description TEXT, PRIMARY KEY(url))
 
 CREATE TABLE Friendship (mail_sender VARCHAR(100) NOT NULL, mail_receiver VARCHAR(100) NOT NULL, status BOOLEAN, date DATE, PRIMARY KEY(mail_sender, mail_receiver), FOREIGN KEY(mail_sender) REFERENCES User(mail), FOREIGN KEY(mail_receiver) REFERENCES User(mail))
 

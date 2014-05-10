@@ -8,7 +8,7 @@ public class Publication {
     private String title;
     private String date;
     private String description;
-    private Stream stream;
+    private String stream;
     private List<Comment> comments;
     private boolean read;
 
@@ -20,11 +20,11 @@ public class Publication {
 	this.comments = comments;
     }
 
-    public Stream getStream() {
+    public String getStream() {
 	return stream;
     }
 
-    public void setStream(Stream stream) {
+    public void setStream(String stream) {
 	this.stream = stream;
     }
 

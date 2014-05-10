@@ -16,6 +16,7 @@ public class PublicationDAOImpl implements GenericDAO<Publication, String> {
     private PreparedStatement insertStatement = null;
     private PreparedStatement updateStatement = null;
     private PreparedStatement deleteStatement = null;
+    private PreparedStatement publicationsOfUser = null;
 
     public PublicationDAOImpl() throws DAOException {
 	mysqlConnection = MysqlConnection.getInstance();
@@ -29,6 +30,11 @@ public class PublicationDAOImpl implements GenericDAO<Publication, String> {
 		    .prepareStatement("INSERT INTO Publication VALUES (?, ?, ?, ?, ?)");
 	    deleteStatement = connection
 		    .prepareStatement("DELETE FROM Publication WHERE url = ?");
+	    publicationsOfUser = connection
+		    .prepareStatement("SELECT * FROM Publication pub WHERE pub.url IN ("
+			    + "SELECT DISTINCT FROM Propose prop WHERE prop.stream_url IN ("
+			    + "SELECT s.url FROM Stream s WHERE s.url IN ("
+			    + "SELECT (sub.stream_url) FROM Subscribe sub WHERE sub.user_mail = <user>)))");
 
 	} catch (SQLException e) {
 	    throw new DAOException(e);
@@ -47,7 +53,6 @@ public class PublicationDAOImpl implements GenericDAO<Publication, String> {
 		publication.setTitle(res.getString("title"));
 		publication.setDescription(res.getString("date"));
 		publication.setDate(res.getString("description"));
-		publication.setRead(res.getBoolean("read"));
 		publications.add(publication);
 	    }
 	    return publications;
@@ -68,7 +73,6 @@ public class PublicationDAOImpl implements GenericDAO<Publication, String> {
 		publication.setTitle(res.getString("title"));
 		publication.setDescription(res.getString("date"));
 		publication.setDate(res.getString("description"));
-		publication.setRead(res.getBoolean("read"));
 		return publication;
 	    }
 	    return null;
@@ -132,6 +136,26 @@ public class PublicationDAOImpl implements GenericDAO<Publication, String> {
 	    throw new DAOException(e);
 	}
     }
+    
+    public List<Publication> publicationsOfUser(User user) {
+	ResultSet res = null;
+	List<Publication> publications = new ArrayList<Publication>();
+	try {
+	    res = selectStatement.executeQuery();
+	    while (res.next()) {
+		Publication publication = new Publication();
+		publication.setUrl(res.getString("link"));
+		publication.setTitle(res.getString("title"));
+		publication.setDescription(res.getString("date"));
+		publication.setDate(res.getString("description"));
+		publication.setRead(res.getBoolean("read"));
+		publications.add(publication);
+	    }
+	    return publications;
+	} catch (SQLException e) {
+	    throw new DAOException(e);
+	}
+    }
 
     @Override
     protected void finalize() throws Throwable {
@@ -151,6 +175,9 @@ public class PublicationDAOImpl implements GenericDAO<Publication, String> {
 	    }
 	    if (deleteStatement != null) {
 		deleteStatement.close();
+	    }
+	    if (publicationsOfUser != null) {
+		publicationsOfUser.close();
 	    }
 
 	} catch (Throwable t) {

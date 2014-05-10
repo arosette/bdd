@@ -38,7 +38,7 @@ public class PublicationRenderer implements ListCellRenderer<Publication> {
 	panel.add(publicationRed);
 
 	// Flux
-	JLabel associatedStreamName = new JLabel(value.getStream().getName());
+	JLabel associatedStreamName = new JLabel(value.getStream());
 	associatedStreamName.setBackground(Color.green);
 	associatedStreamName.setOpaque(true);
 	panel.add(associatedStreamName);
