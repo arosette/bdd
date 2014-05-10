@@ -240,7 +240,7 @@ public class MainFrameController {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-	    System.out.println("Menu : ok");
+	    new AddStreamController();
 	}
 
     }
