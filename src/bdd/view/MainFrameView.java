@@ -38,6 +38,7 @@ public class MainFrameView extends JFrame {
     private JList<Friendship> friendJList;
     private User currentUser;
     private JMenuItem addStreamItem;
+    private JMenuItem addFriendItem;
     private JButton refreshButton;
     private JButton loadNewPublicationsButton;
 
@@ -117,9 +118,14 @@ public class MainFrameView extends JFrame {
 	JMenuBar menuBar = new JMenuBar();
 	JMenu streamMenu = new JMenu("Flux");
 	addStreamItem = new JMenuItem("Ajouter un flux...");
+	JMenu friendMenu = new JMenu("Amis");
+	addFriendItem = new JMenuItem("Ajouter un ami...");
 
 	streamMenu.add(addStreamItem);
 	menuBar.add(streamMenu);
+	
+	friendMenu.add(addFriendItem);
+	menuBar.add(friendMenu);
 
 	this.setJMenuBar(menuBar);
 	this.setContentPane(this.mainPanel);
@@ -176,6 +182,10 @@ public class MainFrameView extends JFrame {
 
     public void addListenerToAddStreamItem(ActionListener actionListener) {
 	addStreamItem.addActionListener(actionListener);
+    }
+    
+    public void addListenerToAddFriendItem(ActionListener actionListener) {
+	addFriendItem.addActionListener(actionListener);
     }
 
     public void addListenerToRefreshButton(ActionListener actionListener) {

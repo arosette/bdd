@@ -53,6 +53,7 @@ public class MainFrameController {
 	mainFrameView
 		.addListenerToPublicationJList(new PublicationPopupMenuListener());
 	mainFrameView.addListenerToAddStreamItem(new AddStreamItemListener());
+	mainFrameView.addListenerToAddFriendItem(new AddFriendItemListener());
 	mainFrameView.addListenerToRefreshButton(new RefreshButtonListener());
 	mainFrameView
 		.addListenerToLoadNewPublicationsButton(new LoadNewPublicationsListener());
@@ -187,6 +188,15 @@ public class MainFrameController {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 	    new AddStreamController(currentUser);
+	}
+
+    }
+    
+    private class AddFriendItemListener implements ActionListener {
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+	    new AddFriendController(currentUser);
 	}
 
     }
