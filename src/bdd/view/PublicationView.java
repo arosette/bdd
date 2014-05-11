@@ -36,7 +36,7 @@ public class PublicationView extends JDialog {
      * Create the dialog.
      */
     public PublicationView() {
-	setBounds(100, 100, 451, 480);
+	setBounds(100, 100, 694, 452);
 	GridBagLayout gridBagLayout = new GridBagLayout();
 	gridBagLayout.columnWidths = new int[] { 119, 348, 0 };
 	gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -85,7 +85,7 @@ public class PublicationView extends JDialog {
 
 	descriptionTextArea = new JTextArea();
 	descriptionTextArea.setEditable(false);
-	descriptionTextArea.setColumns(10);
+	descriptionTextArea.setColumns(50);
 	descriptionTextArea.setRows(10);
 	descriptionTextArea.setLineWrap(true);
 	descriptionTextArea.setWrapStyleWord(true);
