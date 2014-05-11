@@ -87,17 +87,17 @@ public class SubscriptionController {
 		    if (streamDAO.insert(streamToAdd) && userDAO.insert(userToAdd)) {
 			subscriptionView.dispose();
 			dialogBox = new DialogBox("Enregistrement",
-				"vos informations ont été sauvegardées avec succès !");
+				"vos informations ont ete sauvegardees avec succes !");
 			dialogBox.setVisible(true);
 		    } else {
 			dialogBox = new DialogBox("Erreur",
-				"Un problème est survenu lors de l'enregistrement !");
+				"Un probleme est survenu lors de l'enregistrement !");
 			dialogBox.setVisible(true);
 		    }
 		    
 		} else {
 		    dialogBox = new DialogBox("Erreur",
-			    "L'adresse mail existe déjà dans la base de données !");
+			    "L'adresse mail existe deja dans la base de donnees !");
 		    dialogBox.setVisible(true);
 		}
 
