@@ -44,7 +44,11 @@ public class PublicationRenderer implements ListCellRenderer<Publication> {
 	panel.add(publicationTitle);
 
 	// Contenu
-	JLabel publicationDescription = new JLabel(value.getDescription());
+	String content = value.getDescription();
+	if (content.length() >= 30) {
+	    content = content.substring(0, 30) + "...";
+	}
+	JLabel publicationDescription = new JLabel(content);
 	publicationDescription.setForeground(Color.gray);
 	panel.add(publicationDescription);
 

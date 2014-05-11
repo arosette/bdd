@@ -43,7 +43,7 @@ public class MainFrameView extends JFrame implements Observer {
 	this.currentUser = currentUser;
 	this.setTitle("Flux RSS");
 	this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	this.setMinimumSize(new Dimension(800, 700));
+	this.setMinimumSize(new Dimension(1200, 700));
 	this.setResizable(true);
 	this.build();
     }

@@ -87,6 +87,8 @@ public class PublicationView extends JDialog {
 	descriptionTextArea.setEditable(false);
 	descriptionTextArea.setColumns(10);
 	descriptionTextArea.setRows(10);
+	descriptionTextArea.setLineWrap(true);
+	descriptionTextArea.setWrapStyleWord(true);
 	GridBagConstraints gbc_descriptionTextArea = new GridBagConstraints();
 	gbc_descriptionTextArea.insets = new Insets(0, 0, 5, 0);
 	gbc_descriptionTextArea.gridwidth = 2;
@@ -157,8 +159,10 @@ public class PublicationView extends JDialog {
 	this.urlTextfield.setText(publication.getUrl());
 	this.dateTextfield.setText(publication.getDate());
 	DefaultListModel<Comment> commentListModel = new DefaultListModel<Comment>();
-	for (Comment comment : publication.getComments()) {
-	    commentListModel.addElement(comment);
+	if (publication.getComments() != null) {
+	    for (Comment comment : publication.getComments()) {
+		commentListModel.addElement(comment);
+	    }
 	}
 	this.commentList.setModel(commentListModel);
     }

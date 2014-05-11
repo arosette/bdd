@@ -63,8 +63,12 @@ public class RssParser {
 	    Element item = (Element) items.item(i);
 	    pub.setTitle(((Element) item.getElementsByTagName("title").item(0))
 		    .getTextContent());
-	    pub.setDescription(((Element) item.getElementsByTagName(
-		    "description").item(0)).getTextContent());
+	    
+	    // Suppression de la balise img
+	    String[] dirtyDescription = ((Element) item.getElementsByTagName(
+		    "description").item(0)).getTextContent().split("/>"); 
+	    pub.setDescription(dirtyDescription[dirtyDescription.length-1]);
+
 	    pub.setUrl(((Element) item.getElementsByTagName("link").item(0))
 		    .getTextContent());
 	    pub.setRead(false);
@@ -114,7 +118,7 @@ public class RssParser {
 	    default:
 		month = "01";
 	    }
-	    
+
 	    String date = splittedDate[3] + "-" + month + "-" + splittedDate[1];
 	    pub.setDate(date);
 	    publications.add(pub);

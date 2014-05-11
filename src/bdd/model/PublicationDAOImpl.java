@@ -153,8 +153,8 @@ public class PublicationDAOImpl implements GenericDAO<Publication, String> {
 		Publication publication = new Publication();
 		publication.setUrl(res.getString("url"));
 		publication.setTitle(res.getString("title"));
-		publication.setDescription(res.getString("date"));
-		publication.setDate(res.getString("description"));
+		publication.setDate(res.getString("date"));
+		publication.setDescription(res.getString("description"));
 
 		// Publication lue ?
 		isPublicationRead.setString(1, user.getMail());
