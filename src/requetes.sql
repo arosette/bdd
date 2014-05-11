@@ -89,6 +89,8 @@ INSERT INTO Friendship (mail_sender, mail_receiver, status, date) VALUES ("sbeye
 
 INSERT INTO Subscribe (user_mail, stream_url, date) VALUES ("nomer@ulb.ac.be", "http://www.jeuxvideo.com", '2008-09-21');
 
+INSERT INTO Subscribe (user_mail, stream_url, date) VALUES ("arosette@ulb.ac.be", "http://www.facebook.com", '2007-02-22');
+
 INSERT INTO Subscribe (user_mail, stream_url, date) VALUES ("nomer@ulb.ac.be", "http://www.youtube.com", '2006-09-23');
 
 INSERT INTO Subscribe (user_mail, stream_url, date) VALUES ("nomer@ulb.ac.be", "http://www.facebook.com", '2009-09-22');
@@ -140,18 +142,18 @@ INSERT INTO Propose (stream_url, publication_url) VALUES ("http://www.youtube.co
 Requetes de selection
 ----------------------
 
---> Liste toutes les demandes d'amitie
------------------------------------------
+--> Liste les amitiés d'un utilisateur
+---------------------------------------
 <user>
-SELECT * FROM Friendship f WHERE f.Status = TRUE AND (mail_sender = <user> OR mail_receiver = <user>)
+SELECT * FROM Friendship f WHERE f.Status = TRUE AND (mail_sender = <user>.mail OR mail_receiver = <user>.mail)
 
 --> Liste le nombre d'amis d'un utilisateur
------------------------------------------
+-------------------------------------------
 <user>
-SELECT COUNT(*) FROM Friendship f WHERE f.Status = TRUE AND (mail_sender = <user> OR mail_receiver = <user>)
+SELECT COUNT(*) FROM Friendship f WHERE f.Status = TRUE AND (mail_sender = <user>.mail OR mail_receiver = <user>.mail)
 
 --> Liste toutes les amitiés existantes 
------------------------------------------
+----------------------------------------
 SELECT DISTINCT f.mail_sender, f.mail_receiver FROM User u, Friendship f 
 WHERE f.Status = TRUE AND (mail_sender = u.mail OR mail_receiver = u.mail)
 
@@ -176,9 +178,9 @@ SELECT u.surname, s.url FROM User u, Stream s WHERE s.url IN (
 --> R2 : La liste des flux auxquels a souscrit au moins un 
 -- utilisateur qui a souscrit à au moins deux flux auxquel X a souscrit
 -------------------------------------------------------------------------
-<user>
-CREATE TEMPORARY TABLE TMP_USER1_SUBSCRIPTIONS SELECT s.url FROM Stream s WHERE s.url IN (SELECT (sub.stream_url) FROM Subscribe sub WHERE sub.user_mail = <user>.mail)
-CREATE TEMPORARY TABLE TMP_USER2_SUBSCRIPTIONS SELECT u.mail, s.url FROM User u, Stream s WHERE s.url IN (SELECT (sub.stream_url) FROM Subscribe sub WHERE (sub.user_mail = u.mail AND sub.user_mail != <user>.mail))
+<userX>
+CREATE TEMPORARY TABLE TMP_USER1_SUBSCRIPTIONS SELECT s.url FROM Stream s WHERE s.url IN (SELECT (sub.stream_url) FROM Subscribe sub WHERE sub.user_mail = <userX>.mail)
+CREATE TEMPORARY TABLE TMP_USER2_SUBSCRIPTIONS SELECT u.mail, s.url FROM User u, Stream s WHERE s.url IN (SELECT (sub.stream_url) FROM Subscribe sub WHERE (sub.user_mail = u.mail AND sub.user_mail != <userX>.mail))
 
 SELECT s.url
 FROM Stream s 
@@ -189,7 +191,7 @@ WHERE s.url IN (
         SELECT mail 
         FROM TMP_USER1_SUBSCRIPTIONS 
         NATURAL JOIN TMP_USER2_SUBSCRIPTIONS 
-        GROUP BY mail HAVING count(*) >= 2)));
+        GROUP BY mail HAVING count(*) >= 2)))
         
 DROP TABLE TMP_USER1_SUBSCRIPTIONS
 DROP TABLE TMP_USER2_SUBSCRIPTIONS
@@ -201,28 +203,38 @@ SELECT p.publication_url
 FROM Propose p
 WHERE P.stream_url = <stream>.url
 
-SELECT s.url, p.publication_url
-FROM Propose p, Stream s
-WHERE p.stream_url = s.url
-
 --> Liste des flux auxquels X a souscrit duquel il n’a partagé aucune publication
--------------------------------------------------------------------------------------
-<user>
-CREATE TEMPORARY TABLE TMP_USER1_SUBSCRIPTIONS SELECT s.url FROM Stream s WHERE s.url IN (SELECT (sub.stream_url) FROM Subscribe sub WHERE sub.user_mail = <user>.mail)
-CREATE TEMPORARY TABLE TMP_SHARED_PUBLICATION SELECT c.publication_url FROM Comment c WHERE c.user_mail = <user>
-CREATE TEMPORARY TABLE TMP_STREAM_PUBLICATION SELECT s.url, p.publication_url FROM Propose p, TMP_USER1_SUBSCRIPTIONS s WHERE p.stream_url = s.url
+----------------------------------------------------------------------------------
+<userX>
+CREATE TEMPORARY TABLE TMP_USER_SUBSCRIPTIONS SELECT s.url FROM Stream s WHERE s.url IN (SELECT (sub.stream_url) FROM Subscribe sub WHERE sub.user_mail = <userX>.mail)
+CREATE TEMPORARY TABLE TMP_USER_SHARED_PUBLICATION SELECT c.publication_url FROM Comment c WHERE c.user_mail = <userX>.mail
+CREATE TEMPORARY TABLE TMP_USER_STREAM_PUBLICATION SELECT s.url, p.publication_url FROM Propose p, TMP_USER_SUBSCRIPTIONS s WHERE p.stream_url = s.url
 
-SELECT streamPub.url FROM TMP_STREAM_PUBLICATION streamPub WHERE streamPub.publication_url NOT IN (SELECT pub.publication_url FROM TMP_SHARED_PUBLICATION pub)
+SELECT streamPub.url FROM TMP_USER_STREAM_PUBLICATION streamPub WHERE streamPub.publication_url NOT IN (SELECT pub.publication_url FROM TMP_USER_SHARED_PUBLICATION pub)
 
-DROP TABLE TMP_USER_SUBSCRIPTIONS;
-DROP TABLE TMP_SHARED_PUBLICATION;
-DROP TABLE TMP_STREAM_PUBLICATION;
+DROP TABLE TMP_USER_SUBSCRIPTIONS
+DROP TABLE TMP_SHARED_PUBLICATION
+DROP TABLE TMP_USER_STREAM_PUBLICATION
 
 --> R3 : La liste des flux auxquels X a souscrit, auxquels aucun de 
 -- ses amis n’a souscrit et duquel il n’a partagé aucune publication
 ---------------------------------------------------------------------
+<userX>
+CREATE TEMPORARY TABLE TMP_USER_SUBSCRIPTIONS SELECT s.url FROM Stream s WHERE s.url IN (SELECT (sub.stream_url) FROM Subscribe sub WHERE sub.user_mail = <userX>.mail)
+CREATE TEMPORARY TABLE TMP_USER_SHARED_PUBLICATION SELECT c.publication_url FROM Comment c WHERE c.user_mail = <userX>.mail
+CREATE TEMPORARY TABLE TMP_FRIEND_USER SELECT DISTINCT u.mail FROM User u, Friendship f WHERE f.Status = TRUE AND (mail_sender = <userX>.mail OR mail_receiver = <userX>.mail) AND u.mail != <userX>.mail
+CREATE TEMPORARY TABLE TMP_FRIEND_SUBSCRIPTIONS SELECT u.mail, s.url FROM TMP_FRIEND_USER u, Stream s WHERE s.url IN (SELECT (sub.stream_url) FROM Subscribe sub WHERE (sub.user_mail = u.mail))
+CREATE TEMPORARY TABLE TMP_USER_STREAM_PUBLICATION SELECT s.url, p.publication_url FROM Propose p, TMP_USER_SUBSCRIPTIONS s WHERE p.stream_url = s.url
+CREATE TEMPORARY TABLE TMP_USER_UNSHARED_STREAM SELECT streamPub.url FROM TMP_USER_STREAM_PUBLICATION streamPub WHERE streamPub.publication_url NOT IN (SELECT pub.publication_url FROM TMP_USER_SHARED_PUBLICATION pub)
 
-[TODO]
+SELECT userStream.url FROM TMP_USER_UNSHARED_STREAM userStream WHERE userStream.url NOT IN (SELECT s.url FROM TMP_FRIEND_SUBSCRIPTIONS s)
+        
+DROP TABLE TMP_USER_SUBSCRIPTIONS
+DROP TABLE TMP_USER_SHARED_PUBLICATION
+DROP TABLE TMP_FRIEND_USER
+DROP TABLE TMP_FRIEND_SUBSCRIPTIONS
+DROP TABLE TMP_USER_STREAM_PUBLICATION
+DROP TABLE TMP_USER_UNSHARED_STREAM
 
 --> Liste des publications partagées (obligatoirement commentées)
 ----------------------------------------------------------------
@@ -232,11 +244,11 @@ SELECT c.publication_url FROM Comment c WHERE c.user_mail = <user>
 --> R4 : La liste des utilisateurs qui ont 
 -- partagé au moins 3 publications que X a partagé
 ---------------------------------------------------
-<user>
+<userX>
 SELECT DISTINCT u.*
 FROM User u, Comment c1, Comment c2
-WHERE c1.user_mail = <user>
-AND c2.user_mail != <user>
+WHERE c1.user_mail = <userX>
+AND c2.user_mail != <userX>
 AND c1.publication_url = c2.publication_url
 AND c2.user_mail = u.mail
 GROUP BY u.mail
