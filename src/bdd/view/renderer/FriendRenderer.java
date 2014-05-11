@@ -38,7 +38,7 @@ public class FriendRenderer implements ListCellRenderer<Friendship> {
 	    mailOfFriend = value.getSenderMail();
 	} else {
 	    System.out
-		    .println("Probleme : l'utilisateur actuel ne se trouve pas dans la relation d'amitié");
+		    .println("Problème : l'utilisateur actuel ne se trouve pas dans la relation d'amitié");
 	}
 
 	panel.add(new JLabel(mailOfFriend));
