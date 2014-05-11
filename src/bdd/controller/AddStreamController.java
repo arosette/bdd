@@ -30,6 +30,8 @@ public class AddStreamController {
 
 	    StreamDAOImpl streamDAO = new StreamDAOImpl();
 	    Stream stream = streamDAO.find(streamView.getUrl());
+	    
+	    System.out.println("Le flux : " + stream);
 
 	    // Si le flux n'existe pas, on l'ajoute en bdd
 	    if (stream == null) {

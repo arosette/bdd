@@ -28,7 +28,7 @@ public class PublicationDAOImpl implements GenericDAO<Publication, String> {
 	    findStatement = connection
 		    .prepareStatement("SELECT * FROM Publication WHERE url = ?");
 	    insertStatement = connection
-		    .prepareStatement("INSERT INTO Publication VALUES (?, ?, ?, ?, ?)");
+		    .prepareStatement("INSERT INTO Publication VALUES (?, ?, ?, ?)");
 	    deleteStatement = connection
 		    .prepareStatement("DELETE FROM Publication WHERE url = ?");
 	    publicationsOfUser = connection
