@@ -41,6 +41,7 @@ public class MainFrameView extends JFrame {
     private JMenuItem addFriendItem;
     private JButton refreshButton;
     private JButton loadNewPublicationsButton;
+    private FriendRenderer friendRenderer;
 
     public MainFrameView(User currentUser) {
 	super();
@@ -99,7 +100,8 @@ public class MainFrameView extends JFrame {
 
 	gbc.gridy = 1;
 	friendJList = new JList<Friendship>();
-	friendJList.setCellRenderer(new FriendRenderer(currentUser));
+	friendRenderer = new FriendRenderer(currentUser);
+	friendJList.setCellRenderer(friendRenderer);
 	mainPanel.add(friendJList, gbc);
 
 	// Bouton de refresh
@@ -111,7 +113,8 @@ public class MainFrameView extends JFrame {
 	// Bouton qui permet de récupérer les nouvelles publications à partir
 	// des flux RSS
 	gbc.gridx = 1;
-	loadNewPublicationsButton = new JButton("Telecharger les nouvelles publications");
+	loadNewPublicationsButton = new JButton(
+		"Telecharger les nouvelles publications");
 	mainPanel.add(loadNewPublicationsButton, gbc);
 
 	// Menu
@@ -123,7 +126,7 @@ public class MainFrameView extends JFrame {
 
 	streamMenu.add(addStreamItem);
 	menuBar.add(streamMenu);
-	
+
 	friendMenu.add(addFriendItem);
 	menuBar.add(friendMenu);
 
@@ -179,11 +182,21 @@ public class MainFrameView extends JFrame {
     public void addListenerToPublicationJList(MouseListener mouseListener) {
 	publicationJList.addMouseListener(mouseListener);
     }
+    
+    public Friendship getSelectedFriendship() {
+	return friendJList.getSelectedValue();
+    }
+    
+    public void addListenerToFriendJList(MouseListener mouseListener) {
+	friendJList.addMouseListener(mouseListener);
+    }
 
     public void addListenerToAddStreamItem(ActionListener actionListener) {
 	addStreamItem.addActionListener(actionListener);
     }
     
+    
+
     public void addListenerToAddFriendItem(ActionListener actionListener) {
 	addFriendItem.addActionListener(actionListener);
     }
@@ -191,8 +204,9 @@ public class MainFrameView extends JFrame {
     public void addListenerToRefreshButton(ActionListener actionListener) {
 	refreshButton.addActionListener(actionListener);
     }
-    
-    public void addListenerToLoadNewPublicationsButton (ActionListener actionListener) {
+
+    public void addListenerToLoadNewPublicationsButton(
+	    ActionListener actionListener) {
 	loadNewPublicationsButton.addActionListener(actionListener);
     }
 

@@ -35,6 +35,8 @@ public class FriendshipDAOImpl implements GenericDAO<Friendship, String> {
 		    .prepareStatement("DELETE FROM Friendship WHERE mail_sender = ? AND mail_receiver = ?");
 	    getFriendshipsOfUser = connection
 		    .prepareStatement("SELECT * FROM Friendship WHERE mail_sender = ? OR mail_receiver = ?");
+	    updateStatement = connection
+		    .prepareStatement("UPDATE Friendship SET status = ? WHERE mail_sender = ? AND mail_receiver = ?");
 
 	} catch (SQLException e) {
 	    throw new DAOException(e);
@@ -131,10 +133,9 @@ public class FriendshipDAOImpl implements GenericDAO<Friendship, String> {
 	try {
 	    int i = 1;
 
-	    insertStatement.setString(i++, friendship.getSenderMail());
-	    insertStatement.setString(i++, friendship.getReceiverMail());
 	    updateStatement.setBoolean(i++, friendship.getStatus());
-	    updateStatement.setString(i++, friendship.getDate());
+	    updateStatement.setString(i++, friendship.getSenderMail());
+	    updateStatement.setString(i++, friendship.getReceiverMail());
 
 	    int affectedRows = updateStatement.executeUpdate();
 	    if (affectedRows == 0) {
@@ -160,7 +161,7 @@ public class FriendshipDAOImpl implements GenericDAO<Friendship, String> {
 	    throw new DAOException(e);
 	}
     }
-    
+
     public List<Friendship> getFriendshipsOfUser(User user) {
 	ResultSet res = null;
 	List<Friendship> friendships = new ArrayList<Friendship>();

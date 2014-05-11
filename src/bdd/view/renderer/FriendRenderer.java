@@ -1,6 +1,8 @@
 package bdd.view.renderer;
 
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -51,19 +53,7 @@ public class FriendRenderer implements ListCellRenderer<Friendship> {
 
 	panel.add(new JLabel(status));
 
-	JButton acceptButton = new JButton("Accepter");
-	boolean isButtonEnabled;
-
-	if ((value.getReceiverMail().equals(currentUser.getMail()))
-		&& !value.getStatus()) {
-	    isButtonEnabled = true;
-	} else {
-	    isButtonEnabled = false;
-	}
-
-	acceptButton.setEnabled(isButtonEnabled);
-	panel.add(acceptButton);
-
 	return panel;
     }
+
 }

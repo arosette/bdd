@@ -20,6 +20,7 @@ public class StreamDAOImpl implements GenericDAO<Stream, String> {
     private PreparedStatement associatePublication = null;
     private PreparedStatement associateUser = null;
     private PreparedStatement selectStreamsWithoutPersonal = null;
+    private PreparedStatement hasUserSubscribeToStream = null;
 
     public StreamDAOImpl() throws DAOException {
 	mysqlConnection = MysqlConnection.getInstance();
@@ -45,6 +46,9 @@ public class StreamDAOImpl implements GenericDAO<Stream, String> {
 
 	    selectStreamsWithoutPersonal = connection
 		    .prepareStatement("SELECT * FROM Stream s WHERE s.url NOT IN (SELECT u.personal_stream_url FROM User u)");
+
+	    hasUserSubscribeToStream = connection
+		    .prepareStatement("SELECT COUNT(*) FROM Subscribe WHERE user_mail = ? AND stream_url = ?");
 
 	} catch (SQLException e) {
 	    throw new DAOException(e);
@@ -200,13 +204,13 @@ public class StreamDAOImpl implements GenericDAO<Stream, String> {
 	}
     }
 
-    public boolean associateUser(Stream stream, User user) {
+    public boolean associateUser(String streamUrl, String userMail) {
 	try {
 
 	    int i = 1;
 
-	    associateUser.setString(i++, user.getMail());
-	    associateUser.setString(i++, stream.getUrl());
+	    associateUser.setString(i++, userMail);
+	    associateUser.setString(i++, streamUrl);
 
 	    int affectedRows = associateUser.executeUpdate();
 	    if (affectedRows == 0) {
@@ -227,6 +231,28 @@ public class StreamDAOImpl implements GenericDAO<Stream, String> {
 	    throw new DAOException(e);
 	}
 	return convertResultSetToStream(res);
+    }
+
+    public boolean hasUserSubscribeToStream(String userMail, String streamUrl) {
+	boolean hasSubscribe = false;
+	try {
+	    hasUserSubscribeToStream.setString(1, userMail);
+	    hasUserSubscribeToStream.setString(2, streamUrl);
+	    ResultSet res = hasUserSubscribeToStream.executeQuery();
+
+	    if (res.next()) {
+		if (res.getInt(1) == 0) {
+		    hasSubscribe = false;
+		} else {
+		    hasSubscribe = true;
+		}
+	    } else {
+		System.out.println("Probleme pour récupérer le count");
+	    }
+	} catch (SQLException e) {
+	    throw new DAOException(e);
+	}
+	return hasSubscribe;
     }
 
     @Override

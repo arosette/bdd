@@ -30,7 +30,7 @@ public class AddStreamController {
 
 	    StreamDAOImpl streamDAO = new StreamDAOImpl();
 	    Stream stream = streamDAO.find(streamView.getUrl());
-	    
+
 	    System.out.println("Le flux : " + stream);
 
 	    // Si le flux n'existe pas, on l'ajoute en bdd
@@ -46,22 +46,21 @@ public class AddStreamController {
 
 		List<Publication> publications = rssParser.getPulications();
 		for (int i = 0; i < 10 && i < publications.size(); ++i) {
-		    // TODO Attention, ici, il faut peut etre verifier que la
-		    // publication n'existe pas
+
 		    Publication publication = publications.get(i);
 		    PublicationDAOImpl publicationDAO = new PublicationDAOImpl();
-		    
+
 		    // Si la publication n'existe pas en bdd, on l'ajoute
 		    if (publicationDAO.find(publication.getUrl()) == null) {
 			publicationDAO.insert(publication);
 		    }
-		    
+
 		    streamDAO.associatePublication(stream, publication);
 		}
 	    }
-	    
+
 	    // Ajout du flux au flux de l'utilisateur
-	    streamDAO.associateUser(stream, user);
+	    streamDAO.associateUser(stream.getUrl(), user.getMail());
 	    streamView.dispose();
 	}
     }

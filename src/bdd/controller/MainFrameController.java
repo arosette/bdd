@@ -1,5 +1,6 @@
 package bdd.controller;
 
+import bdd.view.DialogBox;
 import bdd.view.MainFrameView;
 
 import java.awt.Desktop;
@@ -25,6 +26,7 @@ import bdd.model.PublicationDAOImpl;
 import bdd.model.Stream;
 import bdd.model.StreamDAOImpl;
 import bdd.model.User;
+import bdd.model.UserDAOImpl;
 import bdd.parser.RssParser;
 
 public class MainFrameController {
@@ -35,15 +37,24 @@ public class MainFrameController {
     private User currentUser;
 
     public MainFrameController(User loggedUser) {
+	// Creation de la vue
 	mainFrameView = new MainFrameView(loggedUser);
+
+	// Creation des modeles
 	publications = new ArrayList<Publication>();
 	streams = new ArrayList<Stream>();
 	friendships = new ArrayList<Friendship>();
 	this.currentUser = loggedUser;
+
+	// Chargement des donnees depuis la bdd
 	publications = retrievePublicationsFromBdd();
 	streams = retrieveStreamsFromBdd();
 	friendships = retrieveFriendshipsFromBdd();
+
+	// Enregistrement des listeners
 	registerListeners();
+
+	// Affichage des modeles dans la vue
 	mainFrameView.loadStreams(streams);
 	mainFrameView.loadPublications(publications);
 	mainFrameView.loadFriendships(friendships);
@@ -53,6 +64,8 @@ public class MainFrameController {
 	mainFrameView.addListenerToStreamJList(new StreamPopupMenuListener());
 	mainFrameView
 		.addListenerToPublicationJList(new PublicationPopupMenuListener());
+	mainFrameView
+		.addListenerToFriendJList(new FriendshipPopupMenuListener());
 	mainFrameView.addListenerToAddStreamItem(new AddStreamItemListener());
 	mainFrameView.addListenerToAddFriendItem(new AddFriendItemListener());
 	mainFrameView.addListenerToRefreshButton(new RefreshButtonListener());
@@ -147,6 +160,85 @@ public class MainFrameController {
 	    menu.add(openLink);
 
 	    // Partage de la publication
+
+	}
+
+	// Ouverture du menu avec clic droit
+	@Override
+	public void mousePressed(MouseEvent e) {
+	    if (SwingUtilities.isRightMouseButton(e)) {
+		JList jlist = (JList) e.getSource();
+		int row = jlist.locationToIndex(e.getPoint());
+		jlist.setSelectedIndex(row);
+		menu.show(jlist, e.getX(), e.getY());
+	    }
+	}
+    }
+
+    private class FriendshipPopupMenuListener extends MouseAdapter {
+	private JPopupMenu menu;
+	private Friendship selectedFriendship;
+
+	public FriendshipPopupMenuListener() {
+	    menu = new JPopupMenu();
+
+	    JMenuItem acceptFriend = new JMenuItem("Accepter");
+
+	    // Creation du listener sur l'item qui permet d'ouvrir la
+	    // publication
+	    acceptFriend.addActionListener(new ActionListener() {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+
+		    selectedFriendship = mainFrameView.getSelectedFriendship();
+
+		    if (selectedFriendship.getReceiverMail().equals(
+			    currentUser.getMail())
+			    && !selectedFriendship.getStatus()) {
+			// On accepte la demande
+			FriendshipDAOImpl friendshipDAO = new FriendshipDAOImpl();
+			selectedFriendship.setStatus(true);
+			if (friendshipDAO.update(selectedFriendship)) {
+			    // On abonne les 2 utilisateurs à leur flux perso
+			    // respectif
+			    UserDAOImpl userDAO = new UserDAOImpl();
+			    User sender = userDAO.find(selectedFriendship
+				    .getSenderMail());
+			    User receiver = userDAO.find(selectedFriendship
+				    .getReceiverMail());
+
+			    StreamDAOImpl streamDAO = new StreamDAOImpl();
+
+			    // Ajout du flux de l'emetteur au recepteur
+			    if (!streamDAO.hasUserSubscribeToStream(
+				    receiver.getMail(),
+				    sender.getPersonalStream())) {
+
+				streamDAO.associateUser(
+					sender.getPersonalStream(),
+					receiver.getMail());
+			    }
+
+			    // Ajout du flux du recepteur a l'emetteur
+			    if (!streamDAO.hasUserSubscribeToStream(
+				    sender.getMail(),
+				    receiver.getPersonalStream())) {
+
+				streamDAO.associateUser(
+					receiver.getPersonalStream(),
+					sender.getMail());
+			    }
+			}
+
+		    } else {
+			new DialogBox(
+				"Erreur",
+				"Vous ne pouvez pas ajouter cet utilisateur comme ami car il est deja votre ami ou c'est à lui d'accepter");
+		    }
+		}
+	    });
+	    menu.add(acceptFriend);
 
 	}
 
