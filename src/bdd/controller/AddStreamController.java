@@ -50,7 +50,12 @@ public class AddStreamController {
 		    // publication n'existe pas
 		    Publication publication = publications.get(i);
 		    PublicationDAOImpl publicationDAO = new PublicationDAOImpl();
-		    publicationDAO.insert(publication);
+		    
+		    // Si la publication n'existe pas en bdd, on l'ajoute
+		    if (publicationDAO.find(publication.getUrl()) == null) {
+			publicationDAO.insert(publication);
+		    }
+		    
 		    streamDAO.associatePublication(stream, publication);
 		}
 	    }

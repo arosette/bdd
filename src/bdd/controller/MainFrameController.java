@@ -18,13 +18,13 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
-import bdd.model.Comment;
 import bdd.model.Friendship;
 import bdd.model.Publication;
 import bdd.model.PublicationDAOImpl;
 import bdd.model.Stream;
 import bdd.model.StreamDAOImpl;
 import bdd.model.User;
+import bdd.parser.RssParser;
 
 public class MainFrameController {
     private MainFrameView mainFrameView;
@@ -54,6 +54,8 @@ public class MainFrameController {
 		.addListenerToPublicationJList(new PublicationPopupMenuListener());
 	mainFrameView.addListenerToAddStreamItem(new AddStreamItemListener());
 	mainFrameView.addListenerToRefreshButton(new RefreshButtonListener());
+	mainFrameView
+		.addListenerToLoadNewPublicationsButton(new LoadNewPublicationsListener());
     }
 
     private List<Stream> retrieveStreamsFromBdd() {
@@ -64,73 +66,6 @@ public class MainFrameController {
     private List<Publication> retrievePublicationsFromBdd() {
 	PublicationDAOImpl publicationDAO = new PublicationDAOImpl();
 	return publicationDAO.publicationsOfUser(currentUser);
-    }
-
-    private List<Stream> createStreams() {
-	Stream s1 = new Stream();
-	s1.setName("RTBF");
-	s1.setDescription("Le flux d'info de la RTBF");
-	s1.setUrl("http://rtbf.be");
-
-	Stream s2 = new Stream();
-	s2.setName("RTL");
-	s2.setDescription("Le flux d'info de RTL");
-	s2.setUrl("http://rtl.be");
-
-	Stream s3 = new Stream();
-	s3.setName("DH");
-	s3.setDescription("Le flux d'info de la DH");
-	s3.setUrl("http://dh.be");
-
-	ArrayList<Stream> streams = new ArrayList<Stream>();
-
-	streams.add(s1);
-	streams.add(s2);
-	streams.add(s3);
-
-	return streams;
-
-    }
-
-    private List<Publication> createPublications() {
-
-	Comment c1 = new Comment();
-	c1.setUserMail("a@a.com");
-	c1.setContent("lolo");
-	c1.setDate("2014-05-07");
-	ArrayList<Comment> comments = new ArrayList<Comment>();
-	comments.add(c1);
-
-	Publication p1 = new Publication();
-	p1.setTitle("Etre un troll");
-	p1.setDescription("Trolololololo");
-	p1.setRead(false);
-	p1.setDate("2014-05-07");
-	p1.setUrl("http://trol.com/art1");
-	p1.setComments(comments);
-
-	Publication p2 = new Publication();
-	p2.setTitle("Le troll, comment l'apprendre ?");
-	p2.setDescription("Trolololololo");
-	p2.setRead(true);
-	p2.setDate("2014-05-07");
-	p2.setUrl("http://trol.com/art2");
-
-	ArrayList<Publication> publications = new ArrayList<Publication>();
-	publications.add(p1);
-	publications.add(p2);
-	publications.add(p1);
-	publications.add(p2);
-	publications.add(p1);
-	publications.add(p2);
-	publications.add(p1);
-	publications.add(p2);
-	publications.add(p1);
-	publications.add(p2);
-	publications.add(p1);
-	publications.add(p2);
-
-	return publications;
     }
 
     private List<Friendship> createFriendship() {
@@ -220,11 +155,13 @@ public class MainFrameController {
 			    .getSelectedPublication();
 		    if (!selectedPublication.isRead()) {
 			PublicationDAOImpl publicationDAO = new PublicationDAOImpl();
-			publicationDAO.makePublicationRead(currentUser, selectedPublication);
+			publicationDAO.makePublicationRead(currentUser,
+				selectedPublication);
 			selectedPublication.setRead(true);
 		    }
 
-		    new PublicationController(selectedPublication, mainFrameView);
+		    new PublicationController(selectedPublication,
+			    mainFrameView);
 		}
 	    });
 	    menu.add(openLink);
@@ -264,6 +201,70 @@ public class MainFrameController {
 	    mainFrameView.loadStreams(streams);
 	    mainFrameView.loadPublications(publications);
 	    mainFrameView.loadFriendships(friendships);
+	}
+
+    }
+
+    private class LoadNewPublicationsListener implements ActionListener {
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+	    StreamDAOImpl streamDAO = new StreamDAOImpl();
+
+	    // Pour chaque flux qui n'est pas un flux perso, on telecharge les
+	    // nouvelles publications
+	    for (Stream stream : streamDAO.getStreamsWithoutPersonal()) {
+		RssParser parser = new RssParser(stream.getUrl());
+		PublicationDAOImpl publicationDAO = new PublicationDAOImpl();
+		// Cette liste n'est pas triée
+		List<Publication> publicationsInBdd = publicationDAO
+			.getPublicationOfStream(stream);
+		// Cette liste est triée
+		List<Publication> publicationsInInternet = parser
+			.getPulications();
+
+		List<Publication> newPublications = getOnlyNewPublication(
+			publicationsInBdd, publicationsInInternet);
+
+		System.out.println("Les nouvelles publications : "
+			+ newPublications.size());
+
+		for (Publication publication : newPublications) {
+		    publicationDAO.insert(publication);
+		    streamDAO.associatePublication(stream, publication);
+		}
+	    }
+	}
+
+	private List<Publication> getOnlyNewPublication(
+		List<Publication> bddPublications,
+		List<Publication> internetPublications) {
+	    int beginIndex = 0;
+	    int lastIndex = internetPublications.size();
+
+	    for (Publication pub : bddPublications) {
+		int currentIndex = indexOfPublication(internetPublications,
+			pub.getUrl());
+		if (currentIndex != -1) {
+		    if (currentIndex < lastIndex) {
+			lastIndex = currentIndex;
+		    }
+		}
+	    }
+
+	    return internetPublications.subList(beginIndex, lastIndex);
+	}
+
+	private int indexOfPublication(List<Publication> publications,
+		String publicationUrl) {
+	    int index = -1;
+	    for (int i = 0; i < publications.size(); ++i) {
+		if (publications.get(i).getUrl().equals(publicationUrl)) {
+		    index = i;
+		    break;
+		}
+	    }
+	    return index;
 	}
 
     }
