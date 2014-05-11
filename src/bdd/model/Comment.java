@@ -1,8 +1,6 @@
 package bdd.model;
 
-import java.util.Observable;
-
-public class Comment extends Observable {
+public class Comment {
 
     private String user_mail;
     private String publication_url;
@@ -33,7 +31,7 @@ public class Comment extends Observable {
     public void setStreamUrl(String stream_url) {
 	this.stream_url = stream_url;
     }
-    
+
     public String getContent() {
 	return content;
     }

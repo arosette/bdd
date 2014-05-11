@@ -1,8 +1,6 @@
 package bdd.model;
 
-import java.util.Observable;
-
-public class User extends Observable {
+public class User {
 
     private String mail;
     private String surname;
@@ -77,7 +75,7 @@ public class User extends Observable {
     public void setDate(String date) {
 	this.date = date;
     }
-    
+
     public String getPersonalStream() {
 	return personal_stream_url;
     }

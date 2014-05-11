@@ -12,6 +12,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -29,7 +30,7 @@ import bdd.view.renderer.FriendRenderer;
 import bdd.view.renderer.PublicationRenderer;
 import bdd.view.renderer.StreamRenderer;
 
-public class MainFrameView extends JFrame implements Observer {
+public class MainFrameView extends JFrame {
 
     private JPanel mainPanel;
     private JList<Stream> streamJList;
@@ -37,6 +38,7 @@ public class MainFrameView extends JFrame implements Observer {
     private JList<Friendship> friendJList;
     private User currentUser;
     private JMenuItem addStreamItem;
+    private JButton refreshButton;
 
     public MainFrameView(User currentUser) {
 	super();
@@ -87,26 +89,31 @@ public class MainFrameView extends JFrame implements Observer {
 	publicationJList = new JList<Publication>();
 	publicationJList.setCellRenderer(new PublicationRenderer());
 	mainPanel.add(new JScrollPane(publicationJList), gbc);
-	
-	
+
 	gbc.anchor = GridBagConstraints.EAST;
 	gbc.gridx = 2;
 	gbc.gridy = 0;
 	mainPanel.add(new JLabel("Amis"), gbc);
-	
+
 	gbc.gridy = 1;
 	friendJList = new JList<Friendship>();
 	friendJList.setCellRenderer(new FriendRenderer(currentUser));
 	mainPanel.add(friendJList, gbc);
 
+	// Bouton de refresh
+	gbc.gridx = 0;
+	gbc.gridy = 2;
+	refreshButton = new JButton("Refresh");
+	mainPanel.add(refreshButton, gbc);
+
 	// Menu
 	JMenuBar menuBar = new JMenuBar();
 	JMenu streamMenu = new JMenu("Flux");
 	addStreamItem = new JMenuItem("Ajouter un flux...");
-	
+
 	streamMenu.add(addStreamItem);
 	menuBar.add(streamMenu);
-	
+
 	this.setJMenuBar(menuBar);
 	this.setContentPane(this.mainPanel);
 	this.setVisible(true);
@@ -133,7 +140,7 @@ public class MainFrameView extends JFrame implements Observer {
 	publicationJList.setModel(publicationListModel);
 
     }
-    
+
     public void loadFriendships(List<Friendship> friendships) {
 
 	DefaultListModel<Friendship> friendshipListModel = new DefaultListModel<Friendship>();
@@ -151,23 +158,17 @@ public class MainFrameView extends JFrame implements Observer {
     public void addListenerToStreamJList(MouseListener mouseListener) {
 	streamJList.addMouseListener(mouseListener);
     }
-    
+
     public Publication getSelectedPublication() {
 	return publicationJList.getSelectedValue();
     }
-    
+
     public void addListenerToPublicationJList(MouseListener mouseListener) {
 	publicationJList.addMouseListener(mouseListener);
     }
-    
+
     public void addListenerToAddStreamItem(ActionListener actionListener) {
 	addStreamItem.addActionListener(actionListener);
-    }
-
-    @Override
-    public void update(Observable o, Object arg) {
-	// TODO Auto-generated method stub
-
     }
 
 }

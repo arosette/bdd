@@ -1,8 +1,6 @@
 package bdd.model;
 
-import java.util.Observable;
-
-public class Stream extends Observable {
+public class Stream {
     private String url;
     private String name;
     private String description;

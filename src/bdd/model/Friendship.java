@@ -1,8 +1,6 @@
 package bdd.model;
 
-import java.util.Observable;
-
-public class Friendship extends Observable {
+public class Friendship {
     private String mail_sender;
     private String mail_receiver;
     private Boolean status;
