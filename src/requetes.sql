@@ -203,6 +203,13 @@ SELECT p.publication_url
 FROM Propose p
 WHERE P.stream_url = <stream>.url
 
+--> Détermine à quel flux appartient la publication
+----------------------------------------------------
+<publication>
+SELECT p.stream_url
+FROM Propose p
+WHERE p.publication_url = <publication>.url
+
 --> Liste des flux auxquels X a souscrit duquel il n’a partagé aucune publication
 ----------------------------------------------------------------------------------
 <userX>

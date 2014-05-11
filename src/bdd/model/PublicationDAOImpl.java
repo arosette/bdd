@@ -20,6 +20,7 @@ public class PublicationDAOImpl implements GenericDAO<Publication, String> {
     private PreparedStatement isPublicationRead = null;
     private PreparedStatement makePublicationRead = null;
     private PreparedStatement publicationsOfStream = null;
+    private PreparedStatement streamOfPublication = null;
 
     public PublicationDAOImpl() throws DAOException {
 	mysqlConnection = MysqlConnection.getInstance();
@@ -42,9 +43,10 @@ public class PublicationDAOImpl implements GenericDAO<Publication, String> {
 		    .prepareStatement("SELECT COUNT(*) FROM `Read` WHERE user_mail = ? AND publication_url = ?");
 	    makePublicationRead = connection
 		    .prepareStatement("INSERT INTO `Read` VALUES (?, ?, CURDATE())");
-
 	    publicationsOfStream = connection
 		    .prepareStatement("SELECT * FROM Publication pub WHERE pub.url IN (SELECT prop.publication_url FROM Propose prop WHERE prop.stream_url = ?)");
+	    streamOfPublication = connection
+		    .prepareStatement("SELECT p.stream_url FROM Propose p WHERE p.publication_url = ?");
 
 	} catch (SQLException e) {
 	    throw new DAOException(e);
@@ -228,6 +230,25 @@ public class PublicationDAOImpl implements GenericDAO<Publication, String> {
 	    throw new DAOException(e);
 	}
 	return publications;
+    }
+
+    public Stream getStreamOfPublication(Publication publication) {
+	Stream stream = new Stream();
+	try {
+	    ResultSet res = null;
+	    streamOfPublication.setString(1, publication.getUrl());
+	    res = streamOfPublication.executeQuery();
+	    while (res.next()) {
+		stream.setUrl(res.getString("url"));
+		stream.setName(res.getString("name"));
+		stream.setWebLink(res.getString("webLink"));
+		stream.setDescription(res.getString("description"));
+	    }
+
+	} catch (SQLException e) {
+	    throw new DAOException(e);
+	}
+	return stream;
     }
 
     @Override
