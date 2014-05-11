@@ -19,6 +19,7 @@ public class StreamDAOImpl implements GenericDAO<Stream, String> {
     private PreparedStatement streamsOfUser = null;
     private PreparedStatement associatePublication = null;
     private PreparedStatement associateUser = null;
+    private PreparedStatement selectStreamsWithoutPersonal = null;
 
     public StreamDAOImpl() throws DAOException {
 	mysqlConnection = MysqlConnection.getInstance();
@@ -41,6 +42,9 @@ public class StreamDAOImpl implements GenericDAO<Stream, String> {
 
 	    associateUser = connection
 		    .prepareStatement("INSERT INTO Subscribe VALUES (?, ?, CURDATE())");
+
+	    selectStreamsWithoutPersonal = connection
+		    .prepareStatement("SELECT * FROM Stream s WHERE s.url NOT IN (SELECT u.personal_stream_url FROM User u)");
 
 	} catch (SQLException e) {
 	    throw new DAOException(e);
@@ -195,7 +199,7 @@ public class StreamDAOImpl implements GenericDAO<Stream, String> {
 	    throw new DAOException(e);
 	}
     }
-    
+
     public boolean associateUser(Stream stream, User user) {
 	try {
 
@@ -213,6 +217,16 @@ public class StreamDAOImpl implements GenericDAO<Stream, String> {
 	} catch (SQLException e) {
 	    throw new DAOException(e);
 	}
+    }
+
+    public List<Stream> getStreamsWithoutPersonal() {
+	ResultSet res = null;
+	try {
+	    res = selectStreamsWithoutPersonal.executeQuery();
+	} catch (SQLException e) {
+	    throw new DAOException(e);
+	}
+	return convertResultSetToStream(res);
     }
 
     @Override

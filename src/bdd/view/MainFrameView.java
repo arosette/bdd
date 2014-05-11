@@ -39,6 +39,7 @@ public class MainFrameView extends JFrame {
     private User currentUser;
     private JMenuItem addStreamItem;
     private JButton refreshButton;
+    private JButton loadNewPublicationsButton;
 
     public MainFrameView(User currentUser) {
 	super();
@@ -106,6 +107,12 @@ public class MainFrameView extends JFrame {
 	refreshButton = new JButton("Refresh");
 	mainPanel.add(refreshButton, gbc);
 
+	// Bouton qui permet de récupérer les nouvelles publications à partir
+	// des flux RSS
+	gbc.gridx = 1;
+	loadNewPublicationsButton = new JButton("Telecharger les nouvelles publications");
+	mainPanel.add(loadNewPublicationsButton, gbc);
+
 	// Menu
 	JMenuBar menuBar = new JMenuBar();
 	JMenu streamMenu = new JMenu("Flux");
@@ -170,9 +177,13 @@ public class MainFrameView extends JFrame {
     public void addListenerToAddStreamItem(ActionListener actionListener) {
 	addStreamItem.addActionListener(actionListener);
     }
-    
+
     public void addListenerToRefreshButton(ActionListener actionListener) {
 	refreshButton.addActionListener(actionListener);
+    }
+    
+    public void addListenerToLoadNewPublicationsButton (ActionListener actionListener) {
+	loadNewPublicationsButton.addActionListener(actionListener);
     }
 
 }
