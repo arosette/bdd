@@ -23,7 +23,7 @@ public class LoginView extends JDialog {
 
     public LoginView() {
 	super();
-	this.setTitle("Fenetre d'authentification");
+	this.setTitle("Fenêtre d'authentification");
 	this.setSize(300, 200);
 	this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	this.build();
@@ -79,6 +79,10 @@ public class LoginView extends JDialog {
 
     public void setEmailFieldBackground(Color color) {
 	emailTextField.setBackground(color);
+    }
+    
+    public void setPasswordFieldBackground(Color color) {
+	passwordTextField.setBackground(color);
     }
 
     public void addConnectionListener(ActionListener connectionListener) {

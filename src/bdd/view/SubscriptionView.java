@@ -33,7 +33,7 @@ public class SubscriptionView extends JDialog {
     
     public SubscriptionView() {
 	super();
-	this.setTitle("Fenetre d'inscription");
+	this.setTitle("Fenêtre d'inscription");
 	this.setSize(450, 400);
 	this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	this.build();
@@ -105,7 +105,7 @@ public class SubscriptionView extends JDialog {
 	
 	gbc.gridx = 0;
 	gbc.gridy = 6;
-	mainPanel.add(new JLabel("Biography : "), gbc);
+	mainPanel.add(new JLabel("Biographie : "), gbc);
 	
 	gbc.gridx = 1;
 	mainPanel.add(biographyTextField, gbc);

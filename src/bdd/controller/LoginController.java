@@ -45,24 +45,28 @@ public class LoginController {
     private class ConnectionListener implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 
+	    loginView.setPasswordFieldBackground(new Color(255, 255, 255));
 	    boolean fieldOk = isEmailFieldOk();
 
 	    if (fieldOk) {
 
 		UserDAOImpl userDAO = new UserDAOImpl();
 		User user = userDAO.find(loginView.getEmail());
+
 		if (user != null) {
 		    if (loginView.getPassword().equals(user.getPassword())) {
 			loginView.dispose();
 			new MainFrameController(user);
 		    } else {
+			loginView.setPasswordFieldBackground(new Color(200, 0,
+				0));
 			dialogBox = new DialogBox("Erreur",
-				"Mot de passe incorrect");
+				"Mot de passe incorrect !");
 			dialogBox.setVisible(true);
 		    }
 		} else {
 		    dialogBox = new DialogBox("Erreur",
-			    "Adresse mail pas en bdd");
+			    "L'adresse mail n'est pas en base de données !");
 		    dialogBox.setVisible(true);
 		}
 
