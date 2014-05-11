@@ -205,6 +205,8 @@ public class MainFrameController {
 
 	public PublicationPopupMenuListener() {
 	    menu = new JPopupMenu();
+
+	    // Ouverture de la publication
 	    JMenuItem openLink = new JMenuItem("Ouvrir...");
 
 	    // Creation du listener sur l'item qui permet d'ouvrir la
@@ -213,11 +215,21 @@ public class MainFrameController {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    new PublicationController(mainFrameView
-			    .getSelectedPublication(), mainFrameView);
+
+		    Publication selectedPublication = mainFrameView
+			    .getSelectedPublication();
+		    if (!selectedPublication.isRead()) {
+			PublicationDAOImpl publicationDAO = new PublicationDAOImpl();
+			publicationDAO.makePublicationRead(currentUser, selectedPublication);
+			selectedPublication.setRead(true);
+		    }
+
+		    new PublicationController(selectedPublication, mainFrameView);
 		}
 	    });
 	    menu.add(openLink);
+
+	    // Partage de la publication
 
 	}
 
@@ -241,19 +253,19 @@ public class MainFrameController {
 	}
 
     }
-    
+
     private class RefreshButtonListener implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 	    streams = retrieveStreamsFromBdd();
 	    publications = retrievePublicationsFromBdd();
-	    
+
 	    mainFrameView.loadStreams(streams);
 	    mainFrameView.loadPublications(publications);
 	    mainFrameView.loadFriendships(friendships);
 	}
-	
+
     }
 
 }

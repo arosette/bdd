@@ -18,6 +18,7 @@ public class PublicationDAOImpl implements GenericDAO<Publication, String> {
     private PreparedStatement deleteStatement = null;
     private PreparedStatement publicationsOfUser = null;
     private PreparedStatement isPublicationRead = null;
+    private PreparedStatement makePublicationRead = null;
 
     public PublicationDAOImpl() throws DAOException {
 	mysqlConnection = MysqlConnection.getInstance();
@@ -38,6 +39,8 @@ public class PublicationDAOImpl implements GenericDAO<Publication, String> {
 			    + "SELECT (sub.stream_url) FROM Subscribe sub WHERE sub.user_mail = ?)))");
 	    isPublicationRead = connection
 		    .prepareStatement("SELECT COUNT(*) FROM `Read` WHERE user_mail = ? AND publication_url = ?");
+	    makePublicationRead = connection
+		    .prepareStatement("INSERT INTO `Read` VALUES (?, ?, CURDATE())");
 
 	} catch (SQLException e) {
 	    throw new DAOException(e);
@@ -117,7 +120,6 @@ public class PublicationDAOImpl implements GenericDAO<Publication, String> {
 	    updateStatement.setString(i++, publication.getTitle());
 	    updateStatement.setString(i++, publication.getDate());
 	    updateStatement.setString(i++, publication.getDescription());
-	    updateStatement.setBoolean(i++, publication.isRead());
 
 	    int affectedRows = updateStatement.executeUpdate();
 	    if (affectedRows == 0) {
@@ -178,6 +180,25 @@ public class PublicationDAOImpl implements GenericDAO<Publication, String> {
 	    throw new DAOException(e);
 	}
 	return publications;
+    }
+
+    public boolean makePublicationRead(User user, Publication publication) {
+	try {
+
+	    int i = 1;
+
+	    makePublicationRead.setString(i++, user.getMail());
+	    makePublicationRead.setString(i++, publication.getUrl());
+
+	    int affectedRows = makePublicationRead.executeUpdate();
+	    if (affectedRows == 0) {
+		return false;
+	    }
+	    return true;
+
+	} catch (SQLException e) {
+	    throw new DAOException(e);
+	}
     }
 
     @Override
