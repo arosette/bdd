@@ -53,6 +53,7 @@ public class MainFrameController {
 	mainFrameView
 		.addListenerToPublicationJList(new PublicationPopupMenuListener());
 	mainFrameView.addListenerToAddStreamItem(new AddStreamItemListener());
+	mainFrameView.addListenerToRefreshButton(new RefreshButtonListener());
     }
 
     private List<Stream> retrieveStreamsFromBdd() {
@@ -172,17 +173,13 @@ public class MainFrameController {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    System.out.println(mainFrameView.getSelectedStream()
-			    .getUrl());
 		    try {
 			Desktop.getDesktop().browse(
 				new URI(mainFrameView.getSelectedStream()
 					.getUrl()));
 		    } catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		    } catch (URISyntaxException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		    }
 		}
@@ -244,4 +241,19 @@ public class MainFrameController {
 	}
 
     }
+    
+    private class RefreshButtonListener implements ActionListener {
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+	    streams = retrieveStreamsFromBdd();
+	    publications = retrievePublicationsFromBdd();
+	    
+	    mainFrameView.loadStreams(streams);
+	    mainFrameView.loadPublications(publications);
+	    mainFrameView.loadFriendships(friendships);
+	}
+	
+    }
+
 }

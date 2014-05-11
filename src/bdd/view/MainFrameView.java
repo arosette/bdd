@@ -170,5 +170,9 @@ public class MainFrameView extends JFrame {
     public void addListenerToAddStreamItem(ActionListener actionListener) {
 	addStreamItem.addActionListener(actionListener);
     }
+    
+    public void addListenerToRefreshButton(ActionListener actionListener) {
+	refreshButton.addActionListener(actionListener);
+    }
 
 }

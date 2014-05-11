@@ -160,15 +160,14 @@ public class PublicationDAOImpl implements GenericDAO<Publication, String> {
 		isPublicationRead.setString(1, user.getMail());
 		isPublicationRead.setString(2, publication.getUrl());
 		ResultSet res2 = isPublicationRead.executeQuery();
-		System.out.println("ok");
+
 		if (res2.next()) {
 		    if (res2.getInt(1) == 0) {
 			publication.setRead(false);
 		    } else {
 			publication.setRead(true);
 		    }
-		}
-		else {
+		} else {
 		    System.out.println("Probleme pour récupérer le count");
 		}
 
