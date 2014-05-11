@@ -19,6 +19,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
 import bdd.model.Friendship;
+import bdd.model.FriendshipDAOImpl;
 import bdd.model.Publication;
 import bdd.model.PublicationDAOImpl;
 import bdd.model.Stream;
@@ -41,7 +42,7 @@ public class MainFrameController {
 	this.currentUser = loggedUser;
 	publications = retrievePublicationsFromBdd();
 	streams = retrieveStreamsFromBdd();
-	friendships = createFriendship();
+	friendships = retrieveFriendshipsFromBdd();
 	registerListeners();
 	mainFrameView.loadStreams(streams);
 	mainFrameView.loadPublications(publications);
@@ -69,31 +70,9 @@ public class MainFrameController {
 	return publicationDAO.publicationsOfUser(currentUser);
     }
 
-    private List<Friendship> createFriendship() {
-	Friendship f1 = new Friendship();
-	f1.setSenderMail(currentUser.getMail());
-	f1.setReceiverMail("lol@lol.com");
-	f1.setStatus(false);
-	f1.setDate("2014-05-08");
-
-	Friendship f2 = new Friendship();
-	f2.setReceiverMail(currentUser.getMail());
-	f2.setSenderMail("hahah@coucou.com");
-	f2.setStatus(false);
-	f2.setDate("2014-05-08");
-
-	Friendship f3 = new Friendship();
-	f3.setReceiverMail(currentUser.getMail());
-	f3.setSenderMail("tit@tutu.com");
-	f3.setStatus(true);
-	f3.setDate("2014-05-08");
-
-	ArrayList<Friendship> friendships = new ArrayList<Friendship>();
-	friendships.add(f1);
-	friendships.add(f2);
-	friendships.add(f3);
-
-	return friendships;
+    private List<Friendship> retrieveFriendshipsFromBdd() {
+	FriendshipDAOImpl friendshipDAO = new FriendshipDAOImpl();
+	return friendshipDAO.getFriendshipsOfUser(currentUser);
     }
 
     private class StreamPopupMenuListener extends MouseAdapter {
@@ -191,7 +170,7 @@ public class MainFrameController {
 	}
 
     }
-    
+
     private class AddFriendItemListener implements ActionListener {
 
 	@Override
@@ -207,6 +186,7 @@ public class MainFrameController {
 	public void actionPerformed(ActionEvent e) {
 	    streams = retrieveStreamsFromBdd();
 	    publications = retrievePublicationsFromBdd();
+	    friendships = retrieveFriendshipsFromBdd();
 
 	    mainFrameView.loadStreams(streams);
 	    mainFrameView.loadPublications(publications);
@@ -240,7 +220,10 @@ public class MainFrameController {
 			+ newPublications.size());
 
 		for (Publication publication : newPublications) {
-		    publicationDAO.insert(publication);
+		    if (publicationDAO.find(publication.getUrl()) == null) {
+			publicationDAO.insert(publication);
+		    }
+
 		    streamDAO.associatePublication(stream, publication);
 		}
 	    }

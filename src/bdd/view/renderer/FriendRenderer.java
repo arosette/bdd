@@ -28,42 +28,39 @@ public class FriendRenderer implements ListCellRenderer<Friendship> {
 	JPanel panel = new JPanel();
 	panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 
-	
 	String mailOfFriend = new String("Error");
-	
-	if (value.getSenderMail() == currentUser.getMail()) {
+
+	if (value.getSenderMail().equals(currentUser.getMail())) {
 	    mailOfFriend = value.getReceiverMail();
-	} else if (value.getReceiverMail() == currentUser.getMail()) {
+	} else if (value.getReceiverMail().equals(currentUser.getMail())) {
 	    mailOfFriend = value.getSenderMail();
 	} else {
 	    System.out
 		    .println("Probleme : l'utilisateur actuel ne se trouve pas dans la relation d'amitié");
 	}
-	
+
 	panel.add(new JLabel(mailOfFriend));
-	
+
 	String status = new String("Status : ");
-	
-	if(value.getStatus()) {
+
+	if (value.getStatus()) {
 	    status += "accepte";
-	}
-	else {
+	} else {
 	    status += "en attente";
 	}
-	
+
 	panel.add(new JLabel(status));
-	
-	
+
 	JButton acceptButton = new JButton("Accepter");
 	boolean isButtonEnabled;
-	
-	if ((value.getReceiverMail() == currentUser.getMail()) && !value.getStatus()) {
+
+	if ((value.getReceiverMail().equals(currentUser.getMail()))
+		&& !value.getStatus()) {
 	    isButtonEnabled = true;
-	}
-	else {
+	} else {
 	    isButtonEnabled = false;
 	}
-	
+
 	acceptButton.setEnabled(isButtonEnabled);
 	panel.add(acceptButton);
 
