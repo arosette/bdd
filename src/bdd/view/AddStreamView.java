@@ -1,6 +1,7 @@
 package bdd.view;
 
 import java.awt.EventQueue;
+import java.awt.event.ActionListener;
 
 import javax.swing.JDialog;
 import javax.swing.BoxLayout;
@@ -31,6 +32,14 @@ public class AddStreamView extends JDialog {
 	addButton = new JButton("Ajouter");
 	getContentPane().add(addButton);
 
+    }
+    
+    public void addListenerToAddButton(ActionListener actionListener) {
+	addButton.addActionListener(actionListener);
+    }
+    
+    public String getUrl() {
+	return urlTextfield.getText();
     }
 
 }

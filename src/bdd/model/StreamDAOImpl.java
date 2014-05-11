@@ -17,6 +17,8 @@ public class StreamDAOImpl implements GenericDAO<Stream, String> {
     private PreparedStatement updateStatement = null;
     private PreparedStatement deleteStatement = null;
     private PreparedStatement streamsOfUser = null;
+    private PreparedStatement associatePublication = null;
+    private PreparedStatement associateUser = null;
 
     public StreamDAOImpl() throws DAOException {
 	mysqlConnection = MysqlConnection.getInstance();
@@ -33,6 +35,12 @@ public class StreamDAOImpl implements GenericDAO<Stream, String> {
 
 	    streamsOfUser = connection
 		    .prepareStatement("SELECT * FROM Stream s WHERE s.url IN (SELECT (sub.stream_url) FROM Subscribe sub WHERE sub.user_mail = ?)");
+
+	    associatePublication = connection
+		    .prepareStatement("INSERT INTO Propose VALUES (?, ?)");
+
+	    associateUser = connection
+		    .prepareStatement("INSERT INTO Subscribe VALUES (?, ?, CURDATE())");
 
 	} catch (SQLException e) {
 	    throw new DAOException(e);
@@ -117,7 +125,7 @@ public class StreamDAOImpl implements GenericDAO<Stream, String> {
 		return false;
 	    }
 	    return true;
-	    
+
 	} catch (SQLException e) {
 	    throw new DAOException(e);
 	}
@@ -169,6 +177,44 @@ public class StreamDAOImpl implements GenericDAO<Stream, String> {
 	return convertResultSetToStream(res);
     }
 
+    public boolean associatePublication(Stream stream, Publication publication) {
+	try {
+
+	    int i = 1;
+
+	    associatePublication.setString(i++, stream.getUrl());
+	    associatePublication.setString(i++, publication.getUrl());
+
+	    int affectedRows = associatePublication.executeUpdate();
+	    if (affectedRows == 0) {
+		return false;
+	    }
+	    return true;
+
+	} catch (SQLException e) {
+	    throw new DAOException(e);
+	}
+    }
+    
+    public boolean associateUser(Stream stream, User user) {
+	try {
+
+	    int i = 1;
+
+	    associateUser.setString(i++, user.getMail());
+	    associateUser.setString(i++, stream.getUrl());
+
+	    int affectedRows = associateUser.executeUpdate();
+	    if (affectedRows == 0) {
+		return false;
+	    }
+	    return true;
+
+	} catch (SQLException e) {
+	    throw new DAOException(e);
+	}
+    }
+
     @Override
     protected void finalize() throws Throwable {
 	super.finalize();
@@ -190,6 +236,12 @@ public class StreamDAOImpl implements GenericDAO<Stream, String> {
 	    }
 	    if (streamsOfUser != null) {
 		streamsOfUser.close();
+	    }
+	    if (associatePublication != null) {
+		associatePublication.close();
+	    }
+	    if (associateUser != null) {
+		associateUser.close();
 	    }
 
 	} catch (Throwable t) {

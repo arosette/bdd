@@ -95,7 +95,6 @@ public class PublicationDAOImpl implements GenericDAO<Publication, String> {
 	    insertStatement.setString(i++, publication.getTitle());
 	    insertStatement.setString(i++, publication.getDate());
 	    insertStatement.setString(i++, publication.getDescription());
-	    insertStatement.setBoolean(i++, publication.isRead());
 
 	    int affectedRows = insertStatement.executeUpdate();
 	    if (affectedRows == 0) {

@@ -240,7 +240,7 @@ public class MainFrameController {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-	    new AddStreamController();
+	    new AddStreamController(currentUser);
 	}
 
     }
