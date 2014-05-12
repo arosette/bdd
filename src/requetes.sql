@@ -160,7 +160,7 @@ WHERE f.Status = TRUE AND (mail_sender = u.mail OR mail_receiver = u.mail)
 --> R1 Liste tous les utilisateurs qui ont au plus 2 amis
 -- (et ceux qui n'ont pas d'amis ne sont pas comptabilisés)
 ------------------------------------------------------------
-SELECT u.surname, count(*)
+SELECT u.*
 FROM User u, Friendship f 
 WHERE (f.Status = TRUE AND (mail_sender = u.mail OR mail_receiver = u.mail))
 GROUP BY u.mail

@@ -1,0 +1,211 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage[a4paper]{geometry}
+\usepackage{hyperref}
+\geometry{hscale=0.75,vscale=0.78,centering}
+\usepackage{graphicx}
+
+\usepackage{tikz}
+
+\begin{document}
+
+\begin{titlepage}
+    \begin{center}
+
+	\begin{tikzpicture}[remember picture, overlay]
+	  \node [anchor=north east, inner sep=0pt]  at (current page.north east)
+	     {\includegraphics[height=3cm]{Banniere_ULB.png}};
+	\end{tikzpicture}
+	
+        {\Large \textbf{\textsc{Faculté des Sciences}}\\
+        \textbf{\textsc{Département d'Informatique}}}
+
+        \vfill{}\vfill{}
+
+        \begin{center}
+            \Huge{INFO-H-303}
+                \Huge{Projet Base de données}
+        \end{center}
+        \Huge{\par}
+        \begin{center}
+            \large{
+                \textsc{Omer} Nicolas \\
+                \textsc{Rosette} Arnaud \\
+            }
+        \end{center}
+        \Huge{\par}
+
+        \vfill{}\vfill{}
+        \large{\par}
+
+        \vfill{}\vfill{}\enlargethispage{3cm}
+
+        \begin{figure} [h!]
+             \centering
+	    \includegraphics[width=4cm]{Sigle_ULB.png}
+	\end{figure}
+
+        \textbf{Année académique 2013~-~2014}
+        
+    \end{center}
+\end{titlepage}
+
+\tableofcontents
+\pagebreak
+
+\section{Etude de cas}
+
+Il nous est demandé d'implémenter une application de création de flux d'information RSS 2.0. Il devra être possible pour des utilisateurs de consulter ces flux d'informations (par le biais de publications) et de s'abonner aux flux qui les intéressent. Ce concept est directement inspiré du lecteur de flux \textit{Google Reader}. De plus, les utilisateurs pourront s'envoyer des demandes d'amitié (afin de s'abonner au flux de leur amis) et partager les publications qui les intéressent. Ils pourront également commenter les publications partagées s'ils le désirent. 
+
+\section{Modèle entité-relation}
+
+Afin de modéliser la façon dont les informations seront physiquement enregistrées en base de données (au moyen d'SQL), voici un diagramme entité-association fournissant une description graphique du modèle conceptuel de données.
+
+\subsection{Schéma}
+
+	\begin{figure}[h!]
+	    \centering
+	    \includegraphics[width=15cm]{Entite-Relation-2.pdf}
+	    \caption{Modèle entité-relation de l'application}
+	    \label{fig:Entite-Relation}
+	\end{figure}
+
+\subsection{Contraintes d’intégrité}
+
+	\begin{itemize}
+	    \item Un utilisateur ne peut commenter qu'une seule fois une publication
+	    \item Un utilisateur peut commenter uniquement les publications de son flux personnel ou du flux d'un ami
+	    \item Un utilisateur n'est pas inscrit à son propre flux
+	    \item Un utilisateur ne peut pas envoyer une demande d'ami s'il a déjà reçu une demande du même utilisateur 
+	    \item Chaque utilisateur est inscrit au flux de ses amis
+	    \item Sur une publication, un utilisateur ne voit que les commentaires de ses amis 
+	    \item La valeur de l'attribut "Date d’Inscription" de la table "Utilisateur" est antérieure aux valeurs respectives des attributs "Date de Souscription" de la relation "Souscrire", "Date de Lecture" de la relation "Lire", "Date de Commentaire" de la relation "Commenter" et "Date de Demande" de la relation "Amitié".
+	    \item La valeur de l'attribut "Date de Publication" de la table "Publication" est antérieure aux valeurs respectives des attributs "Date de Lecture" de la relation "Lire" et "Date de Commentaire" de la relation "Commenter".
+	\end{itemize}
+
+\subsection{Hypothèses du modèle}
+
+La relation \textit{FriendShip}, une fois traduite en base de données, comprend deux attributs mail\_.sender et mail\_.receiver (clefs étrangères référençant des champs de la table \textit{User}).
+
+\section{Modèle relationnel}
+
+Cette section comprend quant à elle le modèle logique directement tiré du diagramme entité-association. 
+
+\subsection{Traduction}
+
+User(\underline {mail}, surname, password, avatar, country, city, \textit{biography},  date, personal\_.stream\_.url)
+
+personal\_.stream\_.url référence Stream.url
+\\\\
+Stream(\underline {url}, name, webLink, description)
+\\\\
+Publication(\underline {url}, title, date, description)
+\\\\
+Friendship(\underline {mail\_.sender},\underline {mail\_.receiver}, status, date)
+
+mail\_.sender référence User.mail 
+
+mail\_.receiver référence User.mail
+\\\\
+Comment(\underline {user\_.mail}, \underline {publication\_.url}, \underline {stream\_.url}, content, date)
+
+user\_.mail référence User.mail
+
+publication\_.url référence Publication.url
+\\\\
+Read(\underline {user\_.mail}, \underline {publication\_.url}, date)
+
+user\_.mail référence User.mail
+
+publication\_.url référence Publication.url
+\\\\
+Propose(\underline {stream\_.url}, \underline {publication\_.url})
+
+stream\_.url référence Stream.url
+
+publication\_.url référence Publication.url
+\\\\
+Subscribe(\underline {user\_.mail}, \underline {stream\_.url}, date)
+
+user\_.mail référence User.mail
+
+stream\_.url référence Stream.url
+\\\\
+
+\subsection{Contraintes}
+
+	\begin{itemize}
+	    \item La valeur de l'attribut \textit{mail} de la table \textit{User} doit respecter un format valide, c'est à dire une expression du type : [a-zA-Z0-9+. -] + @[a-z0-9-.] + \.[a-z].
+	\end{itemize}
+
+\section{Justification des choix de modélisations}
+
+Nous avions pensé à créer une table \textit{Personnal Stream} qui héritait de la table \textit{Stream} mais cela compliquait inutilement le modèle.
+
+\section{Requêtes demandées}
+
+Cette section présente les six requêtes obligatoires écrites respectivement en forme SQL, en algèbre relationnelle et en calcul relationnel tuple. Cependant, seulement les requêtes 5 et 6 ne doivent pas figurer sous ces deux dernières formes.
+
+	\begin{enumerate}
+	    \item Tous les utilisateurs qui ont au plus 2 amis
+	    \item La liste des flux auxquels a souscrit au moins un utilisateur qui a souscrit à au moins deux flux auxquel X a souscrit
+	    \item La liste des flux auxquels X a souscrit, auxquels aucun de ses amis n’a souscrit et duquel il n’a partagé aucune publication
+	    \item La liste des utilisateurs qui ont partagé au moins 3 publications que X a partagé
+	    \item La liste des flux auquel un utilisateur est inscrit avec le nombre de publications lues, le nombre de publications partagées, le pourcentage de ces dernières par rapport aux premières, cela pour les 30 derniers jours et ordonnée par le nombre de publications partagées.
+	    \item La liste des amis d’un utilisateur avec pour chacun le nombre de publications lues par jour et le nombre d’amis, ordonnée par la moyenne des lectures par jour depuis la date d’inscription de cet ami
+	\end{enumerate}
+
+\subsection{Requêtes SQL}
+
+	\begin{enumerate}
+	    \item 
+		\begin{verbatim}
+			SELECT u.*
+			FROM User u, Friendship f 
+			WHERE (f.Status = TRUE 
+			AND (mail_sender = u.mail OR mail_receiver = u.mail))
+			GROUP BY u.mail HAVING count(*) < 3;
+		\end{verbatim}
+		
+	    \item
+	    \item 
+	    \item 
+		\begin{verbatim}
+			<userX>
+			SELECT DISTINCT u.*
+			FROM User u, Comment c1, Comment c2
+			WHERE c1.user_mail = <userX>
+			AND c2.user_mail != <userX>
+			AND c1.publication_url = c2.publication_url
+			AND c2.user_mail = u.mail
+			GROUP BY u.mail
+			HAVING count(*) >= 3;
+		\end{verbatim}
+	    \item 
+	    \item 
+	\end{enumerate}
+
+\subsection{Algèbre relationnelle}
+
+	\begin{enumerate}
+	    \item 
+	    \item
+	    \item 
+	    \item
+	\end{enumerate}
+
+\subsection{Calcul relationnel tuple}
+
+	\begin{enumerate}
+	    \item 
+	    \item
+	    \item 
+	    \item
+	\end{enumerate}
+
+\section{Instructions d'exécution du programme}
+
+Concernant les détails techniques, notre programme est codé sous java et utilise MySQL comme base de données. Il nécessite donc de lancer le serveur mysql avant l'utilisation de l'application.
+
+\end{document}
