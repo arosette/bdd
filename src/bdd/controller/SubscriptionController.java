@@ -84,7 +84,8 @@ public class SubscriptionController {
 		    userToAdd.setDate(getDate());
 		    userToAdd.setPersonalStream("http://personal_stream/"
 			    + subscriptionView.getEmail());
-		    if (streamDAO.insert(streamToAdd) && userDAO.insert(userToAdd)) {
+		    if (streamDAO.insert(streamToAdd)
+			    && userDAO.insert(userToAdd)) {
 			subscriptionView.dispose();
 			dialogBox = new DialogBox("Enregistrement",
 				"Vos informations ont été sauvegardées avec succès !");
@@ -94,7 +95,7 @@ public class SubscriptionController {
 				"Un probleme est survenu lors de l'enregistrement !");
 			dialogBox.setVisible(true);
 		    }
-		    
+
 		} else {
 		    dialogBox = new DialogBox("Erreur",
 			    "L'adresse mail existe déjà dans la base de données !");
@@ -102,7 +103,8 @@ public class SubscriptionController {
 		}
 
 	    } else {
-		dialogBox = new DialogBox("Erreur", "Le format de mail est incorrect !");
+		dialogBox = new DialogBox("Erreur",
+			"Le format de mail est incorrect !");
 		dialogBox.setVisible(true);
 	    }
 	}

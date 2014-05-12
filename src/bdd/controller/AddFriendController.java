@@ -3,6 +3,9 @@ package bdd.controller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import bdd.model.Friendship;
 import bdd.model.FriendshipDAOImpl;
 import bdd.model.User;
@@ -19,6 +22,14 @@ public class AddFriendController {
 	addFriendView = new AddFriendView();
 	addFriendView.setVisible(true);
 	addFriendView.addListenerToAddButton(new AddFriendListener());
+    }
+
+    private String getDate() {
+	Date currentDate = new Date();
+	DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	String date = dateFormat.format(currentDate);
+
+	return date;
     }
 
     private class AddFriendListener implements ActionListener {
@@ -38,6 +49,7 @@ public class AddFriendController {
 			newFriendship.setSenderMail(user.getMail());
 			newFriendship.setReceiverMail(newFriend.getMail());
 			newFriendship.setStatus(false);
+			newFriendship.setDate(getDate());
 			friendshipDAO.insert(newFriendship);
 			addFriendView.dispose();
 		    } else {
