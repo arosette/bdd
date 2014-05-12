@@ -56,7 +56,7 @@
 
 \section{Etude de cas}
 
-Il nous est demandé d'implémenter une application de création de flux d'information RSS 2.0. Il devra être possible pour des utilisateurs de consulter ces flux d'informations (par le biais de publications) et de s'abonner aux flux qui les intéressent. Ce concept est directement inspiré du lecteur de flux \textit{Google Reader}. De plus, les utilisateurs pourront s'envoyer des demandes d'amitié (afin de s'abonner au flux de leur amis) et partager les publications qui les intéressent. Ils pourront également commenter les publications partagées s'ils le désirent. 
+Il nous est demandé d'implémenter une application de création de flux d'information RSS 2.0. Il devra être possible pour des utilisateurs de consulter ces flux d'informations (par le biais de publications) et de s'abonner aux flux qui les intéressent. Ce concept est directement inspiré du lecteur de flux \textsl{Google Reader}. De plus, les utilisateurs pourront s'envoyer des demandes d'amitié (afin de s'abonner au flux de leur amis) et partager les publications qui les intéressent. Ils pourront également commenter les publications partagées s'ils le désirent. 
 
 \section{Modèle entité-relation}
 
@@ -80,13 +80,13 @@ Afin de modéliser la façon dont les informations seront physiquement enregistr
 	    \item Un utilisateur ne peut pas envoyer une demande d'ami s'il a déjà reçu une demande du même utilisateur 
 	    \item Chaque utilisateur est inscrit au flux de ses amis
 	    \item Sur une publication, un utilisateur ne voit que les commentaires de ses amis 
-	    \item La valeur de l'attribut "Date d’Inscription" de la table "Utilisateur" est antérieure aux valeurs respectives des attributs "Date de Souscription" de la relation "Souscrire", "Date de Lecture" de la relation "Lire", "Date de Commentaire" de la relation "Commenter" et "Date de Demande" de la relation "Amitié".
-	    \item La valeur de l'attribut "Date de Publication" de la table "Publication" est antérieure aux valeurs respectives des attributs "Date de Lecture" de la relation "Lire" et "Date de Commentaire" de la relation "Commenter".
+	    \item La valeur de l'attribut \textsl{date} de la table \textsl{User} doit être antérieure aux valeurs respectives des attributs \textsl{date} de la relation \textsl{Subscribe}, \textsl{date} de la relation \textsl{Read}, \textsl{date} de la relation \textsl{Comment} et \textsl{date} de la relation \textsl{Friendship}.
+	    \item La valeur de l'attribut \textsl{date} de la table \textsl{Publication} doit être antérieure aux valeurs respectives des attributs \textsl{date} de la relation \textsl{Read} et date de la relation \textsl{Comment}.
 	\end{itemize}
 
 \subsection{Hypothèses du modèle}
 
-La relation \textit{FriendShip}, une fois traduite en base de données, comprend deux attributs mail\_.sender et mail\_.receiver (clefs étrangères référençant des champs de la table \textit{User}).
+La relation \textsl{FriendShip}, une fois traduite en base de données, comprend deux attributs mail\_sender et mail\_receiver (clefs étrangères référençant des champs de la table \textsl{User}). Ces derniers désignent respectivement l'émetteur et le récepteur de la demande d'amitié. On évite ainsi la confusion entre les deux et le cas problématique où l'émetteur de la demande d'amitié aurait accepté le demande sans l'aval du récepteur.
 
 \section{Modèle relationnel}
 
@@ -94,54 +94,54 @@ Cette section comprend quant à elle le modèle logique directement tiré du dia
 
 \subsection{Traduction}
 
-User(\underline {mail}, surname, password, avatar, country, city, \textit{biography},  date, personal\_.stream\_.url)
+User(\underline {mail}, surname, password, avatar, country, city, \textsl{biography},  date, personal\_stream\_url)
 
-personal\_.stream\_.url référence Stream.url
+personal\_stream\_url référence Stream.url
 \\\\
 Stream(\underline {url}, name, webLink, description)
 \\\\
 Publication(\underline {url}, title, date, description)
 \\\\
-Friendship(\underline {mail\_.sender},\underline {mail\_.receiver}, status, date)
+Friendship(\underline {mail\_sender},\underline {mail\_receiver}, status, date)
 
-mail\_.sender référence User.mail 
+mail\_sender référence User.mail 
 
-mail\_.receiver référence User.mail
+mail\_receiver référence User.mail
 \\\\
-Comment(\underline {user\_.mail}, \underline {publication\_.url}, \underline {stream\_.url}, content, date)
+Comment(\underline {user\_mail}, \underline {publication\_url}, \underline {stream\_url}, content, date)
 
-user\_.mail référence User.mail
+user\_mail référence User.mail
 
-publication\_.url référence Publication.url
+publication\_url référence Publication.url
 \\\\
-Read(\underline {user\_.mail}, \underline {publication\_.url}, date)
+Read(\underline {user\_mail}, \underline {publication\_url}, date)
 
-user\_.mail référence User.mail
+user\_mail référence User.mail
 
-publication\_.url référence Publication.url
+publication\_url référence Publication.url
 \\\\
-Propose(\underline {stream\_.url}, \underline {publication\_.url})
+Propose(\underline {stream\_url}, \underline {publication\_url})
 
-stream\_.url référence Stream.url
+stream\_url référence Stream.url
 
-publication\_.url référence Publication.url
+publication\_url référence Publication.url
 \\\\
-Subscribe(\underline {user\_.mail}, \underline {stream\_.url}, date)
+Subscribe(\underline {user\_mail}, \underline {stream\_url}, date)
 
-user\_.mail référence User.mail
+user\_mail référence User.mail
 
-stream\_.url référence Stream.url
+stream\_url référence Stream.url
 \\\\
 
 \subsection{Contraintes}
 
 	\begin{itemize}
-	    \item La valeur de l'attribut \textit{mail} de la table \textit{User} doit respecter un format valide, c'est à dire une expression du type : [a-zA-Z0-9+. -] + @[a-z0-9-.] + \.[a-z].
+	    \item La valeur de l'attribut \textsl{mail} de la table \textsl{User} doit respecter un format valide, c'est à dire une expression du type : [a-zA-Z0-9+. -] + @[a-z0-9-.] + \.[a-z].
 	\end{itemize}
 
 \section{Justification des choix de modélisations}
 
-Nous avions pensé à créer une table \textit{Personnal Stream} qui héritait de la table \textit{Stream} mais cela compliquait inutilement le modèle.
+Nous avions pensé à créer une table \textsl{Personnal Stream} qui héritait de la table \textsl{Stream} mais cela compliquait inutilement le modèle.
 
 \section{Requêtes demandées}
 
