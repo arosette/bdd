@@ -66,7 +66,8 @@ public class MainFrameController {
 		.addListenerToPublicationJList(new PublicationPopupMenuListener());
 	mainFrameView
 		.addListenerToFriendJList(new FriendshipPopupMenuListener());
-	mainFrameView.addListenerToAddStreamItem(new AddStreamItemListener());
+	mainFrameView.addListenerToAddXmlStreamItem(new AddXmlStreamItemListener());
+	mainFrameView.addListenerToAddExistingStreamItem(new AddExistingStreamItemListener());
 	mainFrameView.addListenerToAddFriendItem(new AddFriendItemListener());
 	mainFrameView.addListenerToRefreshButton(new RefreshButtonListener());
 	mainFrameView
@@ -246,13 +247,22 @@ public class MainFrameController {
 	}
     }
 
-    private class AddStreamItemListener implements ActionListener {
+    private class AddXmlStreamItemListener implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-	    new AddStreamController(currentUser);
+	    new AddXmlStreamController(currentUser);
 	}
 
+    }
+    
+    private class AddExistingStreamItemListener implements ActionListener {
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+	    new AddExistingStreamController(currentUser);
+	}
+	
     }
 
     private class AddFriendItemListener implements ActionListener {

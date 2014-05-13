@@ -1,6 +1,5 @@
 package bdd.view;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -8,8 +7,6 @@ import java.awt.Insets;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -37,7 +34,8 @@ public class MainFrameView extends JFrame {
     private JList<Publication> publicationJList;
     private JList<Friendship> friendJList;
     private User currentUser;
-    private JMenuItem addStreamUrlItem;
+    private JMenuItem addXmlStreamItem;
+    private JMenuItem addExistingStreamItem;
     private JMenuItem addFriendItem;
     private JButton refreshButton;
     private JButton loadNewPublicationsButton;
@@ -120,11 +118,15 @@ public class MainFrameView extends JFrame {
 	// Menu
 	JMenuBar menuBar = new JMenuBar();
 	JMenu streamMenu = new JMenu("Flux");
-	addStreamUrlItem = new JMenuItem("Ajouter un flux depuis un fichier xml...");
+	addXmlStreamItem = new JMenuItem(
+		"Ajouter un flux depuis un fichier xml...");
+	addExistingStreamItem = new JMenuItem(
+		"Ajouter un flux qui existe deja en bdd...");
 	JMenu friendMenu = new JMenu("Amis");
 	addFriendItem = new JMenuItem("Ajouter un ami...");
 
-	streamMenu.add(addStreamUrlItem);
+	streamMenu.add(addXmlStreamItem);
+	streamMenu.add(addExistingStreamItem);
 	menuBar.add(streamMenu);
 
 	friendMenu.add(addFriendItem);
@@ -182,20 +184,22 @@ public class MainFrameView extends JFrame {
     public void addListenerToPublicationJList(MouseListener mouseListener) {
 	publicationJList.addMouseListener(mouseListener);
     }
-    
+
     public Friendship getSelectedFriendship() {
 	return friendJList.getSelectedValue();
     }
-    
+
     public void addListenerToFriendJList(MouseListener mouseListener) {
 	friendJList.addMouseListener(mouseListener);
     }
 
-    public void addListenerToAddStreamItem(ActionListener actionListener) {
-	addStreamUrlItem.addActionListener(actionListener);
+    public void addListenerToAddXmlStreamItem(ActionListener actionListener) {
+	addXmlStreamItem.addActionListener(actionListener);
     }
-    
-    
+
+    public void addListenerToAddExistingStreamItem(ActionListener actionListener) {
+	addExistingStreamItem.addActionListener(actionListener);
+    }
 
     public void addListenerToAddFriendItem(ActionListener actionListener) {
 	addFriendItem.addActionListener(actionListener);

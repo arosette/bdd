@@ -10,15 +10,15 @@ import bdd.model.Stream;
 import bdd.model.StreamDAOImpl;
 import bdd.model.User;
 import bdd.parser.RssParser;
-import bdd.view.AddStreamView;
+import bdd.view.AddXmlStreamView;
 
-public class AddStreamController {
-    private AddStreamView streamView;
+public class AddXmlStreamController {
+    private AddXmlStreamView streamView;
     private User user;
 
-    public AddStreamController(User user) {
+    public AddXmlStreamController(User user) {
 	this.user = user;
-	streamView = new AddStreamView();
+	streamView = new AddXmlStreamView();
 	streamView.setVisible(true);
 	streamView.addListenerToAddButton(new AddStreamListener());
     }
@@ -30,8 +30,6 @@ public class AddStreamController {
 
 	    StreamDAOImpl streamDAO = new StreamDAOImpl();
 	    Stream stream = streamDAO.find(streamView.getUrl());
-
-	    System.out.println("Le flux : " + stream);
 
 	    // Si le flux n'existe pas, on l'ajoute en bdd
 	    if (stream == null) {

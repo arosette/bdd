@@ -1,23 +1,22 @@
 package bdd.view;
 
-import java.awt.EventQueue;
 import java.awt.event.ActionListener;
 
-import javax.swing.JDialog;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-import javax.swing.JButton;
 
-public class AddStreamView extends JDialog {
+public class AddExistingStreamView extends JDialog {
     private JTextField urlTextfield;
     private JButton addButton;
 
     /**
      * Create the dialog.
      */
-    public AddStreamView() {
-	setTitle("Ajouter un flux RSS");
+    public AddExistingStreamView() {
+	setTitle("Ajouter un flux RSS deja existant en bdd");
 	setBounds(100, 100, 300, 88);
 	getContentPane().setLayout(
 		new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
@@ -33,11 +32,11 @@ public class AddStreamView extends JDialog {
 	getContentPane().add(addButton);
 
     }
-    
+
     public void addListenerToAddButton(ActionListener actionListener) {
 	addButton.addActionListener(actionListener);
     }
-    
+
     public String getUrl() {
 	return urlTextfield.getText();
     }
