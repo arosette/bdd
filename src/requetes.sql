@@ -166,6 +166,12 @@ WHERE (f.Status = TRUE AND (mail_sender = u.mail OR mail_receiver = u.mail))
 GROUP BY u.mail
 HAVING count(*) < 3
 
+SELECT u.* 
+FROM User u LEFT JOIN Friendship f ON f.mail_sender = u.mail OR f.mail_receiver = u.mail 
+WHERE f.status = TRUE 
+GROUP BY u.mail 
+HAVING COUNT(*) < 3
+
 --> Liste tous les flux de l'utilisateur
 -----------------------------------------
 <user>
