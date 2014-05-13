@@ -22,17 +22,17 @@ Insertion des donnees de test
 
 --> Utilisateurs
 -----------------
-INSERT INTO User (mail, surname, password, avatar, country, city, biography, personal_stream_url) VALUES ("arosette@ulb.ac.be", "arosette", "arosette", "~/Images/arosette.jpg", "Belgique", "Theux", "Je suis un etudiant qui etudie à l'ulb et vit à Theux", "http://personal_stream/arosette@ulb.ac.be");
+INSERT INTO User (mail, surname, password, avatar, country, city, biography, date, personal_stream_url) VALUES ("arosette@ulb.ac.be", "arosette", "arosette", "~/Images/arosette.jpg", "Belgique", "Theux", "Je suis un etudiant qui etudie à l'ulb et vit à Theux", '2009-02-02', "http://personal_stream/arosette@ulb.ac.be");
 
-INSERT INTO User (mail, surname, password, avatar, country, city, biography, personal_stream_url) VALUES ("nomer@ulb.ac.be", "nomer", "nomer", "~/Images/nomer.jpg", "Belgique", "Bruxelles", "Je suis un etudiant qui etudie à l'ulb et vit à Bruxelles", "http://personal_stream/nomer@ulb.ac.be");
+INSERT INTO User (mail, surname, password, avatar, country, city, biography, date, personal_stream_url) VALUES ("nomer@ulb.ac.be", "nomer", "nomer", "~/Images/nomer.jpg", "Belgique", "Bruxelles", "Je suis un etudiant qui etudie à l'ulb et vit à Bruxelles", '2009-01-02', "http://personal_stream/nomer@ulb.ac.be");
 
-INSERT INTO User (mail, surname, password, avatar, country, city, biography, personal_stream_url) VALUES ("pveranneman@ulb.ac.be", "pveranneman", "pveranneman", "~/Images/pveranneman.jpg", "Bresil", "Rio", "Je suis un etudiant qui etudie à l'ulb et vit à Rio", "http://personal_stream/pveranneman@ulb.ac.be");
+INSERT INTO User (mail, surname, password, avatar, country, city, biography, date, personal_stream_url) VALUES ("pveranneman@ulb.ac.be", "pveranneman", "pveranneman", "~/Images/pveranneman.jpg", "Bresil", "Rio", "Je suis un etudiant qui etudie à l'ulb et vit à Rio", '2007-02-02', "http://personal_stream/pveranneman@ulb.ac.be");
 
-INSERT INTO User (mail, surname, password, avatar, country, city, biography, personal_stream_url) VALUES ("lpostula@ulb.ac.be", "lpostula", "lpostula", "~/Images/lpostula.jpg", "Belgique", "Liege", "Je suis un etudiant qui etudie à l'ulb et vit à Liege", "http://personal_stream/lpostula@ulb.ac.be");
+INSERT INTO User (mail, surname, password, avatar, country, city, biography, date, personal_stream_url) VALUES ("lpostula@ulb.ac.be", "lpostula", "lpostula", "~/Images/lpostula.jpg", "Belgique", "Liege", "Je suis un etudiant qui etudie à l'ulb et vit à Liege", '2009-03-02', "http://personal_stream/lpostula@ulb.ac.be");
 
-INSERT INTO User (mail, surname, password, avatar, country, city, biography, personal_stream_url) VALUES ("sbeyen@ulb.ac.be", "sbeyen", "sbeyen", "~/Images/sbeyen.jpg", "Allemagne", "Berlin", "Je suis un etudiant qui etudie à l'ulb et vit à Berlin", "http://personal_stream/sbeyen@ulb.ac.be");
+INSERT INTO User (mail, surname, password, avatar, country, city, biography, date, personal_stream_url) VALUES ("sbeyen@ulb.ac.be", "sbeyen", "sbeyen", "~/Images/sbeyen.jpg", "Allemagne", "Berlin", "Je suis un etudiant qui etudie à l'ulb et vit à Berlin", '2010-01-01', "http://personal_stream/sbeyen@ulb.ac.be");
 
-INSERT INTO User (mail, surname, password, avatar, country, city, biography, personal_stream_url) VALUES ("spicard@ulb.ac.be", "spicard", "spicard", "~/Images/spicard.jpg", "Belgique", "Ostende", "Je suis un etudiant qui etudie à l'ulb et vit à Ostende", "http://personal_stream/spicard@ulb.ac.be");
+INSERT INTO User (mail, surname, password, avatar, country, city, biography, date, personal_stream_url) VALUES ("spicard@ulb.ac.be", "spicard", "spicard", "~/Images/spicard.jpg", "Belgique", "Ostende", "Je suis un etudiant qui etudie à l'ulb et vit à Ostende", '2008-01-02', "http://personal_stream/spicard@ulb.ac.be");
 
 --> Flux
 -----------------
@@ -139,6 +139,15 @@ INSERT INTO Propose (stream_url, publication_url) VALUES ("http://www.jeuxvideo.
 
 INSERT INTO Propose (stream_url, publication_url) VALUES ("http://www.youtube.com", "http://www.videos.com");
 
+INSERT INTO Propose (stream_url, publication_url) VALUES ("http://personal_stream/nomer@ulb.ac.be", "http://www.games.com");
+
+--> Lecture
+------------
+
+INSERT INTO `Read` (user_mail, publication_url, date) VALUES ("nomer@ulb.ac.be", "http://www.perdu.com", '2011-11-02');
+
+INSERT INTO `Read` (user_mail, publication_url, date) VALUES ("nomer@ulb.ac.be", "http://www.games.com", '2013-09-02');
+
 Requetes de selection
 ----------------------
 
@@ -218,7 +227,7 @@ WHERE s.url IN (
 <stream>
 SELECT p.publication_url
 FROM Propose p
-WHERE P.stream_url = <stream>.url
+WHERE p.stream_url = <stream>.url
 
 --> Détermine à quel flux appartient la publication
 ----------------------------------------------------
@@ -278,6 +287,21 @@ AND c2.user_mail = u.mail
 GROUP BY u.mail
 HAVING count(*) >= 3;
 
+--> La liste des flux auquel un utilisateur est inscrit avec le 
+-- nombre de publications lues, le nombre de publications partagées, 
+-- le pourcentage de ces dernières par rapport aux premières
+--------------------------------------------------------------------
+<user>
+SELECT s.url AS Data FROM Stream s WHERE s.url IN (
+    SELECT (sub.stream_url) FROM Subscribe sub WHERE sub.user_mail = <user>)
+UNION
+SELECT COUNT(*) FROM `Read` WHERE user_mail = <user>.mail
+UNION
+SELECT COUNT(*) FROM Propose p WHERE p.stream_url = <user>.personal_stream_url
+UNION
+SELECT (COUNT(*) / (SELECT COUNT(*) FROM `Read` WHERE user_mail = <user>.mail))
+FROM Propose p WHERE p.stream_url = <user>.personal_stream_url;
+
 --> R5 : La liste des flux auquel un utilisateur est inscrit avec le 
 -- nombre de publications lues, le nombre de publications partagées, le 
 -- pourcentage de ces dernières par rapport aux premières, cela pour les 
@@ -304,4 +328,4 @@ SELECT * FROM Publication pub WHERE pub.url IN (
 --> Savoir si une publication est lue par un utilisateur
 ---------------------------------------------------------
 <user>, <publication>
-SELECT COUNT(*) FROM `Read` WHERE user_mail = <user> AND publication_url = <publication>
+SELECT COUNT(*) FROM `Read` WHERE user_mail = <user>.mail AND publication_url = <publication>.url
