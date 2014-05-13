@@ -167,8 +167,23 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 			AND (mail_sender = u.mail OR mail_receiver = u.mail))
 			GROUP BY u.mail HAVING count(*) < 3;
 		\end{verbatim}
-		
 	    \item
+	        \begin{verbatim}
+		<userX>
+		SELECT s.url
+		FROM Stream s 
+		WHERE s.url IN (
+		    SELECT (sub.stream_url) 
+		    FROM Subscribe sub 
+		    WHERE (sub.user_mail = (
+		        SELECT mail
+		        FROM (SELECT s.url FROM Stream s WHERE s.url IN (
+		            SELECT (sub.stream_url) FROM Subscribe sub WHERE sub.user_mail = <userX>)) AS url
+		        NATURAL JOIN (SELECT u.mail, s.url FROM User u, Stream s WHERE s.url IN (
+		            SELECT (sub.stream_url) FROM Subscribe sub 
+		            WHERE (sub.user_mail = u.mail AND sub.user_mail != <userX>))) AS mail
+		        GROUP BY mail HAVING count(*) >= 2)));
+		\end{verbatim}
 	    \item 
 	    \item 
 		\begin{verbatim}

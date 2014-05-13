@@ -179,8 +179,8 @@ SELECT u.surname, s.url FROM User u, Stream s WHERE s.url IN (
 -- utilisateur qui a souscrit à au moins deux flux auxquel X a souscrit
 -------------------------------------------------------------------------
 <userX>
-CREATE TEMPORARY TABLE TMP_USER1_SUBSCRIPTIONS SELECT s.url FROM Stream s WHERE s.url IN (SELECT (sub.stream_url) FROM Subscribe sub WHERE sub.user_mail = <userX>.mail)
-CREATE TEMPORARY TABLE TMP_USER2_SUBSCRIPTIONS SELECT u.mail, s.url FROM User u, Stream s WHERE s.url IN (SELECT (sub.stream_url) FROM Subscribe sub WHERE (sub.user_mail = u.mail AND sub.user_mail != <userX>.mail))
+CREATE TEMPORARY TABLE TMP_USER1_SUBSCRIPTIONS SELECT s.url FROM Stream s WHERE s.url IN (SELECT (sub.stream_url) FROM Subscribe sub WHERE sub.user_mail = <userX>);
+CREATE TEMPORARY TABLE TMP_USER2_SUBSCRIPTIONS SELECT u.mail, s.url FROM User u, Stream s WHERE s.url IN (SELECT (sub.stream_url) FROM Subscribe sub WHERE (sub.user_mail = u.mail AND sub.user_mail != <userX>));
 
 SELECT s.url
 FROM Stream s 
@@ -191,10 +191,27 @@ WHERE s.url IN (
         SELECT mail 
         FROM TMP_USER1_SUBSCRIPTIONS 
         NATURAL JOIN TMP_USER2_SUBSCRIPTIONS 
-        GROUP BY mail HAVING count(*) >= 2)))
-        
-DROP TABLE TMP_USER1_SUBSCRIPTIONS
-DROP TABLE TMP_USER2_SUBSCRIPTIONS
+        GROUP BY mail HAVING count(*) >= 2)));
+
+DROP TABLE TMP_USER1_SUBSCRIPTIONS;
+DROP TABLE TMP_USER2_SUBSCRIPTIONS;
+
+--> Sans tables temporaires
+---------------------------
+<userX>
+SELECT s.url
+FROM Stream s 
+WHERE s.url IN (
+    SELECT (sub.stream_url) 
+    FROM Subscribe sub 
+    WHERE (sub.user_mail = (
+        SELECT mail
+        FROM (SELECT s.url FROM Stream s WHERE s.url IN (
+            SELECT (sub.stream_url) FROM Subscribe sub WHERE sub.user_mail = <userX>)) AS url
+        NATURAL JOIN (SELECT u.mail, s.url FROM User u, Stream s WHERE s.url IN (
+            SELECT (sub.stream_url) FROM Subscribe sub 
+            WHERE (sub.user_mail = u.mail AND sub.user_mail != <userX>))) AS mail
+        GROUP BY mail HAVING count(*) >= 2)));
 
 --> Liste des publications d'un flux
 -------------------------------------
