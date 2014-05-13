@@ -66,8 +66,10 @@ public class MainFrameController {
 		.addListenerToPublicationJList(new PublicationPopupMenuListener());
 	mainFrameView
 		.addListenerToFriendJList(new FriendshipPopupMenuListener());
-	mainFrameView.addListenerToAddXmlStreamItem(new AddXmlStreamItemListener());
-	mainFrameView.addListenerToAddExistingStreamItem(new AddExistingStreamItemListener());
+	mainFrameView
+		.addListenerToAddXmlStreamItem(new AddXmlStreamItemListener());
+	mainFrameView
+		.addListenerToAddExistingStreamItem(new AddExistingStreamItemListener());
 	mainFrameView.addListenerToAddFriendItem(new AddFriendItemListener());
 	mainFrameView.addListenerToRefreshButton(new RefreshButtonListener());
 	mainFrameView
@@ -146,13 +148,26 @@ public class MainFrameController {
 			selectedPublication.setRead(true);
 		    }
 
-		    new PublicationController(selectedPublication,
-			    mainFrameView);
+		    new PublicationController(selectedPublication);
 		}
 	    });
 	    menu.add(openLink);
 
 	    // Partage de la publication
+	    JMenuItem sharePublication = new JMenuItem(
+		    "Partager la publication...");
+	    sharePublication.addActionListener(new ActionListener() {
+	        
+	        @Override
+	        public void actionPerformed(ActionEvent e) {
+	            Publication selectedPublication = mainFrameView
+			    .getSelectedPublication();
+	            
+	            new ShareController(selectedPublication);
+	        }
+	    });
+
+	    menu.add(sharePublication);
 
 	}
 
@@ -255,14 +270,14 @@ public class MainFrameController {
 	}
 
     }
-    
+
     private class AddExistingStreamItemListener implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 	    new AddExistingStreamController(currentUser);
 	}
-	
+
     }
 
     private class AddFriendItemListener implements ActionListener {
