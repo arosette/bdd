@@ -53,7 +53,8 @@ public class AddXmlStreamController {
 			publicationDAO.insert(publication);
 		    }
 
-		    streamDAO.associatePublication(stream, publication);
+		    streamDAO.associatePublication(stream.getUrl(),
+			    publication.getUrl());
 		}
 	    }
 

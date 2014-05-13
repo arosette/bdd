@@ -29,7 +29,7 @@ public class CommentDAOImpl implements GenericDAO<Comment, String> {
 	    findStatementB = connection
 		    .prepareStatement("SELECT * FROM Comment WHERE user_mail = ? AND publication_url = ? AND stream_url = ?");
 	    insertStatement = connection
-		    .prepareStatement("INSERT INTO Comment VALUES (?, ?, ?, ?, ?)");
+		    .prepareStatement("INSERT INTO Comment VALUES (?, ?, ?, ?, CURDATE())");
 	    deleteStatement = connection
 		    .prepareStatement("DELETE FROM Comment WHERE user_mail = ? AND publication_url = ? AND stream_url = ?");
 
@@ -115,7 +115,6 @@ public class CommentDAOImpl implements GenericDAO<Comment, String> {
 	    insertStatement.setString(i++, comment.getPublicationUrl());
 	    insertStatement.setString(i++, comment.getStreamUrl());
 	    insertStatement.setString(i++, comment.getContent());
-	    insertStatement.setString(i++, comment.getDate());
 
 	    int affectedRows = insertStatement.executeUpdate();
 	    if (affectedRows == 0) {

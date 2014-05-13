@@ -21,6 +21,7 @@ public class StreamDAOImpl implements GenericDAO<Stream, String> {
     private PreparedStatement associateUser = null;
     private PreparedStatement selectStreamsWithoutPersonal = null;
     private PreparedStatement hasUserSubscribeToStream = null;
+    private PreparedStatement selectPublicationAssociateToStream = null;
 
     public StreamDAOImpl() throws DAOException {
 	mysqlConnection = MysqlConnection.getInstance();
@@ -49,6 +50,9 @@ public class StreamDAOImpl implements GenericDAO<Stream, String> {
 
 	    hasUserSubscribeToStream = connection
 		    .prepareStatement("SELECT COUNT(*) FROM Subscribe WHERE user_mail = ? AND stream_url = ?");
+
+	    selectPublicationAssociateToStream = connection
+		    .prepareStatement("SELECT COUNT(*) FROM Propose WHERE stream_url = ? AND publication_url = ?");
 
 	} catch (SQLException e) {
 	    throw new DAOException(e);
@@ -185,13 +189,13 @@ public class StreamDAOImpl implements GenericDAO<Stream, String> {
 	return convertResultSetToStream(res);
     }
 
-    public boolean associatePublication(Stream stream, Publication publication) {
+    public boolean associatePublication(String streamUrl, String publicationUrl) {
 	try {
 
 	    int i = 1;
 
-	    associatePublication.setString(i++, stream.getUrl());
-	    associatePublication.setString(i++, publication.getUrl());
+	    associatePublication.setString(i++, streamUrl);
+	    associatePublication.setString(i++, publicationUrl);
 
 	    int affectedRows = associatePublication.executeUpdate();
 	    if (affectedRows == 0) {
@@ -253,6 +257,28 @@ public class StreamDAOImpl implements GenericDAO<Stream, String> {
 	    throw new DAOException(e);
 	}
 	return hasSubscribe;
+    }
+    
+    public boolean isPublicationAssociateWithStream(String streamUrl, String publicationUrl) {
+	boolean exists = false;
+	try {
+	    selectPublicationAssociateToStream.setString(1, streamUrl);
+	    selectPublicationAssociateToStream.setString(2, publicationUrl);
+	    ResultSet res = selectPublicationAssociateToStream.executeQuery();
+
+	    if (res.next()) {
+		if (res.getInt(1) == 0) {
+		    exists = false;
+		} else {
+		    exists = true;
+		}
+	    } else {
+		System.out.println("Probleme pour récupérer le count");
+	    }
+	} catch (SQLException e) {
+	    throw new DAOException(e);
+	}
+	return exists;
     }
 
     @Override

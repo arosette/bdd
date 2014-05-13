@@ -157,14 +157,14 @@ public class MainFrameController {
 	    JMenuItem sharePublication = new JMenuItem(
 		    "Partager la publication...");
 	    sharePublication.addActionListener(new ActionListener() {
-	        
-	        @Override
-	        public void actionPerformed(ActionEvent e) {
-	            Publication selectedPublication = mainFrameView
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+		    Publication selectedPublication = mainFrameView
 			    .getSelectedPublication();
-	            
-	            new ShareController(selectedPublication);
-	        }
+
+		    new ShareController(selectedPublication, currentUser);
+		}
 	    });
 
 	    menu.add(sharePublication);
@@ -333,7 +333,8 @@ public class MainFrameController {
 			publicationDAO.insert(publication);
 		    }
 
-		    streamDAO.associatePublication(stream, publication);
+		    streamDAO.associatePublication(stream.getUrl(),
+			    publication.getUrl());
 		}
 	    }
 	}
