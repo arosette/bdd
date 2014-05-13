@@ -93,7 +93,7 @@ public class MainFrameController {
 
 	public StreamPopupMenuListener() {
 	    menu = new JPopupMenu();
-	    JMenuItem openLink = new JMenuItem("Ouvrir le lien");
+	    JMenuItem openLink = new JMenuItem("Ouvrir...");
 
 	    // Creation du listener sur l'item qui permet d'ouvrir le lien sur
 	    // le navigateur
@@ -101,15 +101,7 @@ public class MainFrameController {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    try {
-			Desktop.getDesktop().browse(
-				new URI(mainFrameView.getSelectedStream()
-					.getUrl()));
-		    } catch (IOException e1) {
-			e1.printStackTrace();
-		    } catch (URISyntaxException e1) {
-			e1.printStackTrace();
-		    }
+		    new StreamController(mainFrameView.getSelectedStream());
 		}
 	    });
 	    menu.add(openLink);

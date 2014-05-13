@@ -40,6 +40,7 @@ public class PublicationView extends JDialog {
      * Create the dialog.
      */
     public PublicationView() {
+    	setTitle("Publication");
 	setBounds(100, 100, 694, 452);
 	GridBagLayout gridBagLayout = new GridBagLayout();
 	gridBagLayout.columnWidths = new int[] { 119, 348, 0 };
