@@ -1,5 +1,6 @@
 package bdd.view.renderer;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,6 +30,13 @@ public class FriendRenderer implements ListCellRenderer<Friendship> {
 
 	JPanel panel = new JPanel();
 	panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+
+	if ((index % 2) == 1) {
+	    panel.setBackground(Color.white);
+	}
+	if (isSelected) {
+	    panel.setBackground(Color.cyan);
+	}
 
 	String mailOfFriend = new String("Error");
 

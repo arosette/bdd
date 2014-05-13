@@ -13,7 +13,7 @@ import javax.swing.ListCellRenderer;
 import bdd.model.Stream;
 
 public class StreamRenderer implements ListCellRenderer<Stream> {
-    
+
     private static final int maxLength = 30;
 
     @Override
@@ -23,6 +23,13 @@ public class StreamRenderer implements ListCellRenderer<Stream> {
 	JPanel panel = new JPanel();
 
 	panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+
+	if ((index % 2) == 1) {
+	    panel.setBackground(Color.white);
+	}
+	if (isSelected) {
+	    panel.setBackground(Color.cyan);
+	}
 
 	String name = value.getName();
 	if (name.length() >= maxLength) {
@@ -47,10 +54,6 @@ public class StreamRenderer implements ListCellRenderer<Stream> {
 	JLabel streamUrl = new JLabel(url);
 	streamUrl.setForeground(Color.blue);
 	panel.add(streamUrl);
-
-	if (isSelected) {
-	    panel.setBackground(Color.cyan);
-	}
 
 	return panel;
     }
