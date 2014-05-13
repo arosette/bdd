@@ -15,6 +15,8 @@ import bdd.model.Publication;
 
 public class PublicationRenderer implements ListCellRenderer<Publication> {
 
+    private static final int maxLength = 30;
+
     @Override
     public Component getListCellRendererComponent(
 	    JList<? extends Publication> list, Publication value, int index,
@@ -38,15 +40,19 @@ public class PublicationRenderer implements ListCellRenderer<Publication> {
 	panel.add(publicationRed);
 
 	// Titre
-	JLabel publicationTitle = new JLabel(value.getTitle());
+	String title = value.getTitle();
+	if (title.length() >= maxLength) {
+	    title = title.substring(0, maxLength) + "...";
+	}
+	JLabel publicationTitle = new JLabel(title);
 	publicationTitle.setFont(new Font(publicationTitle.getName(),
 		Font.BOLD, 14));
 	panel.add(publicationTitle);
 
 	// Contenu
 	String content = value.getDescription();
-	if (content.length() >= 30) {
-	    content = content.substring(0, 30) + "...";
+	if (content.length() >= maxLength) {
+	    content = content.substring(0, maxLength) + "...";
 	}
 	JLabel publicationDescription = new JLabel(content);
 	publicationDescription.setForeground(Color.gray);

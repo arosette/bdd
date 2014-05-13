@@ -14,6 +14,8 @@ import bdd.model.Stream;
 
 public class StreamRenderer implements ListCellRenderer<Stream> {
 
+    private static final int maxLength = 30;
+
     @Override
     public Component getListCellRendererComponent(JList<? extends Stream> list,
 	    Stream value, int index, boolean isSelected, boolean cellHasFocus) {
@@ -22,21 +24,36 @@ public class StreamRenderer implements ListCellRenderer<Stream> {
 
 	panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 
-	JLabel streamTitle = new JLabel(value.getName());
-	streamTitle.setFont(new Font(streamTitle.getName(), Font.BOLD, 20));
-	panel.add(streamTitle);
-
-	JLabel streamDescription = new JLabel(value.getDescription());
-	streamDescription.setForeground(Color.gray);
-	panel.add(streamDescription);
-
-	JLabel streamUrl = new JLabel(value.getUrl());
-	streamUrl.setForeground(Color.blue);
-	panel.add(streamUrl);
-
+	if ((index % 2) == 1) {
+	    panel.setBackground(Color.white);
+	}
 	if (isSelected) {
 	    panel.setBackground(Color.cyan);
 	}
+
+	String name = value.getName();
+	if (name.length() >= maxLength) {
+	    name = name.substring(0, maxLength) + "...";
+	}
+	JLabel streamTitle = new JLabel(name);
+	streamTitle.setFont(new Font(streamTitle.getName(), Font.BOLD, 20));
+	panel.add(streamTitle);
+
+	String description = value.getDescription();
+	if (description.length() >= maxLength) {
+	    description = description.substring(0, maxLength) + "...";
+	}
+	JLabel streamDescription = new JLabel(description);
+	streamDescription.setForeground(Color.gray);
+	panel.add(streamDescription);
+
+	String url = value.getUrl();
+	if (url.length() >= maxLength) {
+	    url = url.substring(0, maxLength) + "...";
+	}
+	JLabel streamUrl = new JLabel(url);
+	streamUrl.setForeground(Color.blue);
+	panel.add(streamUrl);
 
 	return panel;
     }
