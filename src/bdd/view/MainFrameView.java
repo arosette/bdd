@@ -37,7 +37,7 @@ public class MainFrameView extends JFrame {
     private JList<Publication> publicationJList;
     private JList<Friendship> friendJList;
     private User currentUser;
-    private JMenuItem addStreamItem;
+    private JMenuItem addStreamUrlItem;
     private JMenuItem addFriendItem;
     private JButton refreshButton;
     private JButton loadNewPublicationsButton;
@@ -120,11 +120,11 @@ public class MainFrameView extends JFrame {
 	// Menu
 	JMenuBar menuBar = new JMenuBar();
 	JMenu streamMenu = new JMenu("Flux");
-	addStreamItem = new JMenuItem("Ajouter un flux...");
+	addStreamUrlItem = new JMenuItem("Ajouter un flux depuis un fichier xml...");
 	JMenu friendMenu = new JMenu("Amis");
 	addFriendItem = new JMenuItem("Ajouter un ami...");
 
-	streamMenu.add(addStreamItem);
+	streamMenu.add(addStreamUrlItem);
 	menuBar.add(streamMenu);
 
 	friendMenu.add(addFriendItem);
@@ -192,7 +192,7 @@ public class MainFrameView extends JFrame {
     }
 
     public void addListenerToAddStreamItem(ActionListener actionListener) {
-	addStreamItem.addActionListener(actionListener);
+	addStreamUrlItem.addActionListener(actionListener);
     }
     
     
