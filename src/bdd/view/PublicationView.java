@@ -15,6 +15,7 @@ import java.awt.Insets;
 import javax.swing.JTextField;
 
 import java.awt.Color;
+import java.awt.event.ActionListener;
 
 import javax.swing.JTextArea;
 import javax.swing.JList;
@@ -22,6 +23,8 @@ import javax.swing.JList;
 import bdd.model.Comment;
 import bdd.model.Publication;
 import bdd.view.renderer.CommentRenderer;
+
+import javax.swing.JButton;
 
 public class PublicationView extends JDialog {
 
@@ -31,6 +34,7 @@ public class PublicationView extends JDialog {
     private JTextField dateTextfield;
     private JTextField titleTextfield;
     private JList<Comment> commentList;
+    private JButton openLinkButton;
 
     /**
      * Create the dialog.
@@ -39,9 +43,9 @@ public class PublicationView extends JDialog {
 	setBounds(100, 100, 694, 452);
 	GridBagLayout gridBagLayout = new GridBagLayout();
 	gridBagLayout.columnWidths = new int[] { 119, 348, 0 };
-	gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	gridBagLayout.columnWeights = new double[] { 1.0, 1.0, Double.MIN_VALUE };
-	gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+	gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
 		0.0, 0.0, 1.0, Double.MIN_VALUE };
 	getContentPane().setLayout(gridBagLayout);
 
@@ -113,13 +117,20 @@ public class PublicationView extends JDialog {
 	gbc_urlTextfield.gridy = 5;
 	getContentPane().add(urlTextfield, gbc_urlTextfield);
 	urlTextfield.setColumns(10);
+	
+	openLinkButton = new JButton("Ouvrir le lien dans le navigateur");
+	GridBagConstraints gbc_openLinkButton = new GridBagConstraints();
+	gbc_openLinkButton.insets = new Insets(0, 0, 5, 0);
+	gbc_openLinkButton.gridx = 1;
+	gbc_openLinkButton.gridy = 6;
+	getContentPane().add(openLinkButton, gbc_openLinkButton);
 
 	JLabel dateLabel = new JLabel("Date : ");
 	GridBagConstraints gbc_dateLabel = new GridBagConstraints();
 	gbc_dateLabel.anchor = GridBagConstraints.WEST;
 	gbc_dateLabel.insets = new Insets(0, 0, 5, 5);
 	gbc_dateLabel.gridx = 0;
-	gbc_dateLabel.gridy = 6;
+	gbc_dateLabel.gridy = 7;
 	getContentPane().add(dateLabel, gbc_dateLabel);
 
 	dateTextfield = new JTextField();
@@ -128,7 +139,7 @@ public class PublicationView extends JDialog {
 	gbc_dateTextfield.insets = new Insets(0, 0, 5, 0);
 	gbc_dateTextfield.fill = GridBagConstraints.HORIZONTAL;
 	gbc_dateTextfield.gridx = 1;
-	gbc_dateTextfield.gridy = 6;
+	gbc_dateTextfield.gridy = 7;
 	getContentPane().add(dateTextfield, gbc_dateTextfield);
 	dateTextfield.setColumns(10);
 
@@ -137,7 +148,7 @@ public class PublicationView extends JDialog {
 	gbc_commentLabel.insets = new Insets(0, 0, 5, 0);
 	gbc_commentLabel.gridwidth = 2;
 	gbc_commentLabel.gridx = 0;
-	gbc_commentLabel.gridy = 7;
+	gbc_commentLabel.gridy = 8;
 	getContentPane().add(commentLabel, gbc_commentLabel);
 
 	commentList = new JList();
@@ -147,7 +158,7 @@ public class PublicationView extends JDialog {
 	gbc_commentList.gridwidth = 2;
 	gbc_commentList.fill = GridBagConstraints.BOTH;
 	gbc_commentList.gridx = 0;
-	gbc_commentList.gridy = 8;
+	gbc_commentList.gridy = 9;
 	getContentPane().add(new JScrollPane(commentList), gbc_commentList);
 
     }
@@ -165,5 +176,9 @@ public class PublicationView extends JDialog {
 	    }
 	}
 	this.commentList.setModel(commentListModel);
+    }
+    
+    public void addListenerToOpenLinkButton(ActionListener actionListener) {
+	openLinkButton.addActionListener(actionListener);
     }
 }
