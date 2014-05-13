@@ -71,19 +71,6 @@ Afin de modéliser la façon dont les informations seront physiquement enregistr
 	    \label{fig:Entite-Relation}
 	\end{figure}
 
-\subsection{Contraintes d’intégrité}
-
-	\begin{itemize}
-	    \item Un utilisateur ne peut commenter qu'une seule fois une publication
-	    \item Un utilisateur peut commenter uniquement les publications de son flux personnel ou du flux d'un ami
-	    \item Un utilisateur n'est pas inscrit à son propre flux
-	    \item Un utilisateur ne peut pas envoyer une demande d'ami s'il a déjà reçu une demande du même utilisateur 
-	    \item Chaque utilisateur est inscrit au flux de ses amis
-	    \item Sur une publication, un utilisateur ne voit que les commentaires de ses amis 
-	    \item La valeur de l'attribut \textsl{date} de la table \textsl{User} doit être antérieure aux valeurs respectives des attributs \textsl{date} de la relation \textsl{Subscribe}, \textsl{date} de la relation \textsl{Read}, \textsl{date} de la relation \textsl{Comment} et \textsl{date} de la relation \textsl{Friendship}.
-	    \item La valeur de l'attribut \textsl{date} de la table \textsl{Publication} doit être antérieure aux valeurs respectives des attributs \textsl{date} de la relation \textsl{Read} et date de la relation \textsl{Comment}.
-	\end{itemize}
-
 \subsection{Hypothèses du modèle}
 
 La relation \textsl{FriendShip}, une fois traduite en base de données, comprend deux attributs mail\_sender et mail\_receiver (clefs étrangères référençant des champs de la table \textsl{User}). Ces derniers désignent respectivement l'émetteur et le récepteur de la demande d'amitié. On évite ainsi la confusion entre les deux et le cas problématique où l'émetteur de la demande d'amitié aurait accepté le demande sans l'aval du récepteur.
@@ -133,15 +120,25 @@ user\_mail référence User.mail
 stream\_url référence Stream.url
 \\\\
 
-\subsection{Contraintes}
+\subsection{Contraintes d’intégrité}
 
 	\begin{itemize}
+	    \item Un utilisateur ne peut commenter qu'une seule fois une publication.
+	    \item Un utilisateur peut commenter uniquement les publications de son flux personnel ou du flux d'un ami.
+	    \item Un utilisateur n'est pas inscrit à son propre flux.
+	    \item Un utilisateur ne peut pas envoyer une demande d'ami s'il a déjà reçu une demande du même utilisateur.
+	    \item Chaque utilisateur est inscrit au flux de ses amis.
+	    \item Sur une publication, un utilisateur ne voit que les commentaires de ses amis.
+	    \item La valeur de l'attribut \textsl{date} de la table \textsl{User} doit être antérieure aux valeurs respectives des attributs \textsl{date} de la relation \textsl{Subscribe}, \textsl{date} de la relation \textsl{Read}, \textsl{date} de la relation \textsl{Comment} et \textsl{date} de la relation \textsl{Friendship}.
+	    \item La valeur de l'attribut \textsl{date} de la table \textsl{Publication} doit être antérieure aux valeurs respectives des attributs \textsl{date} de la relation \textsl{Read} et date de la relation \textsl{Comment}.
 	    \item La valeur de l'attribut \textsl{mail} de la table \textsl{User} doit respecter un format valide, c'est à dire une expression du type : [a-zA-Z0-9+. -] + @[a-z0-9-.] + \.[a-z].
+	    \item La valeur des attributs \textsl{date} des tables \textsl{User}, \textsl{Publication}, \textsl{Friendship}, \textsl{Comment}, \textsl{Read} et \textsl{Subscribe} doivent respecter le format suivant : 'yyyy-mm-dd'.
+	    \item Un utilisateur ne peut pas s'ajouter lui-même en ami. Il est également impossible d'envoyer une demande à un utilisateur pour lequel il a déjà reçu une demande.
 	\end{itemize}
 
 \section{Justification des choix de modélisations}
 
-Nous avions pensé à créer une table \textsl{Personnal Stream} qui héritait de la table \textsl{Stream} mais cela compliquait inutilement le modèle.
+Nous avions pensé à créer une table \textsl{Personnal Stream} qui héritait de la table \textsl{Stream} mais cela compliquait inutilement le modèle. Dans le même ordre d'idées, il était possible d'avoir une table \textsl{Commented Publication} qui aurait hérité de \textsl{Publication} mais la relation \textsl{Comment} suffit amplement pour ce modèle.
 
 \section{Requêtes demandées}
 
@@ -149,7 +146,7 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 
 	\begin{enumerate}
 	    \item Tous les utilisateurs qui ont au plus 2 amis
-	    \item La liste des flux auxquels a souscrit au moins un utilisateur qui a souscrit à au moins deux flux auxquel X a souscrit
+	    \item La liste des flux auxquels a souscrit au moins un utilisateur qui a souscrit à au moins deux flux auxquels X a souscrit
 	    \item La liste des flux auxquels X a souscrit, auxquels aucun de ses amis n’a souscrit et duquel il n’a partagé aucune publication
 	    \item La liste des utilisateurs qui ont partagé au moins 3 publications que X a partagé
 	    \item La liste des flux auquel un utilisateur est inscrit avec le nombre de publications lues, le nombre de publications partagées, le pourcentage de ces dernières par rapport aux premières, cela pour les 30 derniers jours et ordonnée par le nombre de publications partagées.
@@ -160,43 +157,9 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 
 	\begin{enumerate}
 	    \item 
-		\begin{verbatim}
-			SELECT u.*
-			FROM User u, Friendship f 
-			WHERE (f.Status = TRUE 
-			AND (mail_sender = u.mail OR mail_receiver = u.mail))
-			GROUP BY u.mail HAVING count(*) < 3;
-		\end{verbatim}
 	    \item
-	        \begin{verbatim}
-		<userX>
-		SELECT s.url
-		FROM Stream s 
-		WHERE s.url IN (
-		    SELECT (sub.stream_url) 
-		    FROM Subscribe sub 
-		    WHERE (sub.user_mail = (
-		        SELECT mail
-		        FROM (SELECT s.url FROM Stream s WHERE s.url IN (
-		            SELECT (sub.stream_url) FROM Subscribe sub WHERE sub.user_mail = <userX>)) AS url
-		        NATURAL JOIN (SELECT u.mail, s.url FROM User u, Stream s WHERE s.url IN (
-		            SELECT (sub.stream_url) FROM Subscribe sub 
-		            WHERE (sub.user_mail = u.mail AND sub.user_mail != <userX>))) AS mail
-		        GROUP BY mail HAVING count(*) >= 2)));
-		\end{verbatim}
 	    \item 
 	    \item 
-		\begin{verbatim}
-			<userX>
-			SELECT DISTINCT u.*
-			FROM User u, Comment c1, Comment c2
-			WHERE c1.user_mail = <userX>
-			AND c2.user_mail != <userX>
-			AND c1.publication_url = c2.publication_url
-			AND c2.user_mail = u.mail
-			GROUP BY u.mail
-			HAVING count(*) >= 3;
-		\end{verbatim}
 	    \item 
 	    \item 
 	\end{enumerate}
