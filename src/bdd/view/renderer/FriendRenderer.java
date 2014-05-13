@@ -43,17 +43,15 @@ public class FriendRenderer implements ListCellRenderer<Friendship> {
 
 	panel.add(new JLabel(mailOfFriend));
 
-	String status = new String("Status : ");
+	String status = new String("Statut : ");
 
 	if (value.getStatus()) {
-	    status += "accepte";
+	    status += "acceptée";
 	} else {
 	    status += "en attente";
 	}
 
 	panel.add(new JLabel(status));
-
 	return panel;
     }
-
 }
