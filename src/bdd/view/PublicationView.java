@@ -165,6 +165,7 @@ public class PublicationView extends JDialog {
     }
 
     public void loadPublication(Publication publication) {
+	System.out.println(publication.getComments().size());
 	this.publicationReadCheckBox.setSelected(publication.isRead());
 	this.titleTextfield.setText(publication.getTitle());
 	this.descriptionTextArea.setText(publication.getDescription());

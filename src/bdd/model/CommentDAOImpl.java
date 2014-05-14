@@ -17,6 +17,7 @@ public class CommentDAOImpl implements GenericDAO<Comment, String> {
     private PreparedStatement insertStatement = null;
     private PreparedStatement updateStatement = null;
     private PreparedStatement deleteStatement = null;
+    private PreparedStatement commentForUserForPublication = null;
 
     public CommentDAOImpl() throws DAOException {
 	mysqlConnection = MysqlConnection.getInstance();
@@ -32,6 +33,8 @@ public class CommentDAOImpl implements GenericDAO<Comment, String> {
 		    .prepareStatement("INSERT INTO Comment VALUES (?, ?, ?, ?, CURDATE())");
 	    deleteStatement = connection
 		    .prepareStatement("DELETE FROM Comment WHERE user_mail = ? AND publication_url = ? AND stream_url = ?");
+	    commentForUserForPublication = connection
+		    .prepareStatement("SELECT * FROM Comment com WHERE  (com.user_mail IN  (SELECT f1.mail_sender FROM Friendship f1 WHERE f1.status = TRUE) OR com.user_mail IN (SELECT f2.mail_receiver FROM Friendship f2 WHERE f2.status = TRUE) OR com.user_mail = ?) AND com.stream_url IN (SELECT sub.stream_url FROM Subscribe sub WHERE sub.user_mail = ?) AND com.publication_url = ? ");
 
 	} catch (SQLException e) {
 	    throw new DAOException(e);
@@ -147,6 +150,31 @@ public class CommentDAOImpl implements GenericDAO<Comment, String> {
 	} catch (SQLException e) {
 	    throw new DAOException(e);
 	}
+    }
+
+    public List<Comment> commentsAssociateWithUserAndPublication(
+	    String userMail, String publicationUrl) {
+	ResultSet res = null;
+	List<Comment> comments = new ArrayList<Comment>();
+	try {
+	    commentForUserForPublication.setString(1, userMail);
+	    commentForUserForPublication.setString(2, userMail);
+	    commentForUserForPublication.setString(3, publicationUrl);
+	    res = commentForUserForPublication.executeQuery();
+	    while (res.next()) {
+		Comment comment = new Comment();
+		comment.setUserMail(res.getString("user_mail"));
+		comment.setPublicationUrl(res.getString("publication_url"));
+		comment.setStreamUrl(res.getString("stream_url"));
+		comment.setContent(res.getString("content"));
+		comment.setDate(res.getString("date"));
+		comments.add(comment);
+	    }
+
+	} catch (SQLException e) {
+	    throw new DAOException(e);
+	}
+	return comments;
     }
 
     @Override

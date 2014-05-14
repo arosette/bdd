@@ -179,6 +179,13 @@ public class PublicationDAOImpl implements GenericDAO<Publication, String> {
 		    System.out.println("Probleme pour récupérer le count");
 		}
 
+		// Recuperation des commentaires
+		CommentDAOImpl commentDAO = new CommentDAOImpl();
+		List<Comment> comments = commentDAO
+			.commentsAssociateWithUserAndPublication(
+				user.getMail(), publication.getUrl());
+		publication.setComments(comments);
+
 		publications.add(publication);
 
 	    }

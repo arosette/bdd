@@ -293,3 +293,21 @@ SELECT * FROM Publication pub WHERE pub.url IN (
 ---------------------------------------------------------
 <user>, <publication>
 SELECT COUNT(*) FROM `Read` WHERE user_mail = <user>.mail AND publication_url = <publication>.url
+
+
+--> Les commentaire a afficher pour une publication et un utilisateur donne (on affiche que les commentaires de ses amis et que les commentaires associés aux flux auxquels on est abonné)
+----------------------------------------------------------------------------
+<user>, <publication>
+SELECT *
+FROM Comment com
+WHERE 
+(com.user_mail IN 
+    (SELECT f1.mail_sender FROM Friendship f1 WHERE f1.status = TRUE) 
+OR com.user_mail IN
+    (SELECT f2.mail_receiver FROM Friendship f2 WHERE f2.status = TRUE) 
+OR com.user_mail = <user>.mail)
+AND
+com.stream_url IN
+    (SELECT sub.stream_url FROM Subscribe sub WHERE sub.user_mail = <user>.mail)
+AND
+com.publication_url = <publication>.url
