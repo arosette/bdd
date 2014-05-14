@@ -40,14 +40,14 @@ public class PublicationView extends JDialog {
      * Create the dialog.
      */
     public PublicationView() {
-    	setTitle("Publication");
+	setTitle("Publication");
 	setBounds(100, 100, 694, 452);
 	GridBagLayout gridBagLayout = new GridBagLayout();
 	gridBagLayout.columnWidths = new int[] { 119, 348, 0 };
 	gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	gridBagLayout.columnWeights = new double[] { 1.0, 1.0, Double.MIN_VALUE };
-	gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-		0.0, 0.0, 1.0, Double.MIN_VALUE };
+	gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+		0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE };
 	getContentPane().setLayout(gridBagLayout);
 
 	publicationReadCheckBox = new JCheckBox("Lue");
@@ -118,7 +118,7 @@ public class PublicationView extends JDialog {
 	gbc_urlTextfield.gridy = 5;
 	getContentPane().add(urlTextfield, gbc_urlTextfield);
 	urlTextfield.setColumns(10);
-	
+
 	openLinkButton = new JButton("Ouvrir le lien dans le navigateur");
 	GridBagConstraints gbc_openLinkButton = new GridBagConstraints();
 	gbc_openLinkButton.insets = new Insets(0, 0, 5, 0);
@@ -165,7 +165,6 @@ public class PublicationView extends JDialog {
     }
 
     public void loadPublication(Publication publication) {
-	System.out.println(publication.getComments().size());
 	this.publicationReadCheckBox.setSelected(publication.isRead());
 	this.titleTextfield.setText(publication.getTitle());
 	this.descriptionTextArea.setText(publication.getDescription());
@@ -179,7 +178,7 @@ public class PublicationView extends JDialog {
 	}
 	this.commentList.setModel(commentListModel);
     }
-    
+
     public void addListenerToOpenLinkButton(ActionListener actionListener) {
 	openLinkButton.addActionListener(actionListener);
     }
