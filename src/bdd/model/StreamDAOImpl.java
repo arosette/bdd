@@ -22,6 +22,7 @@ public class StreamDAOImpl implements GenericDAO<Stream, String> {
     private PreparedStatement selectStreamsWithoutPersonal = null;
     private PreparedStatement hasUserSubscribeToStream = null;
     private PreparedStatement selectPublicationAssociateToStream = null;
+    private PreparedStatement selectStreamsForComment = null;
 
     public StreamDAOImpl() throws DAOException {
 	mysqlConnection = MysqlConnection.getInstance();
@@ -53,6 +54,9 @@ public class StreamDAOImpl implements GenericDAO<Stream, String> {
 
 	    selectPublicationAssociateToStream = connection
 		    .prepareStatement("SELECT COUNT(*) FROM Propose WHERE stream_url = ? AND publication_url = ?");
+
+	    selectStreamsForComment = connection
+		    .prepareStatement("SELECT * FROM Stream s WHERE s.url IN (SELECT u.personal_stream_url FROM User u, Propose prop WHERE (u.mail IN (SELECT f1.mail_sender FROM Friendship f1 WHERE f1.mail_receiver = ? AND f1.status = TRUE) OR u.mail IN (SELECT f2.mail_receiver FROM Friendship f2 WHERE f2.mail_sender = ? AND f2.status = TRUE)) AND u.personal_stream_url = prop.stream_url AND prop.publication_url = ?) AND s.url NOT IN (SELECT com.stream_url FROM Comment com WHERE com.publication_url = ? AND com.user_mail = ?)");
 
 	} catch (SQLException e) {
 	    throw new DAOException(e);
@@ -258,8 +262,9 @@ public class StreamDAOImpl implements GenericDAO<Stream, String> {
 	}
 	return hasSubscribe;
     }
-    
-    public boolean isPublicationAssociateWithStream(String streamUrl, String publicationUrl) {
+
+    public boolean isPublicationAssociateWithStream(String streamUrl,
+	    String publicationUrl) {
 	boolean exists = false;
 	try {
 	    selectPublicationAssociateToStream.setString(1, streamUrl);
@@ -279,6 +284,21 @@ public class StreamDAOImpl implements GenericDAO<Stream, String> {
 	    throw new DAOException(e);
 	}
 	return exists;
+    }
+
+    public List<Stream> streamsForComment(String userMail, String publicationUrl) {
+	ResultSet res = null;
+	try {
+	    selectStreamsForComment.setString(1, userMail);
+	    selectStreamsForComment.setString(2, userMail);
+	    selectStreamsForComment.setString(3, publicationUrl);
+	    selectStreamsForComment.setString(4, publicationUrl);
+	    selectStreamsForComment.setString(5, userMail);
+	    res = selectStreamsForComment.executeQuery();
+	} catch (SQLException e) {
+	    throw new DAOException(e);
+	}
+	return convertResultSetToStream(res);
     }
 
     @Override

@@ -49,6 +49,10 @@ public class AddCommentView extends JDialog {
     public String getComment() {
 	return commentTextArea.getText();
     }
+    
+    public Stream getSelectedStream() {
+	return (Stream) streamsComboBox.getSelectedItem();
+    }
 
     public void loadStreams(List<Stream> streams) {
 	DefaultComboBoxModel<Stream> streamComboBoxModel = new DefaultComboBoxModel<>();

@@ -316,3 +316,15 @@ com.publication_url = <publication>.url
 --> Les flux a proposer a l'utilisateur lorsqu'il veut commenter une publication (il faut exclure les flux qu'il a deja commente)
 ---------------------------------------------------------------------------------
 <user>, <publication>
+SELECT *
+FROM Stream s
+WHERE
+s.url IN 
+    (SELECT u.personal_stream_url FROM User u, Propose prop WHERE (u.mail IN
+        (SELECT f1.mail_sender FROM Friendship f1 WHERE f1.mail_receiver = <user>.mail AND f1.status = TRUE)
+    OR u.mail IN
+        (SELECT f2.mail_receiver FROM Friendship f2 WHERE f2.mail_sender = <user>.mail AND f2.status = TRUE))
+    AND u.personal_stream_url = prop.stream_url AND prop.publication_url = <publication>.url)
+AND
+s.url NOT IN
+    (SELECT com.stream_url FROM Comment com WHERE com.publication_url = <publication>.url AND com.user_mail = <user>.mail)
