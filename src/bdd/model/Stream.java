@@ -38,4 +38,10 @@ public class Stream {
 	this.webLink = webLink;
     }
 
+    @Override
+    public String toString() {
+
+	return url;
+    }
+
 }

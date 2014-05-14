@@ -34,7 +34,7 @@ public class CommentDAOImpl implements GenericDAO<Comment, String> {
 	    deleteStatement = connection
 		    .prepareStatement("DELETE FROM Comment WHERE user_mail = ? AND publication_url = ? AND stream_url = ?");
 	    commentForUserForPublication = connection
-		    .prepareStatement("SELECT * FROM Comment com WHERE  (com.user_mail IN  (SELECT f1.mail_sender FROM Friendship f1 WHERE f1.status = TRUE) OR com.user_mail IN (SELECT f2.mail_receiver FROM Friendship f2 WHERE f2.status = TRUE) OR com.user_mail = ?) AND com.stream_url IN (SELECT sub.stream_url FROM Subscribe sub WHERE sub.user_mail = ?) AND com.publication_url = ? ");
+		    .prepareStatement("SELECT * FROM Comment com WHERE com.stream_url IN (SELECT sub.stream_url FROM Subscribe sub WHERE sub.user_mail = ? AND sub.stream_url IN (SELECT u.personal_stream_url FROM User u WHERE u.mail IN (SELECT f1.mail_sender FROM Friendship f1 WHERE f1.mail_receiver = ? AND f1.status = TRUE) OR u.mail IN (SELECT f2.mail_receiver FROM Friendship f2 WHERE f2.mail_sender = ? AND f2.status = TRUE))) AND com.publication_url = ?");
 
 	} catch (SQLException e) {
 	    throw new DAOException(e);
@@ -159,7 +159,8 @@ public class CommentDAOImpl implements GenericDAO<Comment, String> {
 	try {
 	    commentForUserForPublication.setString(1, userMail);
 	    commentForUserForPublication.setString(2, userMail);
-	    commentForUserForPublication.setString(3, publicationUrl);
+	    commentForUserForPublication.setString(3, userMail);
+	    commentForUserForPublication.setString(4, publicationUrl);
 	    res = commentForUserForPublication.executeQuery();
 	    while (res.next()) {
 		Comment comment = new Comment();

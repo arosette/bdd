@@ -169,6 +169,21 @@ public class MainFrameController {
 
 	    menu.add(sharePublication);
 
+	    // Commenter la publication
+	    JMenuItem commentPublication = new JMenuItem(
+		    "Commenter la publication...");
+	    commentPublication.addActionListener(new ActionListener() {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+		    Publication selectedPublication = mainFrameView
+			    .getSelectedPublication();
+		    new AddCommentController(currentUser, selectedPublication);
+		}
+	    });
+	    
+	    menu.add(commentPublication);
+
 	}
 
 	// Ouverture du menu avec clic droit

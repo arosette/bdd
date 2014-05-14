@@ -295,19 +295,24 @@ SELECT * FROM Publication pub WHERE pub.url IN (
 SELECT COUNT(*) FROM `Read` WHERE user_mail = <user>.mail AND publication_url = <publication>.url
 
 
---> Les commentaire a afficher pour une publication et un utilisateur donne (on affiche que les commentaires de ses amis et que les commentaires associés aux flux auxquels on est abonné)
+--> Les commentaires a afficher pour une publication et un utilisateur donne (on affiche que les commentaires qui appartiennent au flux d'un ami)
 ----------------------------------------------------------------------------
 <user>, <publication>
 SELECT *
 FROM Comment com
-WHERE 
-(com.user_mail IN 
-    (SELECT f1.mail_sender FROM Friendship f1 WHERE f1.status = TRUE) 
-OR com.user_mail IN
-    (SELECT f2.mail_receiver FROM Friendship f2 WHERE f2.status = TRUE) 
-OR com.user_mail = <user>.mail)
-AND
+WHERE
 com.stream_url IN
-    (SELECT sub.stream_url FROM Subscribe sub WHERE sub.user_mail = <user>.mail)
+    (SELECT sub.stream_url 
+    FROM Subscribe sub 
+    WHERE sub.user_mail = <user>.mail AND 
+    sub.stream_url IN 
+        (SELECT u.personal_stream_url FROM User u WHERE u.mail IN
+            (SELECT f1.mail_sender FROM Friendship f1 WHERE f1.mail_receiver = <user>.mail AND f1.status = TRUE)
+        OR u.mail IN
+            (SELECT f2.mail_receiver FROM Friendship f2 WHERE f2.mail_sender = <user>.mail AND f2.status = TRUE)))
 AND
 com.publication_url = <publication>.url
+
+--> Les flux a proposer a l'utilisateur lorsqu'il veut commenter une publication (il faut exclure les flux qu'il a deja commente)
+---------------------------------------------------------------------------------
+<user>, <publication>

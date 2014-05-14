@@ -2,14 +2,16 @@ package bdd.controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.util.Date;
+import java.util.List;
 import java.text.SimpleDateFormat;
 import java.text.DateFormat;
+
 import bdd.model.Publication;
 import bdd.model.Stream;
 import bdd.model.Comment;
 import bdd.model.CommentDAOImpl;
+import bdd.model.StreamDAOImpl;
 import bdd.model.User;
 import bdd.view.AddCommentView;
 import bdd.view.DialogBox;
@@ -20,15 +22,17 @@ public class AddCommentController {
     private Publication publication;
     private Stream stream;
 
-    public AddCommentController(User user, Publication publication,
-	    Stream stream) {
+    public AddCommentController(User user, Publication publication) {
 	this.user = user;
 	this.publication = publication;
 	this.stream = stream;
 	addCommentView = new AddCommentView();
-	addCommentView.setVisible(true);
+	StreamDAOImpl streamDAO = new StreamDAOImpl();
+	List<Stream> streams = streamDAO.streamsOfUser(user);
+	addCommentView.loadStreams(streams);
 	addCommentView.addCommentListener(new AddCommentListener());
-	addCommentView.addCancelListener(new AddCommentListener());
+	addCommentView.setVisible(true);
+
     }
 
     private String getDate() {
