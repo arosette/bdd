@@ -35,11 +35,11 @@ INSERT INTO Stream (url, name, webLink, description) VALUES ("http://www.faceboo
 
 --> Publications
 -----------------
-INSERT INTO Publication (url, title, date, description) VALUES ("http://www.perdu.com", "Perdu", '2010-11-02', "Vous vous êtes perdu ?");
-INSERT INTO Publication (url, title, date, description) VALUES ("http://www.recherche.com", "Recherche", '2011-11-02', "Vous êtes recherché !");
-INSERT INTO Publication (url, title, date, description) VALUES ("http://www.retrouve.com", "Retrouve", '2012-11-02', "Vous êtes retrouvé !");
-INSERT INTO Publication (url, title, date, description) VALUES ("http://www.games.com", "Jeux", '2013-08-02', "Publication de jeux videos");
-INSERT INTO Publication (url, title, date, description) VALUES ("http://www.videos.com", "Vidéos", '2014-02-02', "Publication de vidéos");
+INSERT INTO Publication (url, title, date, description) VALUES ("http://www.perdu.com", "Perdu", '2014-05-08', "Vous vous êtes perdu ?");
+INSERT INTO Publication (url, title, date, description) VALUES ("http://www.recherche.com", "Recherche", '2014-05-01', "Vous êtes recherché !");
+INSERT INTO Publication (url, title, date, description) VALUES ("http://www.retrouve.com", "Retrouve", '2014-04-06', "Vous êtes retrouvé !");
+INSERT INTO Publication (url, title, date, description) VALUES ("http://www.games.com", "Jeux", '2014-03-02', "Publication de jeux videos");
+INSERT INTO Publication (url, title, date, description) VALUES ("http://www.videos.com", "Vidéos", '2014-04-26', "Publication de vidéos");
 
 --> Amitiés
 -----------------
@@ -86,10 +86,10 @@ INSERT INTO Propose (stream_url, publication_url) VALUES ("http://personal_strea
 
 --> Lecture
 ------------
-INSERT INTO `Read` (user_mail, publication_url, date) VALUES ("nomer@ulb.ac.be", "http://www.perdu.com", '2011-11-02');
-INSERT INTO `Read` (user_mail, publication_url, date) VALUES ("nomer@ulb.ac.be", "http://www.games.com", '2013-09-02');
-INSERT INTO `Read` (user_mail, publication_url, date) VALUES ("arosette@ulb.ac.be", "http://www.recherche.com", '2011-11-02');
-INSERT INTO `Read` (user_mail, publication_url, date) VALUES ("pveranneman@ulb.ac.be", "http://www.videos.com", '2013-09-02');
+INSERT INTO `Read` (user_mail, publication_url, date) VALUES ("nomer@ulb.ac.be", "http://www.perdu.com", '2014-11-02');
+INSERT INTO `Read` (user_mail, publication_url, date) VALUES ("nomer@ulb.ac.be", "http://www.games.com", '2014-09-02');
+INSERT INTO `Read` (user_mail, publication_url, date) VALUES ("arosette@ulb.ac.be", "http://www.recherche.com", '2014-11-02');
+INSERT INTO `Read` (user_mail, publication_url, date) VALUES ("pveranneman@ulb.ac.be", "http://www.videos.com", '2014-09-02');
 
 Requetes de selection
 ----------------------
@@ -110,7 +110,6 @@ SELECT DISTINCT f.mail_sender, f.mail_receiver FROM User u, Friendship f
 WHERE f.Status = TRUE AND (mail_sender = u.mail OR mail_receiver = u.mail)
 
 --> R1 Liste tous les utilisateurs qui ont au plus 2 amis
--- (et ceux qui n'ont pas d'amis ne sont pas comptabilisés)
 ------------------------------------------------------------
 SELECT u.*
 FROM User u, Friendship f 
@@ -118,10 +117,10 @@ WHERE (f.Status = TRUE AND (mail_sender = u.mail OR mail_receiver = u.mail))
 GROUP BY u.mail
 HAVING count(*) < 3
 
-SELECT u.*
+SELECT u.mail, COUNT(*)
 FROM User u LEFT JOIN (SELECT * FROM Friendship f1 WHERE f1.status = TRUE) AS f2 ON f2.mail_sender = u.mail OR f2.mail_receiver = u.mail
 GROUP BY u.mail
-HAVING COUNT(*) < 3
+HAVING COUNT(*) < 3;
 
 --> Liste tous les flux de l'utilisateur
 -----------------------------------------
@@ -253,6 +252,11 @@ SELECT COUNT(*) FROM Propose p WHERE p.stream_url = <userX>.personal_stream_url
 UNION
 SELECT (COUNT(*) / (SELECT COUNT(*) FROM `Read` r WHERE r.user_mail = <userX>.mail))
 FROM Propose p WHERE p.stream_url = <userX>.personal_stream_url;
+
+--> Liste des publications des 30 derniers jours
+-------------------------------------------------------
+SELECT p.* FROM Publication p
+WHERE DATE_SUB(CURDATE(),INTERVAL 30 DAY) <= p.date
 
 --> R5 : La liste des flux auquel un utilisateur est inscrit avec le 
 -- nombre de publications lues, le nombre de publications partagées, le 

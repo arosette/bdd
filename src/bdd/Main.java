@@ -11,11 +11,10 @@ public class Main {
 	try {
 	    mysqlConnection = MysqlConnection.getInstance();
 	    mysqlConnection.dataBaseExists();
-	    // mysqlConnection.showDataBase();
 	    // mysqlConnection.deleteDataBase();
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}
-	new LoginController();
+	// new LoginController();
     }
 }
