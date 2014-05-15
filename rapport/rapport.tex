@@ -200,22 +200,18 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 % \Join : jointure 
 % \sqsupset : LEFT JOIN
 % \sqsubset : RIGHT JOIN
-%
-%\begin{equation}
-% symboles
-%\end{equation}
 
 	\begin{enumerate}
 	    \item
-\begin{equation}
-\underset{2}{F} \leftarrow \sigma \underset{status = True}{} (Friendship) \\
-\end{equation}
-\begin{equation}
-T \leftarrow User \sqsupset \Join \underset{<\underset{2}{F}.mail\_sender = u.mail \vee \underset{2}{F}.mail\_receiver = u.mail>}{} \underset{2}{F} 
-\end{equation}
-\begin{equation}
-Result \leftarrow \pi \underset{u.*}{}(u.mail \  \  \  \sigma \underset{COUNT(*) < 3}{}T)
-\end{equation}
+		\begin{equation}
+		\underset{2}{F} \leftarrow \sigma \underset{status = True}{} (Friendship) \\
+		\end{equation}
+		\begin{equation}
+		T \leftarrow User \sqsupset \Join \underset{<\underset{2}{F}.mail\_sender = u.mail \vee \underset{2}{F}.mail\_receiver = u.mail>}{} \underset{2}{F} 
+		\end{equation}
+		\begin{equation}
+		Result \leftarrow \pi \underset{u.*}{}(u.mail \  \  \  \sigma \underset{COUNT(*) < 3}{}T)
+		\end{equation}
 	    \item
 	    \item 
 	    \item
@@ -236,7 +232,22 @@ Result \leftarrow \pi \underset{u.*}{}(u.mail \  \  \  \sigma \underset{COUNT(*)
 % \leftarrow : <=
 
 	\begin{enumerate}
-	    \item 
+	    \item
+		\begin{equation}
+		[u.* | \ U(u) \ \wedge \forall \underset{\ \ 2}{u} (U(\underset{\ \ 2}{u}) \rightarrow (( \forall f ( F(f) \rightarrow (f.status = False \wedge(f.mail\_sender = \underset{\ \ 2}{u}.mail \vee 
+		\end{equation}
+		\begin{equation}
+		f.mail\_receiver = \underset{\ \ 2}{u}.mail)))) \vee ( \exists \underset{\ \ 2}{f} (F(\underset{\ \ 2}{f}) \rightarrow (\underset{\ \ 2}{f}.status = True \wedge(\underset{\ \ 2}{f}.mail\_sender = \underset{\ \ 2}{u}.mail \vee 
+		\end{equation}  
+		\begin{equation}
+		\underset{\ \ 2}{f}.mail\_receiver = \underset{\ \ 2}{u}.mail)))) \vee ( \exists \underset{\ \ 3}{f} \underset{\ \ 4}{f} (F(\underset{\ \ 3}{f} ) \rightarrow (\underset{\ \ 3}{f}.status = True \wedge (\underset{\ \ 3}{f}.mail\_sender = \underset{\ \ 2}{u}.mail \vee
+		\end{equation}  
+		\begin{equation}
+		\underset{\ \ 3}{f}.mail\_receiver = \underset{\ \ 2}{u}.mail))) \wedge F(\underset{\ \ 4}{f}) \rightarrow (\underset{\ \ 4}{f}.status = True \wedge (\underset{\ \ 4}{f}.mail\_sender = \underset{\ \ 2}{u}.mail \vee
+		\end{equation}
+		\begin{equation}
+		\underset{\ \ 4}{f}.mail\_receiver = \underset{\ \ 2}{u}.mail)) \wedge (\underset{\ \ 3}{f} \ != \underset{\ \ 4}{f}))))]
+		\end{equation}
 	    \item
 	    \item 
 	    \item
