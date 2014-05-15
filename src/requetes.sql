@@ -112,12 +112,6 @@ WHERE f.Status = TRUE AND (mail_sender = u.mail OR mail_receiver = u.mail)
 --> R1 Liste tous les utilisateurs qui ont au plus 2 amis
 ------------------------------------------------------------
 SELECT u.*
-FROM User u, Friendship f 
-WHERE (f.Status = TRUE AND (mail_sender = u.mail OR mail_receiver = u.mail))
-GROUP BY u.mail
-HAVING count(*) < 3
-
-SELECT u.mail, COUNT(*)
 FROM User u LEFT JOIN (SELECT * FROM Friendship f1 WHERE f1.status = TRUE) AS f2 ON f2.mail_sender = u.mail OR f2.mail_receiver = u.mail
 GROUP BY u.mail
 HAVING COUNT(*) < 3;
@@ -134,40 +128,16 @@ SELECT u.surname, s.url FROM User u, Stream s WHERE s.url IN (
 --> R2 : La liste des flux auxquels a souscrit au moins un 
 -- utilisateur qui a souscrit à au moins deux flux auxquel X a souscrit
 -------------------------------------------------------------------------
-<userX>
-CREATE TEMPORARY TABLE TMP_USER1_SUBSCRIPTIONS SELECT s.url FROM Stream s WHERE s.url IN (SELECT (sub.stream_url) FROM Subscribe sub WHERE sub.user_mail = <userX>);
-CREATE TEMPORARY TABLE TMP_USER2_SUBSCRIPTIONS SELECT u.mail, s.url FROM User u, Stream s WHERE s.url IN (SELECT (sub.stream_url) FROM Subscribe sub WHERE (sub.user_mail = u.mail AND sub.user_mail != <userX>));
-
-SELECT s.url
-FROM Stream s 
-WHERE s.url IN (
-    SELECT (sub.stream_url) 
-    FROM Subscribe sub 
-    WHERE (sub.user_mail = (
-        SELECT mail 
-        FROM TMP_USER1_SUBSCRIPTIONS 
-        NATURAL JOIN TMP_USER2_SUBSCRIPTIONS 
-        GROUP BY mail HAVING count(*) >= 2)));
-
-DROP TABLE TMP_USER1_SUBSCRIPTIONS;
-DROP TABLE TMP_USER2_SUBSCRIPTIONS;
-
---> Sans tables temporaires
----------------------------
-<userX>
-SELECT s.url
-FROM Stream s 
-WHERE s.url IN (
-    SELECT (sub.stream_url) 
-    FROM Subscribe sub 
-    WHERE (sub.user_mail = (
-        SELECT mail
-        FROM (SELECT s.url FROM Stream s WHERE s.url IN (
-            SELECT (sub.stream_url) FROM Subscribe sub WHERE sub.user_mail = <userX>)) AS url
-        NATURAL JOIN (SELECT u.mail, s.url FROM User u, Stream s WHERE s.url IN (
-            SELECT (sub.stream_url) FROM Subscribe sub 
-            WHERE (sub.user_mail = u.mail AND sub.user_mail != <userX>))) AS mail
-        GROUP BY mail HAVING count(*) >= 2)));
+<user>
+SELECT DISTINCT s3.*
+FROM Subscribe sub3, Stream s3
+WHERE sub3.stream_url = s3.url AND sub3.user_mail IN
+    (SELECT u1.mail
+    FROM User u1, Stream s2, Subscribe sub2
+    WHERE sub2.user_mail != <user>.mail AND sub2.user_mail = u1.mail AND sub2.stream_url = s2.url AND sub2.stream_url IN    
+        (SELECT sub1.stream_url FROM Subscribe sub1 WHERE sub1.user_mail = <user>.mail)
+    GROUP BY sub2.user_mail
+    HAVING COUNT(*) >= 2)
 
 --> Liste des publications d'un flux
 -------------------------------------
