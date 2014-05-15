@@ -2,7 +2,7 @@
 \usepackage[utf8]{inputenc}
 
 \usepackage[a4paper]{geometry}
-\usepackage{amssymb}
+\usepackage{amsmath,amsthm,amssymb,latexsym,amsfonts}
 \usepackage{hyperref}
 \geometry{hscale=0.75,vscale=0.78,centering}
 \usepackage{graphicx}
@@ -158,7 +158,31 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 
 	\begin{enumerate}
 	    \item 
+	    \begin{verbatim}
+		SELECT u.*
+		FROM User u LEFT JOIN (SELECT * FROM Friendship f1 WHERE f1.status = TRUE) AS f2 
+		ON f2.mail_sender = u.mail OR f2.mail_receiver = u.mail
+		GROUP BY u.mail
+		HAVING COUNT(*) < 3;
+             \end{verbatim}
 	    \item
+             \begin{verbatim}
+		<user>
+		SELECT DISTINCT s3.*
+		FROM Subscribe sub3, Stream s3
+		WHERE sub3.stream_url = s3.url AND sub3.user_mail IN
+		    (SELECT u1.mail
+		    FROM User u1, Stream s2, Subscribe sub2
+		    WHERE sub2.user_mail != <user>.mail
+		    AND sub2.user_mail = u1.mail 
+		    AND sub2.stream_url = s2.url 
+		    AND sub2.stream_url IN    
+		        (SELECT sub1.stream_url 
+		            FROM Subscribe sub1 
+		            WHERE sub1.user_mail = <user>.mail)
+		    GROUP BY sub2.user_mail
+		    HAVING COUNT(*) >= 2);
+             \end{verbatim}
 	    \item 
 	    \item 
 	    \item 
@@ -176,9 +200,22 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 % \Join : jointure 
 % \sqsupset : LEFT JOIN
 % \sqsubset : RIGHT JOIN
+%
+%\begin{equation}
+% symboles
+%\end{equation}
 
 	\begin{enumerate}
-	    \item 
+	    \item
+\begin{equation}
+\underset{2}{F} \leftarrow \sigma \underset{status = True}{} (Friendship) \\
+\end{equation}
+\begin{equation}
+T \leftarrow User \sqsupset \Join \underset{<\underset{2}{F}.mail\_sender = u.mail \vee \underset{2}{F}.mail\_receiver = u.mail>}{} \underset{2}{F} 
+\end{equation}
+\begin{equation}
+Result \leftarrow \pi \underset{u.*}{}(u.mail \  \  \  \sigma \underset{COUNT(*) < 3}{}T)
+\end{equation}
 	    \item
 	    \item 
 	    \item

@@ -49,7 +49,10 @@ INSERT INTO Friendship (mail_sender, mail_receiver, status, date) VALUES ("lpost
 INSERT INTO Friendship (mail_sender, mail_receiver, status, date) VALUES ("pveranneman@ulb.ac.be", "lpostula@ulb.ac.be", TRUE, '2012-09-21');
 INSERT INTO Friendship (mail_sender, mail_receiver, status, date) VALUES ("arosette@ulb.ac.be", "pveranneman@ulb.ac.be", FALSE, '2013-10-14');
 INSERT INTO Friendship (mail_sender, mail_receiver, status, date) VALUES ("nomer@ulb.ac.be", "spicard@ulb.ac.be", TRUE, '2013-10-14');
-INSERT INTO Friendship (mail_sender, mail_receiver, status, date) VALUES ("sbeyen@ulb.ac.be", "spicard@ulb.ac.be", FALSE, '2011-12-14');
+INSERT INTO Friendship (mail_sender, mail_receiver, status, date) VALUES ("sbeyen@ulb.ac.be", "nomer@ulb.ac.be", FALSE, '2011-12-14');
+INSERT INTO Friendship (mail_sender, mail_receiver, status, date) VALUES ("sbeyen@ulb.ac.be", "pveranneman@ulb.ac.be", FALSE, '2011-12-14');
+INSERT INTO Friendship (mail_sender, mail_receiver, status, date) VALUES ("sbeyen@ulb.ac.be", "lpostula@ulb.ac.be", FALSE, '2011-12-14');
+INSERT INTO Friendship (mail_sender, mail_receiver, status, date) VALUES ("sbeyen@ulb.ac.be", "arosette@ulb.ac.be", FALSE, '2011-12-14');
 
 --> Souscriptions
 -----------------
@@ -83,6 +86,9 @@ INSERT INTO Propose (stream_url, publication_url) VALUES ("http://www.facebook.c
 INSERT INTO Propose (stream_url, publication_url) VALUES ("http://www.jeuxvideo.com", "http://www.games.com");
 INSERT INTO Propose (stream_url, publication_url) VALUES ("http://www.youtube.com", "http://www.videos.com");
 INSERT INTO Propose (stream_url, publication_url) VALUES ("http://personal_stream/nomer@ulb.ac.be", "http://www.games.com");
+INSERT INTO Propose (stream_url, publication_url) VALUES ("http://personal_stream/nomer@ulb.ac.be", "http://www.videos.com");
+INSERT INTO Propose (stream_url, publication_url) VALUES ("http://personal_stream/nomer@ulb.ac.be", "http://www.recherche.com");
+INSERT INTO Propose (stream_url, publication_url) VALUES ("http://personal_stream/nomer@ulb.ac.be", "http://www.retrouve.com");
 
 --> Lecture
 ------------
@@ -111,8 +117,9 @@ WHERE f.Status = TRUE AND (mail_sender = u.mail OR mail_receiver = u.mail)
 
 --> R1 Liste tous les utilisateurs qui ont au plus 2 amis
 ------------------------------------------------------------
-SELECT u.*
-FROM User u LEFT JOIN (SELECT * FROM Friendship f1 WHERE f1.status = TRUE) AS f2 ON f2.mail_sender = u.mail OR f2.mail_receiver = u.mail
+SELECT u.surname, COUNT(*)
+FROM User u LEFT JOIN (SELECT * FROM Friendship f1 WHERE f1.status = TRUE) AS f2 
+ON f2.mail_sender = u.mail OR f2.mail_receiver = u.mail
 GROUP BY u.mail
 HAVING COUNT(*) < 3;
 
@@ -134,10 +141,15 @@ FROM Subscribe sub3, Stream s3
 WHERE sub3.stream_url = s3.url AND sub3.user_mail IN
     (SELECT u1.mail
     FROM User u1, Stream s2, Subscribe sub2
-    WHERE sub2.user_mail != <user>.mail AND sub2.user_mail = u1.mail AND sub2.stream_url = s2.url AND sub2.stream_url IN    
-        (SELECT sub1.stream_url FROM Subscribe sub1 WHERE sub1.user_mail = <user>.mail)
+    WHERE sub2.user_mail != <user>.mail
+    AND sub2.user_mail = u1.mail 
+    AND sub2.stream_url = s2.url 
+    AND sub2.stream_url IN    
+        (SELECT sub1.stream_url 
+            FROM Subscribe sub1 
+            WHERE sub1.user_mail = <user>.mail)
     GROUP BY sub2.user_mail
-    HAVING COUNT(*) >= 2)
+    HAVING COUNT(*) >= 2);
 
 --> Liste des publications d'un flux
 -------------------------------------
@@ -191,18 +203,21 @@ DROP TABLE TMP_USER_UNSHARED_STREAM
 <user>
 SELECT c.publication_url FROM Comment c WHERE c.user_mail = <user>
 
+--> Liste des publications partagées
+--------------------------------------
+<user>
+SELECT DISTINCT p.* 
+FROM Publication p, Propose prop, Subscribe sub, Stream s
+WHERE p.url = prop.publication_url
+and prop.stream_url = s.url
+AND sub.user_mail = <user>.mail
+AND s.url = <user>.personal_stream_url;
+
 --> R4 : La liste des utilisateurs qui ont 
 -- partagé au moins 3 publications que X a partagé
 ---------------------------------------------------
-<userX>
-SELECT DISTINCT u.*
-FROM User u, Comment c1, Comment c2
-WHERE c1.user_mail = <userX>
-AND c2.user_mail != <userX>
-AND c1.publication_url = c2.publication_url
-AND c2.user_mail = u.mail
-GROUP BY u.mail
-HAVING count(*) >= 3;
+
+[TODO]
 
 --> La liste des flux auquel un utilisateur est inscrit avec le 
 -- nombre de publications lues, le nombre de publications partagées, 
@@ -261,7 +276,7 @@ GROUP BY u.mail;
 SELECT * FROM Publication pub WHERE pub.url IN (
     SELECT DISTINCT prop.publication_url Propose prop WHERE prop.stream_url IN (
         SELECT s.url FROM Stream s WHERE s.url IN (
-            SELECT (sub.stream_url) FROM Subscribe sub WHERE sub.user_mail = <user>)))
+            SELECT (sub.stream_url) FROM Subscribe sub WHERE sub.user_mail = <user>.mail)))
             
 --> Savoir si une publication est lue par un utilisateur
 ---------------------------------------------------------
