@@ -73,7 +73,7 @@ public class MysqlConnection {
 	    }
 	    if (tablesNotExist) {
 		createTables(connection);
-		createUsers(connection);
+
 	    }
 	} catch (SQLException e) {
 	    throw new DAOException(e);
@@ -111,30 +111,6 @@ public class MysqlConnection {
 
 	    stat.close();
 	} catch (SQLException e) {
-	    throw new DAOException(e);
-	}
-    }
-
-    public void createUsers(Connection connection) {
-	try {
-	    Statement stat = connection.createStatement();
-
-	    String personalStream1 = "INSERT INTO Stream (url, name, webLink, description) VALUES (\"http://personal_stream/arosette@ulb.ac.be\", \"Flux personnel de arosette\", \"http://personal_stream\", \"Voici le flux personnel de arosette, c'est ici qu'il partage les publications qu'il aime\")";
-	    stat.executeUpdate(personalStream1);
-
-	    String user1 = "INSERT INTO User (mail, surname, password, avatar, country, city, biography, personal_stream_url) VALUES (\"arosette@ulb.ac.be\", \"arosette\", \"arosette\", \"~/Images/arosette.jpg\", \"Belgique\", \"Theux\", \"Je suis un etudiant qui etudie à l'ulb et vit à Theux\", \"http://personal_stream/arosette@ulb.ac.be\")";
-	    stat.executeUpdate(user1);
-
-	    String personalStream2 = "INSERT INTO Stream (url, name, webLink, description) VALUES (\"http://personal_stream/nomer@ulb.ac.be\", \"Flux personnel de nomer\", \"http://personal_stream\", \"Voici le flux personnel de nomer, c'est ici qu'il partage les publications qu'il aime\")";
-	    stat.executeUpdate(personalStream2);
-
-	    String user2 = "INSERT INTO User (mail, surname, password, avatar, country, city, biography, personal_stream_url) VALUES (\"nomer@ulb.ac.be\", \"nomer\", \"nomer\", \"~/Images/nomer.jpg\", \"Belgique\", \"Bruxelles\", \"Je suis un etudiant qui etudie à l'ulb et vit à Bruxelles\", \"http://personal_stream/nomer@ulb.ac.be\")";
-	    stat.executeUpdate(user2);
-
-	    stat.close();
-	}
-
-	catch (SQLException e) {
 	    throw new DAOException(e);
 	}
     }

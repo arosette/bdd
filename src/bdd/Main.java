@@ -1,6 +1,7 @@
 package bdd;
 
 import bdd.model.MysqlConnection;
+import bdd.parser.DataParser;
 import bdd.controller.LoginController;
 
 public class Main {
@@ -12,9 +13,13 @@ public class Main {
 	    mysqlConnection = MysqlConnection.getInstance();
 	    mysqlConnection.dataBaseExists();
 	    // mysqlConnection.deleteDataBase();
+	    
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}
+	//DataParser dataParser = new DataParser(
+	//	"../../src/populate-db.xml");
 	new LoginController();
+	
     }
 }
