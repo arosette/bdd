@@ -283,16 +283,16 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 	\begin{enumerate}
 	    \item
 		\begin{equation}
-		[u.* | \ U(u) \ \wedge \forall \underset{\ \ 2}{u} (U(\underset{\ \ 2}{u}) \rightarrow (( \forall f ( F(f) \rightarrow (f.status = False \wedge(f.mail\_sender = \underset{\ \ 2}{u}.mail \vee 
+		[u.* | \ User(u) \ \wedge \forall \underset{\ \ 2}{u} (User(\underset{\ \ 2}{u}) \rightarrow (( \forall f ( Friendship(f) \rightarrow (f.status = False \wedge(f.mail\_sender = \underset{\ \ 2}{u}.mail \vee 
 		\end{equation}
 		\begin{equation}
-		f.mail\_receiver = \underset{\ \ 2}{u}.mail)))) \vee ( \exists \underset{\ \ 2}{f} (F(\underset{\ \ 2}{f}) \rightarrow (\underset{\ \ 2}{f}.status = True \wedge(\underset{\ \ 2}{f}.mail\_sender = \underset{\ \ 2}{u}.mail \vee 
+		f.mail\_receiver = \underset{\ \ 2}{u}.mail)))) \vee ( \exists \underset{\ \ 2}{f} (Friendship(\underset{\ \ 2}{f}) \rightarrow (\underset{\ \ 2}{f}.status = True \wedge(\underset{\ \ 2}{f}.mail\_sender = \underset{\ \ 2}{u}.mail \vee 
 		\end{equation}  
 		\begin{equation}
 		\underset{\ \ 2}{f}.mail\_receiver = \underset{\ \ 2}{u}.mail)))) \vee ( \exists \underset{\ \ 3}{f} \underset{\ \ 4}{f} (F(\underset{\ \ 3}{f} ) \rightarrow (\underset{\ \ 3}{f}.status = True \wedge (\underset{\ \ 3}{f}.mail\_sender = \underset{\ \ 2}{u}.mail \vee
 		\end{equation}  
 		\begin{equation}
-		\underset{\ \ 3}{f}.mail\_receiver = \underset{\ \ 2}{u}.mail))) \wedge F(\underset{\ \ 4}{f}) \rightarrow (\underset{\ \ 4}{f}.status = True \wedge (\underset{\ \ 4}{f}.mail\_sender = \underset{\ \ 2}{u}.mail \vee
+		\underset{\ \ 3}{f}.mail\_receiver = \underset{\ \ 2}{u}.mail))) \wedge Friendship(\underset{\ \ 4}{f}) \rightarrow (\underset{\ \ 4}{f}.status = True \wedge (\underset{\ \ 4}{f}.mail\_sender = \underset{\ \ 2}{u}.mail \vee
 		\end{equation}
 		\begin{equation}
 		\underset{\ \ 4}{f}.mail\_receiver = \underset{\ \ 2}{u}.mail)) \wedge (\underset{\ \ 3}{f} \ != \underset{\ \ 4}{f}))))]
@@ -300,6 +300,30 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 	    \item
 	    \item 
 	    \item
+	         \begin{equation}
+		[u.* | \ User(u) \ \wedge \forall \underset{\ \ 2}{u} (User(\underset{\ \ 2}{u}) \rightarrow ( \exists \underset{\ \ 1}{p} \underset{\ \ 2}{p} \underset{\ \ 3}{p} \underset{\ \ 4}{p} \underset{\ \ 5}{p} \underset{\ \ 6}{p} (Proposition(\underset{\ \ 1}{p}) \wedge Proposition(\underset{\ \ 2}{p})  \wedge Proposition(\underset{\ \ 3}{p})
+		\end{equation}
+		\begin{equation}
+                  \wedge Proposition(\underset{\ \ 4}{p}) \wedge Proposition(\underset{\ \ 5}{p}) \wedge Proposition(\underset{\ \ 6}{p}) \wedge \underset{\ \ 1}{p}.stream\_url = <user>.personal\_stream\_url 
+		\end{equation}
+		\begin{equation}
+                   \wedge \underset{\ \ 2}{p}.stream\_url = <user>.personal\_stream\_url \wedge \underset{\ \ 3}{p}.stream\_url = <user>.personal\_stream\_url
+		\end{equation}
+		\begin{equation}
+                   \wedge \underset{\ \ 4}{p}.stream\_url = u.personal\_stream\_url \wedge \underset{\ \ 5}{p}.stream\_url = u.personal\_stream\_url 
+		\end{equation}
+		\begin{equation}
+                   \wedge \underset{\ \ 6}{p}.stream\_url = u.personal\_stream\_url \wedge \underset{\ \ 1}{p}.publication\_url =  \underset{\ \ 4}{p}.publication\_url 
+		\end{equation}
+		\begin{equation}
+		\wedge \underset{\ \ 2}{p}.publication\_url =  \underset{\ \ 5}{p}.publication\_url \wedge \underset{\ \ 3}{p}.publication\_url =  \underset{\ \ 6}{p}.publication\_url 
+		\end{equation}
+		\begin{equation}
+		\wedge \underset{\ \ 4}{p}.stream\_url  \ !=  <user>.personal\_stream\_url \wedge \underset{\ \ 5}{p}.stream\_url  \ !=  <user>.personal\_stream\_url
+		\end{equation}
+		\begin{equation}
+		\wedge \underset{\ \ 6}{p}.stream\_url  \ !=  <user>.personal\_stream\_url)))]
+		\end{equation}
 	\end{enumerate}
 
 \section{Instructions d'exécution du programme}
