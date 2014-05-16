@@ -196,6 +196,7 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 % \pi : projection
 % \div : division
 % \times : multiplication
+% \cap : intersection
 % \ast : jointure naturelle
 % \Join : jointure 
 % \sqsupset : LEFT JOIN
@@ -207,12 +208,27 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 		\underset{2}{F} \leftarrow \sigma \underset{status = True}{} (Friendship) \\
 		\end{equation}
 		\begin{equation}
-		T \leftarrow User \sqsupset \Join \underset{<\underset{2}{F}.mail\_sender = u.mail \vee \underset{2}{F}.mail\_receiver = u.mail>}{} \underset{2}{F} 
+		T \leftarrow User \sqsupset \Join \underset{<mail\_sender = mail \vee mail\_receiver = mail>}{} \underset{2}{F} 
 		\end{equation}
 		\begin{equation}
-		Result \leftarrow \pi \underset{u.*}{}(u.mail \  \  \  \sigma \underset{COUNT(*) < 3}{}T)
+		Result \leftarrow \pi \underset{*}{}(mail \  \  \  \sigma \underset{COUNT(*) < 3}{}(T))
 		\end{equation}
 	    \item
+		\begin{equation}
+		S1 \leftarrow \pi \underset{stream\_url}{} (\sigma \underset{user\_mail = <user>.mail}{}(Subscribe))`
+		\end{equation}
+		\begin{equation}
+		a \leftarrow (\sigma \underset{user\_mail != <user>.mail \wedge user\_mail = mail}{}(User \times Subscribe))
+		\end{equation}
+		\begin{equation}
+		b \leftarrow (\sigma \underset{stream\_url = url \wedge stream\_url\  \cap S1}{}(Stream \times Subscribe))
+		\end{equation}
+		\begin{equation}
+		U1 \leftarrow \pi \underset{mail}{} (user\_mail \  \  \  \sigma \underset{COUNT(*) >= 2}{}(a \wedge b))
+		\end{equation}
+		\begin{equation}
+		Result \leftarrow \pi \underset{*}{} (\sigma \underset {stream\_url = url \wedge user\_mail \cap U1}{}(Subscribe \times Stream))
+		\end{equation}
 	    \item 
 	    \item
 	\end{enumerate}
