@@ -242,6 +242,24 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 		ORDER BY publications_shared
              \end{verbatim}
 	    \item 
+	    \begin{verbatim}
+		<user>
+		SELECT u1.mail,
+		    ((SELECT COUNT(*) FROM `Read` r1 WHERE r1.user_mail = u1.mail) / 
+		    (SELECT DATEDIFF(CURDATE(), u1.date))) AS publications_read_per_day,
+		    (SELECT COUNT(*) FROM User u2 WHERE u2.mail IN 
+		    (SELECT friend3.mail_receiver FROM Friendship friend3 
+		    WHERE friend3.mail_sender = u1.mail AND friend3.status = TRUE) OR u2.mail IN 
+		    (SELECT friend4.mail_sender FROM Friendship friend4 
+		    WHERE friend4.mail_receiver = u1.mail AND friend4.status = TRUE)) AS nb_friends
+		FROM User u1
+		WHERE 
+		u1.mail IN (SELECT friend1.mail_receiver FROM Friendship friend1 
+		WHERE friend1.mail_sender = <user>.mail AND friend1.status = TRUE)
+		OR u1.mail IN (SELECT friend2.mail_sender FROM Friendship friend2 
+		WHERE friend2.mail_receiver = <user>.mail AND friend2.status = TRUE)
+		ORDER BY publications_read_per_day
+             \end{verbatim}
 	\end{enumerate}
 
 \subsection{Algèbre relationnelle}
@@ -259,7 +277,8 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 
 	\begin{enumerate}
 	    \item
-		\begin{equation}
+	    \fbox{\begin{minipage}{1.0\textwidth}
+              \begin{equation}
 		\underset{2}{F} \leftarrow \sigma \underset{status = True}{} (Friendship) \\
 		\end{equation}
 		\begin{equation}
@@ -268,7 +287,9 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 		\begin{equation}
 		Result \leftarrow \pi \underset{*}{}(mail \  \  \  \sigma \underset{COUNT(*) < 3}{}(T))
 		\end{equation}
+             \end{minipage}}
 	    \item
+	    \fbox{\begin{minipage}{1.0\textwidth}
 		\begin{equation}
 		S1 \leftarrow \pi \underset{stream\_url}{} (\sigma \underset{user\_mail = <user>.mail}{}(Subscribe))`
 		\end{equation}
@@ -284,7 +305,9 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 		\begin{equation}
 		Result \leftarrow \pi \underset{*}{} (\sigma \underset {stream\_url = url \wedge user\_mail \cap U1}{}(Subscribe * Stream))
 		\end{equation}
+	    \end{minipage}}
 	    \item 
+	    \fbox{\begin{minipage}{1.0\textwidth}
 	          \begin{equation}
 		Sub1 \leftarrow \pi \underset{stream\_url}{} (\sigma \underset{user\_mail = <user>.mail}{}(Subscribe))
 		\end{equation}
@@ -309,7 +332,9 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 		\begin{equation}
 		Result \leftarrow \pi \underset{*}{} (\sigma \underset{(url \cap Sub1) \wedge (url \setminus Sub2) \wedge (url \setminus Prop2)}{}(Stream))
 		\end{equation}
+             \end{minipage}}
 	    \item
+	    \fbox{\begin{minipage}{1.0\textwidth}
 	         \begin{equation}
 		PP \leftarrow \pi \underset{*}{} (\sigma \underset{stream\_url = <user>.personal\_stream\_url}{}(Propose))
 		\end{equation}
@@ -319,6 +344,7 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 	         \begin{equation}
 		Result \leftarrow \pi \underset{*}{} (mail \  \  \  \sigma \underset{COUNT(*) >= 3}{}(PP \cap PU))
 		\end{equation}
+          \end{minipage}}
 	\end{enumerate}
 	
 \subsection{Calcul relationnel tuple}
@@ -338,6 +364,7 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 
 	\begin{enumerate}
 	    \item
+	    \fbox{\begin{minipage}{1.0\textwidth}
 		\begin{equation}
 		[u.* | \ User(u) \ \wedge \forall \underset{\ \ 2}{u} (User(\underset{\ \ 2}{u}) \rightarrow (( \forall f ( Friendship(f) \rightarrow (f.status = False \wedge(f.mail\_sender = \underset{\ \ 2}{u}.mail \vee 
 		\end{equation}
@@ -353,8 +380,10 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 		\begin{equation}
 		\underset{\ \ 4}{f}.mail\_receiver = \underset{\ \ 2}{u}.mail)) \wedge (\underset{\ \ 3}{f} \ != \underset{\ \ 4}{f}))))]
 		\end{equation}
+             \end{minipage}}
 	    \item
 	    \item
+	    \fbox{\begin{minipage}{1.0\textwidth}
 	         \begin{equation}
 		[s.* | \ Stream(s) \ \wedge \forall u \ \forall f \ \forall \underset{\ \ 2}{s} \ \forall \underset{\ \ 3}{s} ((Friendship(f) \wedge Subscribe(\underset{\ \ 2}{s}) \wedge Subscribe(\underset{\ \ 3}{s}) \wedge User(u)) \rightarrow
 		\end{equation} 
@@ -367,7 +396,9 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 		\begin{equation}
 		( \underset{\ \ 2}{s}.user\_mail = <user>.mail ) \wedge ( \underset{\ \ 3}{s}.user\_mail = u.mail ) \wedge ( s \cap \underset{\ \ 2}{s} = \varnothing ) \wedge ( s \cap \underset{\ \ 3}{s} = \varnothing )))]
 		\end{equation} 
+             \end{minipage}}
 	    \item
+	    \fbox{\begin{minipage}{1.0\textwidth}
 	         \begin{equation}
 		[u.* | \ User(u) \ \wedge \forall \underset{\ \ 2}{u} (User(\underset{\ \ 2}{u}) \rightarrow ( \exists \underset{\ \ 1}{p} \underset{\ \ 2}{p} \underset{\ \ 3}{p} \underset{\ \ 4}{p} \underset{\ \ 5}{p} \underset{\ \ 6}{p} (Proposition(\underset{\ \ 1}{p}) \wedge Proposition(\underset{\ \ 2}{p})  \wedge Proposition(\underset{\ \ 3}{p})
 		\end{equation}
@@ -392,6 +423,7 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 		\begin{equation}
 		\wedge \underset{\ \ 6}{p}.stream\_url  \ !=  <user>.personal\_stream\_url)))]
 		\end{equation}
+         \end{minipage}}
 	\end{enumerate}
 
 \section{Instructions d'exécution du programme}
