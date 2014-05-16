@@ -218,16 +218,16 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 		S1 \leftarrow \pi \underset{stream\_url}{} (\sigma \underset{user\_mail = <user>.mail}{}(Subscribe))`
 		\end{equation}
 		\begin{equation}
-		a \leftarrow (\sigma \underset{user\_mail != <user>.mail \wedge user\_mail = mail}{}(User \times Subscribe))
+		a \leftarrow (\sigma \underset{user\_mail != <user>.mail \wedge user\_mail = mail}{}(User * Subscribe))
 		\end{equation}
 		\begin{equation}
-		b \leftarrow (\sigma \underset{stream\_url = url \wedge stream\_url\  \cap S1}{}(Stream \times Subscribe))
+		b \leftarrow (\sigma \underset{stream\_url = url \wedge stream\_url\  \cap S1}{}(Stream * Subscribe))
 		\end{equation}
 		\begin{equation}
 		U1 \leftarrow \pi \underset{mail}{} (user\_mail \  \  \  \sigma \underset{COUNT(*) >= 2}{}(a \wedge b))
 		\end{equation}
 		\begin{equation}
-		Result \leftarrow \pi \underset{*}{} (\sigma \underset {stream\_url = url \wedge user\_mail \cap U1}{}(Subscribe \times Stream))
+		Result \leftarrow \pi \underset{*}{} (\sigma \underset {stream\_url = url \wedge user\_mail \cap U1}{}(Subscribe * Stream))
 		\end{equation}
 	    \item 
 	          \begin{equation}
@@ -246,7 +246,7 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 		Sub2 \leftarrow \pi \underset{stream\_url}{} (\sigma \underset{user\_mail \cap U}{}(Subscribe))
 		\end{equation}
 		\begin{equation}
-		Prop1 \leftarrow \pi \underset{publication\_url}{} (\sigma \underset{url = publication\_url \wedge stream\_url = <user>.personal\_stream\_url}{}(Propose \times Publication ))
+		Prop1 \leftarrow \pi \underset{publication\_url}{} (\sigma \underset{url = publication\_url \wedge stream\_url = <user>.personal\_stream\_url}{}(Propose * Publication ))
 		\end{equation}
 		\begin{equation}
 		Prop2 \leftarrow \pi \underset{stream\_url}{} (\sigma \underset{publication\_url \cap Prop1}{}(Propose))
@@ -255,8 +255,17 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 		Result \leftarrow \pi \underset{*}{} (\sigma \underset{(url \cap Sub1) \wedge (url \setminus Sub2) \wedge (url \setminus Prop2)}{}(Stream))
 		\end{equation}
 	    \item
+	         \begin{equation}
+		PP \leftarrow \pi \underset{*}{} (\sigma \underset{stream\_url = <user>.personal\_stream\_url}{}(Propose))
+		\end{equation}
+		\begin{equation}
+		PU \leftarrow \pi \underset{*}{} (\sigma \underset{(stream\_url = personal\_stream\_url) \wedge (stream\_url != <user>.personal\_stream\_url)}{}(Propose*User))
+		\end{equation}
+	         \begin{equation}
+		Result \leftarrow \pi \underset{*}{} (mail \  \  \  \sigma \underset{COUNT(*) >= 3}{}(PP \cap PU))
+		\end{equation}
 	\end{enumerate}
-
+	
 \subsection{Calcul relationnel tuple}
 
 % Commandes latex pour le calcul tuple
