@@ -163,7 +163,7 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 		FROM User u LEFT JOIN (SELECT * FROM Friendship f1 WHERE f1.status = TRUE) AS f2 
 		ON f2.mail_sender = u.mail OR f2.mail_receiver = u.mail
 		GROUP BY u.mail
-		HAVING COUNT(*) < 3;
+		HAVING COUNT(*) < 3
              \end{verbatim}
 	    \item
              \begin{verbatim}
@@ -181,11 +181,66 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 		            FROM Subscribe sub1 
 		            WHERE sub1.user_mail = <user>.mail)
 		    GROUP BY sub2.user_mail
-		    HAVING COUNT(*) >= 2);
+		    HAVING COUNT(*) >= 2)
+             \end{verbatim}
+	    \item
+	    \begin{verbatim}
+		<user>
+		SELECT *
+		FROM Stream s
+		WHERE s.url IN
+		    (SELECT sub.stream_url
+		    FROM Subscribe sub1
+		    WHERE sub1.user_mail = <user>.mail)
+		AND s.url NOT IN
+		    (SELECT DISTINCT sub.stream_url
+		    FROM Subscribe sub2
+		    WHERE sub2.user_mail IN
+		        (SELECT u.mail FROM User u WHERE u.mail IN
+		            (SELECT f1.mail_sender FROM Friendship f1 
+		            WHERE f1.mail_receiver = <user>.mail AND f1.status = TRUE)
+		        OR u.mail IN
+		            (SELECT f2.mail_receiver FROM Friendship f2 
+		            WHERE f2.mail_sender = <user>.mail AND f2.status = TRUE)))
+		AND s.url NOT IN
+		    (SELECT DISTINCT prop2.stream_url
+		    FROM Propose prop2
+		    WHERE prop2.publication_url IN
+		        (SELECT prop1.publication_url
+		        FROM Publication pub, Propose prop1
+		        WHERE pub.url = prop1.publication_url 
+		        AND prop1.stream_url = <user>.personal_stream_url))
              \end{verbatim}
 	    \item 
+	    \begin{verbatim}
+		<user>
+		SELECT DISTINCT u.*
+		FROM User u, Propose prop1, Propose prop2
+		WHERE prop1.stream_url = <user>.personal_stream_url
+		AND prop2.stream_url != <user>.personal_stream_url
+		AND prop2.stream_url = u.personal_stream_url
+		AND prop1.publication_url = prop2.publication_url
+		GROUP BY u.mail
+		HAVING count(*) >= 3
+             \end{verbatim}
 	    \item 
-	    \item 
+	    \begin{verbatim}
+		<user>
+		SELECT s1.url, 
+		    @a:=(SELECT COUNT(*) FROM `Read` r2, Propose prop1 
+		    WHERE r2.publication_url = prop1.publication_url 
+		    AND r2.user_mail = <user>.mail AND prop1.stream_url = s1.url 
+		    AND DATE_SUB(CURDATE(),INTERVAL 30 DAY) <= r2.date) AS publications_read,
+		    @b:=(SELECT COUNT(*) FROM Propose prop2, Propose prop3, Publication pub1 
+		    WHERE  pub1.url = prop2.publication_url 
+		    AND pub1.url = prop3.publication_url AND prop2.publication_url = prop3.publication_url 
+		    AND prop2.stream_url = <user>.personal_stream_url AND prop3.stream_url = s1.url 
+		    AND DATE_SUB(CURDATE(),INTERVAL 30 DAY) <= pub1.date) AS publications_shared,
+		    (@b / @a * 100)
+		FROM Stream s1, Subscribe sub1
+		WHERE sub1.stream_url = s1.url AND sub1.user_mail = <user>.mail
+		ORDER BY publications_shared
+             \end{verbatim}
 	    \item 
 	\end{enumerate}
 
@@ -275,6 +330,7 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 % \cup : union
 % \cap : intersection
 % \setminus : différence ensembliste
+% \varnothing : ensemble vide
 % \wedge : ET
 % \vee : OU
 % \rightarrow : =>
@@ -298,7 +354,19 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 		\underset{\ \ 4}{f}.mail\_receiver = \underset{\ \ 2}{u}.mail)) \wedge (\underset{\ \ 3}{f} \ != \underset{\ \ 4}{f}))))]
 		\end{equation}
 	    \item
-	    \item 
+	    \item
+	         \begin{equation}
+		[s.* | \ Stream(s) \ \wedge \forall u \ \forall f \ \forall \underset{\ \ 2}{s} \ \forall \underset{\ \ 3}{s} ((Friendship(f) \wedge Subscribe(\underset{\ \ 2}{s}) \wedge Subscribe(\underset{\ \ 3}{s}) \wedge User(u)) \rightarrow
+		\end{equation} 
+		\begin{equation}
+		( ( (u.mail = f.mail\_sender \wedge <user>.mail = f.mail\_receiver \wedge f.status = TRUE ) \vee 
+		\end{equation} 
+		\begin{equation}
+		(u.mail = f.mail\_receiver \wedge <user>.mail = f.mail\_sender \wedge f.status = TRUE ) ) \wedge 
+		\end{equation} 
+		\begin{equation}
+		( \underset{\ \ 2}{s}.user\_mail = <user>.mail ) \wedge ( \underset{\ \ 3}{s}.user\_mail = u.mail ) \wedge ( s \cap \underset{\ \ 2}{s} = \varnothing ) \wedge ( s \cap \underset{\ \ 3}{s} = \varnothing )))]
+		\end{equation} 
 	    \item
 	         \begin{equation}
 		[u.* | \ User(u) \ \wedge \forall \underset{\ \ 2}{u} (User(\underset{\ \ 2}{u}) \rightarrow ( \exists \underset{\ \ 1}{p} \underset{\ \ 2}{p} \underset{\ \ 3}{p} \underset{\ \ 4}{p} \underset{\ \ 5}{p} \underset{\ \ 6}{p} (Proposition(\underset{\ \ 1}{p}) \wedge Proposition(\underset{\ \ 2}{p})  \wedge Proposition(\underset{\ \ 3}{p})

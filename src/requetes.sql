@@ -216,8 +216,15 @@ AND s.url = <user>.personal_stream_url;
 --> R4 : La liste des utilisateurs qui ont 
 -- partagé au moins 3 publications que X a partagé
 ---------------------------------------------------
-
-[TODO]
+<userX>
+SELECT DISTINCT u.*
+FROM User u, Propose prop1, Propose prop2
+WHERE prop1.stream_url = <user>.personal_stream_url
+AND prop2.stream_url != <user>.personal_stream_url
+AND prop2.stream_url = u.personal_stream_url
+AND prop1.publication_url = prop2.publication_url
+GROUP BY u.mail
+HAVING count(*) >= 3;
 
 --> La liste des flux auquel un utilisateur est inscrit avec le 
 -- nombre de publications lues, le nombre de publications partagées, 
