@@ -12,7 +12,7 @@
         <country>Belgique</country>
         <city>Theux</city>
         <biography>J'etudie a l'ulb et j'habite a Theux</biography>
-        <date>2014-05-16</date>
+        <date>2014-05-14</date>
         
         <streamname>Flux perso de arosette</streamname>
         <streamdescription>Flux perso de arosette</streamdescription>
@@ -28,10 +28,25 @@
         <country>Belgique</country>
         <city>Bruxelles</city>
         <biography>J'etudie a l'ulb et j'habite a Bruxelles</biography>
-        <date>2014-05-16</date>
+        <date>2014-05-14</date>
         
         <streamname>Flux perso de nomer</streamname>
         <streamdescription>Flux perso de nomer</streamdescription>
+        <streamweblink>http://personal_stream/</streamweblink>
+    </user>
+    
+    <user>
+        <mail>lpostula@ulb.ac.be</mail>
+        <surname>lpostula</surname>
+        <password>lpostula</password>
+        <avatar>~/Images/lpostula.jpg</avatar>
+        <country>Belgique</country>
+        <city>Bruxelles</city>
+        <biography>J'etudie a l'ulb et j'habite a Bruxelles</biography>
+        <date>2014-05-14</date>
+        
+        <streamname>Flux perso de lpostula</streamname>
+        <streamdescription>Flux perso de lpostula</streamdescription>
         <streamweblink>http://personal_stream/</streamweblink>
     </user>
     
@@ -42,8 +57,27 @@
         <date>2014-05-16</date>
     </friend>
     
+    <friend>
+        <mailsender>arosette@ulb.ac.be</mailsender>
+        <mailreceiver>lpostula@ulb.ac.be</mailreceiver>
+        <status>TRUE</status>
+        <date>2014-05-16</date>
+    </friend>
+    
     <subscription>
         <usermail>arosette@ulb.ac.be</usermail>
+        <streamurl>/home/arnaud/Documents/ulb/3eme-2013-2014/base-de-donnees/enonce/rss_dh.xml</streamurl>
+        <date>2014-05-16</date>
+    </subscription>
+    
+    <subscription>
+        <usermail>lpostula@ulb.ac.be</usermail>
+        <streamurl>/home/arnaud/Documents/ulb/3eme-2013-2014/base-de-donnees/enonce/rss_dh.xml</streamurl>
+        <date>2014-05-16</date>
+    </subscription>
+    
+    <subscription>
+        <usermail>nomer@ulb.ac.be</usermail>
         <streamurl>/home/arnaud/Documents/ulb/3eme-2013-2014/base-de-donnees/enonce/rss_dh.xml</streamurl>
         <date>2014-05-16</date>
     </subscription>
