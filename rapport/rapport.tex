@@ -230,6 +230,30 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 		Result \leftarrow \pi \underset{*}{} (\sigma \underset {stream\_url = url \wedge user\_mail \cap U1}{}(Subscribe \times Stream))
 		\end{equation}
 	    \item 
+	          \begin{equation}
+		Sub1 \leftarrow \pi \underset{stream\_url}{} (\sigma \underset{user\_mail = <user>.mail}{}(Subscribe))
+		\end{equation}
+		\begin{equation}
+		F1 \leftarrow \pi \underset{mail\_sender}{} (\sigma \underset{mail\_receiver = <user>.mail \wedge status = true}{}(Friendship))
+		\end{equation}
+		\begin{equation}
+		F2 \leftarrow \pi \underset{mail\_sender}{} (\sigma \underset{mail\_sender = <user>.mail \wedge status = true}{}(Friendship))
+		\end{equation}
+		\begin{equation}
+		U \leftarrow \pi \underset{mail}{} (\sigma \underset{(mail \cap F1) \vee (mail \cap F2) }{}(User))
+		\end{equation}
+		\begin{equation}
+		Sub2 \leftarrow \pi \underset{stream\_url}{} (\sigma \underset{user\_mail \cap U}{}(Subscribe))
+		\end{equation}
+		\begin{equation}
+		Prop1 \leftarrow \pi \underset{publication\_url}{} (\sigma \underset{url = publication\_url \wedge stream\_url = <user>.personal\_stream\_url}{}(Propose \times Publication ))
+		\end{equation}
+		\begin{equation}
+		Prop2 \leftarrow \pi \underset{stream\_url}{} (\sigma \underset{publication\_url \cap Prop1}{}(Propose))
+		\end{equation}
+		\begin{equation}
+		Result \leftarrow \pi \underset{*}{} (\sigma \underset{(url \cap Sub1) \wedge (url \setminus Sub2) \wedge (url \setminus Prop2)}{}(Stream))
+		\end{equation}
 	    \item
 	\end{enumerate}
 
