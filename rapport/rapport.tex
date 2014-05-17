@@ -59,6 +59,14 @@
 
 Il nous est demandé d'implémenter une application de création de flux d'information RSS 2.0. Il devra être possible pour des utilisateurs de consulter ces flux d'informations (par le biais de publications) et de s'abonner aux flux qui les intéressent. Ce concept est directement inspiré du lecteur de flux \textsl{Google Reader}. De plus, les utilisateurs pourront s'envoyer des demandes d'amitié (afin de s'abonner au flux de leur amis) et partager les publications qui les intéressent. Ils pourront également commenter les publications partagées s'ils le désirent. 
 
+\section{Scénario}
+
+Pour cette démonstration, nous possédons une base de données contenant déjà certains utilisateurs, flux et publications. Nous commençons par ajouter un utilisateur en base base de données en sélectionnant le bouton d'inscription. Nous montrons qu'il n'est pas possible d'inscrire un utilisateur avec une adresse mail non valide ou avec une adresse mail déjà existante en base de données (l'adresse mail étant la clef d'identification). Après l'inscription, nous nous connectons avec ce nouvel utilisateur en entrant son mot de passe associé. 
+
+Une fois dans l'application, nous montrons l'inscription à un flux en entrant l'adresse url de ce dernier.
+
+Nous envoyons une demande en ami à un utilisateur existant (on peut montrer qu'il n'est pas possible de se demander soi-même en ami). On ferme l'application et on se connecte avec le récepteur de la demande d'ami. Si nous essayons d'envoyer à notre tour une demande à l'émetteur, l'application nous signale que c'est impossible. On accepte la demande en effectuant un clic droit sur la demande en attente pour l'accepter.
+
 \section{Modèle entité-relation}
 
 Afin de modéliser la façon dont les informations seront physiquement enregistrées en base de données (au moyen d'SQL), voici un diagramme entité-association fournissant une description graphique du modèle conceptuel de données.
@@ -366,22 +374,45 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 	    \item
 	    \fbox{\begin{minipage}{1.0\textwidth}
 		\begin{equation}
-		[u.* | \ User(u) \ \wedge \forall \underset{\ \ 2}{u} (User(\underset{\ \ 2}{u}) \rightarrow (( \forall f ( Friendship(f) \rightarrow (f.status = False \wedge(f.mail\_sender = \underset{\ \ 2}{u}.mail \vee 
+		[u.* | \ User(u) \ \wedge \forall \underset{\ \ 2}{u} (User(\underset{\ \ 2}{u}) \rightarrow (( \forall f ( Friendship(f) \rightarrow (f.status = False \wedge(f.mail\_sender = \underset{\ \ 2}{u}.mail 
 		\end{equation}
 		\begin{equation}
-		f.mail\_receiver = \underset{\ \ 2}{u}.mail)))) \vee ( \exists \underset{\ \ 2}{f} (Friendship(\underset{\ \ 2}{f}) \rightarrow (\underset{\ \ 2}{f}.status = True \wedge(\underset{\ \ 2}{f}.mail\_sender = \underset{\ \ 2}{u}.mail \vee 
+		\vee f.mail\_receiver = \underset{\ \ 2}{u}.mail)))) \vee ( \exists \underset{\ \ 2}{f} (Friendship(\underset{\ \ 2}{f}) \rightarrow (\underset{\ \ 2}{f}.status = True \wedge(\underset{\ \ 2}{f}.mail\_sender = \underset{\ \ 2}{u}.mail  
 		\end{equation}  
 		\begin{equation}
-		\underset{\ \ 2}{f}.mail\_receiver = \underset{\ \ 2}{u}.mail)))) \vee ( \exists \underset{\ \ 3}{f} \underset{\ \ 4}{f} (F(\underset{\ \ 3}{f} ) \rightarrow (\underset{\ \ 3}{f}.status = True \wedge (\underset{\ \ 3}{f}.mail\_sender = \underset{\ \ 2}{u}.mail \vee
+		\vee \underset{\ \ 2}{f}.mail\_receiver = \underset{\ \ 2}{u}.mail)))) \vee ( \exists \underset{\ \ 3}{f} \underset{\ \ 4}{f} (F(\underset{\ \ 3}{f} ) \rightarrow (\underset{\ \ 3}{f}.status = True \wedge (\underset{\ \ 3}{f}.mail\_sender = \underset{\ \ 2}{u}.mail 
 		\end{equation}  
 		\begin{equation}
-		\underset{\ \ 3}{f}.mail\_receiver = \underset{\ \ 2}{u}.mail))) \wedge Friendship(\underset{\ \ 4}{f}) \rightarrow (\underset{\ \ 4}{f}.status = True \wedge (\underset{\ \ 4}{f}.mail\_sender = \underset{\ \ 2}{u}.mail \vee
+		\vee \underset{\ \ 3}{f}.mail\_receiver = \underset{\ \ 2}{u}.mail))) \wedge Friendship(\underset{\ \ 4}{f}) \rightarrow (\underset{\ \ 4}{f}.status = True \wedge (\underset{\ \ 4}{f}.mail\_sender = \underset{\ \ 2}{u}.mail 
 		\end{equation}
 		\begin{equation}
-		\underset{\ \ 4}{f}.mail\_receiver = \underset{\ \ 2}{u}.mail)) \wedge (\underset{\ \ 3}{f} \ != \underset{\ \ 4}{f}))))]
+		\vee \underset{\ \ 4}{f}.mail\_receiver = \underset{\ \ 2}{u}.mail)) \wedge (\underset{\ \ 3}{f} \ != \underset{\ \ 4}{f}))))]
 		\end{equation}
              \end{minipage}}
 	    \item
+	    \fbox{\begin{minipage}{1.0\textwidth}
+	         \begin{equation}
+	         [s.* | \ Stream(s) \ \wedge \forall u \forall \underset{\ \ 1}{sub} \forall \underset{\ \ 4}{sub} \exists \underset{\ \ 2}{s} \exists \underset{\ \ 3}{s} \exists \underset{\ \ 2}{sub} \exists \underset{\ \ 3}{sub} ( (User(u) \wedge Subscribe(\underset{\ \ 1}{sub}) \wedge Subscribe(\underset{\ \ 2}{sub}) 
+	         \end{equation} 
+	         \begin{equation}
+	         \wedge Subscribe(\underset{\ \ 3}{sub}) \wedge Subscribe(\underset{\ \ 4}{sub}) \wedge Stream(\underset{\ \ 2}{s}) \wedge Stream(\underset{\ \ 3}{s}) ) \rightarrow ( ( (\underset{\ \ 4}{sub}.stream\_url = s.url  
+	         \end{equation} 
+	         \begin{equation}
+	         \wedge \underset{\ \ 4}{sub}.user\_mail) \cap ((\underset{\ \ 2}{sub}.user\_mail \ != <user>.mail \wedge \underset{\ \ 2}{sub}.user\_mail = u.mail 
+	         \end{equation} 
+	         \begin{equation}
+	         \wedge \underset{\ \ 2}{sub}.stream\_url =  \underset{\ \ 2}{s}.url \wedge \underset{\ \ 2}{sub}.stream\_url) \cap (\underset{\ \ 1}{sub}.user\_mail = <user>.mail))
+	         \end{equation} 
+	         \begin{equation}
+	         \wedge (\underset{\ \ 4}{sub}.stream\_url = s.url \wedge \underset{\ \ 4}{sub}.user\_mail) \cap ((\underset{\ \ 3}{sub}.user\_mail \ != <user>.mail
+	         \end{equation}
+	         \begin{equation}
+	         \wedge \underset{\ \ 3}{sub}.user\_mail = u.mail \wedge \underset{\ \ 3}{sub}.stream\_url =  \underset{\ \ 3}{s}.url \wedge \underset{\ \ 3}{sub}.stream\_url)
+	         \end{equation}
+	         \begin{equation}
+	         \cap (\underset{\ \ 1}{sub}.user\_mail = <user>.mail)) \wedge (\underset{\ \ 3}{sub} \ != \underset{\ \ 4}{sub}) \wedge (\underset{\ \ 2}{s} \ != \underset{\ \ 3}{s})))]
+	         \end{equation}  
+	         \end{minipage}}
 	    \item
 	    \fbox{\begin{minipage}{1.0\textwidth}
 	         \begin{equation}
