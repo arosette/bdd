@@ -62,8 +62,10 @@ Il nous est demandé d'implémenter une application de création de flux d'infor
 \section{Scénario}
 
 Pour cette démonstration, nous possédons une base de données contenant déjà certains utilisateurs, flux et publications. Nous commençons par ajouter un utilisateur en base base de données en sélectionnant le bouton d'inscription. Nous montrons qu'il n'est pas possible d'inscrire un utilisateur avec une adresse mail non valide ou avec une adresse mail déjà existante en base de données (l'adresse mail étant la clef d'identification). Après l'inscription, nous nous connectons avec ce nouvel utilisateur en entrant son mot de passe associé. 
+\
 
-Une fois dans l'application, nous montrons l'inscription à un flux en entrant l'adresse url de ce dernier.
+Une fois dans l'application, nous montrons l'inscription à un flux en entrant l'adresse url de ce dernier. Il est également possible d'ajouter un flux qui existe déjà en base de données à sa liste de souscription, pour cela il faut entrer l'url de ce flux. Une fois un flux ajouté et ses publications s'affichant dans la fenêtre correspondante, nous pouvons consulter les publications soit dans l'application soit dans le navigateur internet par défaut.
+\
 
 Nous envoyons une demande en ami à un utilisateur existant (on peut montrer qu'il n'est pas possible de se demander soi-même en ami). On ferme l'application et on se connecte avec le récepteur de la demande d'ami. Si nous essayons d'envoyer à notre tour une demande à l'émetteur, l'application nous signale que c'est impossible. On accepte la demande en effectuant un clic droit sur la demande en attente pour l'accepter.
 
@@ -71,7 +73,7 @@ Nous envoyons une demande en ami à un utilisateur existant (on peut montrer qu'
 
 Afin de modéliser la façon dont les informations seront physiquement enregistrées en base de données (au moyen d'SQL), voici un diagramme entité-association fournissant une description graphique du modèle conceptuel de données.
 
-\subsection{Schéma}
+\subsection{Schéma {\small (voir Figure \ref{fig:Entite-Relation})}} 
 
 	\begin{figure}[h!]
 	    \centering
@@ -86,7 +88,7 @@ La relation \textsl{FriendShip}, une fois traduite en base de données, comprend
 
 \section{Modèle relationnel}
 
-Cette section comprend quant à elle le modèle logique directement tiré du diagramme entité-association. 
+Cette section comprend quant à elle le modèle logique directement tiré de la traduction du diagramme entité-association. Il s'agit également d'indiquer les références des sous-entités.
 
 \subsection{Traduction}
 
@@ -127,7 +129,7 @@ Subscribe(\underline {user\_mail}, \underline {stream\_url}, date)
 user\_mail référence User.mail
 
 stream\_url référence Stream.url
-\\\\
+\\
 
 \subsection{Contraintes d’intégrité}
 
@@ -147,7 +149,16 @@ stream\_url référence Stream.url
 
 \section{Justification des choix de modélisations}
 
-Nous avions pensé à créer une table \textsl{Personnal Stream} qui héritait de la table \textsl{Stream} mais cela compliquait inutilement le modèle. Dans le même ordre d'idées, il était possible d'avoir une table \textsl{Commented Publication} qui aurait hérité de \textsl{Publication} mais la relation \textsl{Comment} suffit amplement pour ce modèle.
+Nous avions pensé à créer une table \textsl{Personnal Stream} qui héritait de la table \textsl{Stream} mais cela compliquait inutilement le modèle. Dans le même ordre d'idées, il était possible d'avoir une table \textsl{Commented Publication} qui aurait hérité de \textsl{Publication} mais la relation \textsl{Comment} suffit amplement pour ce modèle. Notre application est disponible en français uniquement.
+\
+
+Nous avons utilisé le patron de conception Modèle Vue Contrôleur afin de correctement diviser les tâches de nos classes (les données, leur présentation et leur traitement). La vue (l'interface, les éléments avec lesquels l'utilisateur interagit) lit les données que lui fournit le modèle et manipule un contrôleur qui se charge de mettre à jour les données (gestion des événements). 
+\
+
+Ajouté à cela, nous utilisons des objets d'accès au données qui sont instanciés à chaque interaction avec la base de données SQL. Ils se chargent d'insérer, supprimer, mettre à jour et chercher les données désirées. Nous préparons les requêtes à leur construction et nous remplissons les informations nécessaires pour l'interaction qu'ils ont avec la base de données.
+\
+
+Pour terminer, nous avons également des \textsl{parsers} de données xml afin de peupler notre base de données à partir d'un fichier avec l'extension correspondante.
 
 \section{Requêtes demandées}
 
@@ -459,6 +470,6 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 
 \section{Instructions d'exécution du programme}
 
-Concernant les détails techniques, notre programme est codé sous java et utilise MySQL comme base de données. Il nécessite donc de lancer le serveur mysql avant l'utilisation de l'application.
+Concernant les détails techniques, notre programme est codé en Java, l'interface utilise la librairie Swing de Java et utilise MySQL comme base de données. Nous avons dû adjoindre un connecteur pour Mysql afin d'obtenir une connexion à MySQL. Il nécessite donc de lancer le serveur mysql avant l'utilisation de l'application (nous avons choisi un nom d'utilisateur et un mot de passe par défaut dans l'application).
 
 \end{document}
