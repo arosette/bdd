@@ -13,13 +13,13 @@ public class Main {
 	    mysqlConnection = MysqlConnection.getInstance();
 	    mysqlConnection.dataBaseExists();
 	    // mysqlConnection.deleteDataBase();
-	    
+
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}
-	//DataParser dataParser = new DataParser(
-	//	"../../src/populate-db.xml");
-	new LoginController();
+	//DataParser dataParser = new DataParser("src/populate-db.xml");
 	
+	new LoginController();
+
     }
 }

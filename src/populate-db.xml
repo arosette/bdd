@@ -16,7 +16,7 @@
     
     <stream>
         <url>/home/lois/Documents/BA3/base-de-donnees/enonce/rss_dh.xml</url>
-        <name>Flux perso de lpostula</streamname>
+        <name>Flux perso de lpostula</name>
         <description>Flux perso de lpostula</description>
         <weblink>http://personal_stream/</weblink>
     </stream>

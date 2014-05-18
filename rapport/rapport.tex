@@ -55,7 +55,7 @@
 \tableofcontents
 \pagebreak
 
-\section{Etude de cas}
+\section{Étude de cas}
 
 Il nous est demandé d'implémenter une application de création de flux d'information RSS 2.0. Il devra être possible pour des utilisateurs de consulter ces flux d'informations (par le biais de publications) et de s'abonner aux flux qui les intéressent. Ce concept est directement inspiré du lecteur de flux \textsl{Google Reader}. De plus, les utilisateurs pourront s'envoyer des demandes d'amitié (afin de s'abonner au flux de leur amis) et partager les publications qui les intéressent. Ils pourront également commenter les publications partagées s'ils le désirent. 
 
@@ -64,10 +64,13 @@ Il nous est demandé d'implémenter une application de création de flux d'infor
 Pour cette démonstration, nous possédons une base de données contenant déjà certains utilisateurs, flux et publications. Nous commençons par ajouter un utilisateur en base base de données en sélectionnant le bouton d'inscription. Nous montrons qu'il n'est pas possible d'inscrire un utilisateur avec une adresse mail non valide ou avec une adresse mail déjà existante en base de données (l'adresse mail étant la clef d'identification). Après l'inscription, nous nous connectons avec ce nouvel utilisateur en entrant son mot de passe associé. 
 \
 
-Une fois dans l'application, nous montrons l'inscription à un flux en entrant l'adresse url de ce dernier. Il est également possible d'ajouter un flux qui existe déjà en base de données à sa liste de souscription, pour cela il faut entrer l'url de ce flux. Une fois un flux ajouté et ses publications s'affichant dans la fenêtre correspondante, nous pouvons consulter les publications soit dans l'application soit dans le navigateur internet par défaut.
+Une fois dans l'application, nous montrons l'inscription à un flux en entrant l'adresse url de ce dernier. Il est également possible d'ajouter un flux qui existe déjà en base de données à sa liste de souscription, pour cela il faut entrer l'url de ce flux. Une fois un flux ajouté et ses publications s'affichant dans la fenêtre correspondante, nous pouvons consulter les 10 dernières publications de ce flux soit dans l'application soit dans le navigateur internet par défaut.
 \
 
-Nous envoyons une demande en ami à un utilisateur existant (on peut montrer qu'il n'est pas possible de se demander soi-même en ami). On ferme l'application et on se connecte avec le récepteur de la demande d'ami. Si nous essayons d'envoyer à notre tour une demande à l'émetteur, l'application nous signale que c'est impossible. On accepte la demande en effectuant un clic droit sur la demande en attente pour l'accepter.
+Lorsqu'une publication a été lue, la case correspondante \textsl{lue} est cochée afin de se souvenir quelles publications ont été consultées. L'utilisateur peut aussi, en faisant un clic-droit sur la publication, partager la publication dans son flux personnel et la commenter s'il le désire (mais une seule fois seulement).
+\
+
+Nous envoyons une demande en ami à un utilisateur existant (il n'est cependant pas pas possible de se demander soi-même en ami). On ferme l'application et on se connecte avec le récepteur de la demande d'ami. Si nous essayons d'envoyer à notre tour une demande à l'émetteur, l'application nous signale que c'est impossible. On accepte la demande en effectuant un clic droit sur la demande en attente pour l'accepter. Une fois la fenêtre principale de l'application rafraichie, on voit apparaître le flux du nouvel ami, nous pouvons à présent commenter ses publications. 
 
 \section{Modèle entité-relation}
 
