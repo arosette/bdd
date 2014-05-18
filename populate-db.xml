@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <populate version="1.0">
     <stream>
-        <url>/rss_dh.xml</url>
+        <url>rss_dh.xml</url>
     </stream>
     
     <stream>
-        <url>/rss_lalibre.xml</url>
+        <url>rss_ulb.xml</url>
     </stream>
     
     <stream>
-        <url>/rss_ulb.xml</url>
+        <url>rss_lalibre.xml</url>
     </stream>
     
     <stream>
-        <url>/lesoirmonde.xml</url>
+        <url>rss_lesoirmonde.xml</url>
     </stream>
     
     <stream>
-        <url>/rss_tomshardware.xml</url>
+        <url>rss_tomshardware.xml</url>
     </stream>
     
     <stream>
-        <url>/rss_xkcd.xml</url>
+        <url>rss_xkcd.xml</url>
     </stream>
     
     <user>
@@ -114,25 +114,25 @@
     
     <subscription>
         <usermail>arosette@ulb.ac.be</usermail>
-        <streamurl>/rss_dh.xml</streamurl>
+        <streamurl>rss_dh.xml</streamurl>
         <date>2014-05-16</date>
     </subscription>
     
     <subscription>
         <usermail>lpostula@ulb.ac.be</usermail>
-        <streamurl>/rss_lesoirmonde.xml</streamurl>
+        <streamurl>rss_lesoirmonde.xml</streamurl>
         <date>2014-05-16</date>
     </subscription>
     
     <subscription>
         <usermail>nomer@ulb.ac.be</usermail>
-        <streamurl>/rss_lalibre.xml</streamurl>
+        <streamurl>rss_lalibre.xml</streamurl>
         <date>2014-05-16</date>
     </subscription>
     
     <subscription>
         <usermail>pveranneman@ulb.ac.be</usermail>
-        <streamurl>/rss_tomshardware.xml</streamurl>
+        <streamurl>rss_tomshardware.xml</streamurl>
         <date>2014-05-16</date>
     </subscription>
     
