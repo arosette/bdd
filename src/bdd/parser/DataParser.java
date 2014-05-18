@@ -44,16 +44,19 @@ public class DataParser {
 	    friends = doc.getDocumentElement().getElementsByTagName("friend");
 	    subscriptions = doc.getDocumentElement().getElementsByTagName(
 		    "subscription");
-	    parseStreams();
-	    parseUsers();
-	    parseFriends();
-	    parseSubscription();
 
 	} catch (SAXException e) {
 	    e.printStackTrace();
 	} catch (IOException e) {
 	    e.printStackTrace();
 	}
+    }
+
+    public void populateDb() {
+	parseStreams();
+	parseUsers();
+	parseFriends();
+	parseSubscription();
     }
 
     private void parseStreams() {
@@ -177,41 +180,43 @@ public class DataParser {
 		boolean newStatus;
 		if (status.equals("TRUE")) {
 		    newStatus = true;
-		    
-		}
-		else {
+
+		} else {
 		    newStatus = false;
 		}
 		friendship.setStatus(newStatus);
 		friendship.setDate(date);
 		friendshipDAO.insert(friendship);
-		
-		if(newStatus) {
+
+		if (newStatus) {
 		    StreamDAOImpl streamDAO = new StreamDAOImpl();
 		    UserDAOImpl userDAO = new UserDAOImpl();
 		    User sender = userDAO.find(mailSender);
 		    User receiver = userDAO.find(mailReceiver);
-		    streamDAO.associateUser(sender.getPersonalStream(), mailReceiver);
-		    streamDAO.associateUser(receiver.getPersonalStream(), mailSender);
+		    streamDAO.associateUser(sender.getPersonalStream(),
+			    mailReceiver);
+		    streamDAO.associateUser(receiver.getPersonalStream(),
+			    mailSender);
 		}
 	    }
 	}
     }
-    
+
     private void parseSubscription() {
-	for(int i=0; i<subscriptions.getLength(); ++i) {
+	for (int i = 0; i < subscriptions.getLength(); ++i) {
 	    Element subscriptionElement = (Element) subscriptions.item(i);
-	    
-	    String streamUrl = ((Element) subscriptionElement.getElementsByTagName(
-		    "streamurl").item(0)).getTextContent();
-	    String userMail = ((Element) subscriptionElement.getElementsByTagName(
-		    "usermail").item(0)).getTextContent();
+
+	    String streamUrl = ((Element) subscriptionElement
+		    .getElementsByTagName("streamurl").item(0))
+		    .getTextContent();
+	    String userMail = ((Element) subscriptionElement
+		    .getElementsByTagName("usermail").item(0)).getTextContent();
 	    String date = ((Element) subscriptionElement.getElementsByTagName(
 		    "date").item(0)).getTextContent();
-	    
+
 	    StreamDAOImpl streamDAO = new StreamDAOImpl();
 	    streamDAO.associateUser(streamUrl, userMail);
-	    
+
 	}
     }
 
