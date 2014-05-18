@@ -4,7 +4,7 @@
 \usepackage[a4paper]{geometry}
 \usepackage{amsmath,amsthm,amssymb,latexsym,amsfonts}
 \usepackage{hyperref}
-\geometry{hscale=0.75,vscale=0.78,centering}
+\geometry{hscale=0.75,vscale=0.75,centering}
 \usepackage{graphicx}
 
 \usepackage{tikz}
@@ -161,7 +161,64 @@ Nous avons utilisé le patron de conception Modèle Vue Contrôleur afin de corr
 Ajouté à cela, nous utilisons des objets d'accès au données qui sont instanciés à chaque interaction avec la base de données SQL. Ils se chargent d'insérer, supprimer, mettre à jour et chercher les données désirées. Nous préparons les requêtes à leur construction et nous remplissons les informations nécessaires pour l'interaction qu'ils ont avec la base de données.
 \
 
-Pour terminer, nous avons également des \textsl{parsers} de données xml afin de peupler notre base de données à partir d'un fichier avec l'extension correspondante.
+Nous avons également des \textsl{parsers} de données xml afin de peupler notre base de données à partir d'un fichier avec l'extension correspondante. Il aura pour effet d'insérer toutes les données respectant le format de balises xml. Nous avons créé un fichier \textsl{populate-db.xml} à cet effet, les instructions d'utilisation sont reprises dans la dernière section du rapport.
+
+Pour terminer, nous avons fait le choix d'utiliser des clefs étrangères dans nos tables qui référencent les champs d'une autre table. Cela peut se révéler pratique lors de l'insertion ou la mise à jour d'informations dans la base de données par exemple : Si on désire créer une entrée dans la table \textsl{Subscribe}, les clefs étrangères \textsl{user\_mail} et \textsl{stream\_url} s'assurent que ces deux références existent bien avant de créer la souscription.
+
+\section{Script SQL DDL}
+
+Dans cette section se trouve le script de création de la base de données et des tables principales.
+
+\begin{verbatim}
+-- Création de la base de données
+CREATE DATABASE bdd; 
+
+-- Création de la table des Flux
+CREATE TABLE Stream (url VARCHAR(100) NOT NULL, name VARCHAR(100) NOT NULL, 
+webLink VARCHAR (100), description TEXT, PRIMARY KEY(url));
+
+-- Création de la table des Utilisateurs
+CREATE TABLE User (mail VARCHAR(100) NOT NULL, surname VARCHAR(40) NOT NULL, 
+password VARCHAR(40), avatar VARCHAR(100), country VARCHAR(40), city VARCHAR(40), 
+biography TEXT, date DATE, personal_stream_url VARCHAR(100) NOT NULL, PRIMARY KEY(mail), 
+FOREIGN KEY(personal_stream_url) REFERENCES Stream(url));
+
+-- Création de la table des Publications
+CREATE TABLE Publication (url VARCHAR(255) NOT NULL, title VARCHAR(100) NOT NULL, 
+date DATE, description TEXT, PRIMARY KEY(url));
+
+-- Création de la table des Amitiés entre Utilisateurs
+CREATE TABLE Friendship (mail_sender VARCHAR(100) NOT NULL, 
+mail_receiver VARCHAR(100) NOT NULL, status BOOLEAN, date DATE, 
+PRIMARY KEY(mail_sender, mail_receiver), FOREIGN KEY(mail_sender) REFERENCES User(mail), 
+FOREIGN KEY(mail_receiver) REFERENCES User(mail));
+
+-- Création de la table des Commentaires
+CREATE TABLE Comment (user_mail VARCHAR(100) NOT NULL, 
+publication_url VARCHAR(255) NOT NULL, stream_url VARCHAR(100), 
+content TEXT, date DATE, PRIMARY KEY(user_mail, publication_url, stream_url), 
+FOREIGN KEY(user_mail) REFERENCES User(mail), 
+FOREIGN KEY(publication_url) REFERENCES Publication(url), 
+FOREIGN KEY(stream_url) REFERENCES Stream(url));
+
+-- Création de la table de Lecture des Publications
+CREATE TABLE `Read` (user_mail VARCHAR(100) NOT NULL, 
+publication_url VARCHAR(255) NOT NULL, date DATE, 
+PRIMARY KEY(user_mail, publication_url), FOREIGN KEY(user_mail) REFERENCES User(mail), 
+FOREIGN KEY(publication_url) REFERENCES Publication(url));
+
+-- Création de la table des Souscriptions
+CREATE TABLE Subscribe (user_mail VARCHAR(100) NOT NULL, 
+stream_url VARCHAR(100) NOT NULL,  date DATE, 
+PRIMARY KEY(user_mail, stream_url), FOREIGN KEY(user_mail) REFERENCES User(mail), 
+FOREIGN KEY(stream_url) REFERENCES Stream(url));
+
+-- Création de la table des Propositions de Publications
+CREATE TABLE Propose (stream_url VARCHAR(100) NOT NULL, 
+publication_url VARCHAR(255) NOT NULL, PRIMARY KEY(stream_url, publication_url), 
+FOREIGN KEY(stream_url) REFERENCES Stream(url), 
+FOREIGN KEY(publication_url) REFERENCES Publication(url));
+\end{verbatim}
 
 \section{Requêtes demandées}
 
@@ -178,6 +235,8 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 	
 \subsection{Requêtes SQL}
 
+Dans l'ensemble des requêtes (aussi bien sous forme SQL, algèbre relationnelle ou calcul relationnel tuple), la variable \textsl{User X} fait référence à l'utilisateur pour lequel s'adresse la requête. Si on désire avoir la liste des utilisateurs qui ont partagé au moins 3 publications que l'utilisateur X a partagé, X peut faire référence à l'utilisateur possédant la clef "nomer@ulb.ac.be" par exemple. Il est signalé dans les requêtes où il apparaît.
+
 	\begin{enumerate}
 	    \item 
 	    \begin{verbatim}
@@ -189,41 +248,41 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
              \end{verbatim}
 	    \item
              \begin{verbatim}
-		<user>
+		<User X>
 		SELECT DISTINCT s3.*
 		FROM Subscribe sub3, Stream s3
 		WHERE sub3.stream_url = s3.url AND sub3.user_mail IN
 		    (SELECT u1.mail
 		    FROM User u1, Stream s2, Subscribe sub2
-		    WHERE sub2.user_mail != <user>.mail
+		    WHERE sub2.user_mail != <User X>.mail
 		    AND sub2.user_mail = u1.mail 
 		    AND sub2.stream_url = s2.url 
 		    AND sub2.stream_url IN    
 		        (SELECT sub1.stream_url 
 		            FROM Subscribe sub1 
-		            WHERE sub1.user_mail = <user>.mail)
+		            WHERE sub1.user_mail = <User X>.mail)
 		    GROUP BY sub2.user_mail
 		    HAVING COUNT(*) >= 2)
              \end{verbatim}
 	    \item
 	    \begin{verbatim}
-		<user>
+		<User X>
 		SELECT *
 		FROM Stream s
 		WHERE s.url IN
 		    (SELECT sub.stream_url
 		    FROM Subscribe sub1
-		    WHERE sub1.user_mail = <user>.mail)
+		    WHERE sub1.user_mail = <User X>.mail)
 		AND s.url NOT IN
 		    (SELECT DISTINCT sub.stream_url
 		    FROM Subscribe sub2
 		    WHERE sub2.user_mail IN
 		        (SELECT u.mail FROM User u WHERE u.mail IN
 		            (SELECT f1.mail_sender FROM Friendship f1 
-		            WHERE f1.mail_receiver = <user>.mail AND f1.status = TRUE)
+		            WHERE f1.mail_receiver = <User X>.mail AND f1.status = TRUE)
 		        OR u.mail IN
 		            (SELECT f2.mail_receiver FROM Friendship f2 
-		            WHERE f2.mail_sender = <user>.mail AND f2.status = TRUE)))
+		            WHERE f2.mail_sender = <User X>.mail AND f2.status = TRUE)))
 		AND s.url NOT IN
 		    (SELECT DISTINCT prop2.stream_url
 		    FROM Propose prop2
@@ -231,15 +290,15 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 		        (SELECT prop1.publication_url
 		        FROM Publication pub, Propose prop1
 		        WHERE pub.url = prop1.publication_url 
-		        AND prop1.stream_url = <user>.personal_stream_url))
+		        AND prop1.stream_url = <User X>.personal_stream_url))
              \end{verbatim}
 	    \item 
 	    \begin{verbatim}
-		<user>
+		<User X>
 		SELECT DISTINCT u.*
 		FROM User u, Propose prop1, Propose prop2
-		WHERE prop1.stream_url = <user>.personal_stream_url
-		AND prop2.stream_url != <user>.personal_stream_url
+		WHERE prop1.stream_url = <User X>.personal_stream_url
+		AND prop2.stream_url != <User X>.personal_stream_url
 		AND prop2.stream_url = u.personal_stream_url
 		AND prop1.publication_url = prop2.publication_url
 		GROUP BY u.mail
@@ -247,25 +306,25 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
              \end{verbatim}
 	    \item 
 	    \begin{verbatim}
-		<user>
+		<User X>
 		SELECT s1.url, 
 		    @a:=(SELECT COUNT(*) FROM `Read` r2, Propose prop1 
 		    WHERE r2.publication_url = prop1.publication_url 
-		    AND r2.user_mail = <user>.mail AND prop1.stream_url = s1.url 
+		    AND r2.user_mail = <User X>.mail AND prop1.stream_url = s1.url 
 		    AND DATE_SUB(CURDATE(),INTERVAL 30 DAY) <= r2.date) AS publications_read,
 		    @b:=(SELECT COUNT(*) FROM Propose prop2, Propose prop3, Publication pub1 
 		    WHERE  pub1.url = prop2.publication_url 
 		    AND pub1.url = prop3.publication_url AND prop2.publication_url = prop3.publication_url 
-		    AND prop2.stream_url = <user>.personal_stream_url AND prop3.stream_url = s1.url 
+		    AND prop2.stream_url = <User X>.personal_stream_url AND prop3.stream_url = s1.url 
 		    AND DATE_SUB(CURDATE(),INTERVAL 30 DAY) <= pub1.date) AS publications_shared,
 		    (@b / @a * 100)
 		FROM Stream s1, Subscribe sub1
-		WHERE sub1.stream_url = s1.url AND sub1.user_mail = <user>.mail
+		WHERE sub1.stream_url = s1.url AND sub1.user_mail = <User X>.mail
 		ORDER BY publications_shared
              \end{verbatim}
 	    \item 
 	    \begin{verbatim}
-		<user>
+		<User X>
 		SELECT u1.mail,
 		    ((SELECT COUNT(*) FROM `Read` r1 WHERE r1.user_mail = u1.mail) / 
 		    (SELECT DATEDIFF(CURDATE(), u1.date))) AS publications_read_per_day,
@@ -277,9 +336,9 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 		FROM User u1
 		WHERE 
 		u1.mail IN (SELECT friend1.mail_receiver FROM Friendship friend1 
-		WHERE friend1.mail_sender = <user>.mail AND friend1.status = TRUE)
+		WHERE friend1.mail_sender = <User X>.mail AND friend1.status = TRUE)
 		OR u1.mail IN (SELECT friend2.mail_sender FROM Friendship friend2 
-		WHERE friend2.mail_receiver = <user>.mail AND friend2.status = TRUE)
+		WHERE friend2.mail_receiver = <User X>.mail AND friend2.status = TRUE)
 		ORDER BY publications_read_per_day
              \end{verbatim}
 	\end{enumerate}
@@ -313,10 +372,10 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 	    \item
 	    \fbox{\begin{minipage}{1.0\textwidth}
 		\begin{equation}
-		S1 \leftarrow \pi \underset{stream\_url}{} (\sigma \underset{user\_mail = <user>.mail}{}(Subscribe))`
+		S1 \leftarrow \pi \underset{stream\_url}{} (\sigma \underset{user\_mail = <User X>.mail}{}(Subscribe))`
 		\end{equation}
 		\begin{equation}
-		a \leftarrow (\sigma \underset{user\_mail != <user>.mail \wedge user\_mail = mail}{}(User * Subscribe))
+		a \leftarrow (\sigma \underset{user\_mail != <User X>.mail \wedge user\_mail = mail}{}(User * Subscribe))
 		\end{equation}
 		\begin{equation}
 		b \leftarrow (\sigma \underset{stream\_url = url \wedge stream\_url\  \cap S1}{}(Stream * Subscribe))
@@ -331,13 +390,13 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 	    \item 
 	    \fbox{\begin{minipage}{1.0\textwidth}
 	          \begin{equation}
-		Sub1 \leftarrow \pi \underset{stream\_url}{} (\sigma \underset{user\_mail = <user>.mail}{}(Subscribe))
+		Sub1 \leftarrow \pi \underset{stream\_url}{} (\sigma \underset{user\_mail = <User X>.mail}{}(Subscribe))
 		\end{equation}
 		\begin{equation}
-		F1 \leftarrow \pi \underset{mail\_sender}{} (\sigma \underset{mail\_receiver = <user>.mail \wedge status = true}{}(Friendship))
+		F1 \leftarrow \pi \underset{mail\_sender}{} (\sigma \underset{mail\_receiver = <User X>.mail \wedge status = true}{}(Friendship))
 		\end{equation}
 		\begin{equation}
-		F2 \leftarrow \pi \underset{mail\_sender}{} (\sigma \underset{mail\_sender = <user>.mail \wedge status = true}{}(Friendship))
+		F2 \leftarrow \pi \underset{mail\_sender}{} (\sigma \underset{mail\_sender = <User X>.mail \wedge status = true}{}(Friendship))
 		\end{equation}
 		\begin{equation}
 		U \leftarrow \pi \underset{mail}{} (\sigma \underset{(mail \cap F1) \vee (mail \cap F2) }{}(User))
@@ -346,7 +405,7 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 		Sub2 \leftarrow \pi \underset{stream\_url}{} (\sigma \underset{user\_mail \cap U}{}(Subscribe))
 		\end{equation}
 		\begin{equation}
-		Prop1 \leftarrow \pi \underset{publication\_url}{} (\sigma \underset{url = publication\_url \wedge stream\_url = <user>.personal\_stream\_url}{}(Propose * Publication ))
+		Prop1 \leftarrow \pi \underset{publication\_url}{} (\sigma \underset{url = publication\_url \wedge stream\_url = <User X>.personal\_stream\_url}{}(Propose * Publication ))
 		\end{equation}
 		\begin{equation}
 		Prop2 \leftarrow \pi \underset{stream\_url}{} (\sigma \underset{publication\_url \cap Prop1}{}(Propose))
@@ -358,10 +417,10 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 	    \item
 	    \fbox{\begin{minipage}{1.0\textwidth}
 	         \begin{equation}
-		PP \leftarrow \pi \underset{*}{} (\sigma \underset{stream\_url = <user>.personal\_stream\_url}{}(Propose))
+		PP \leftarrow \pi \underset{*}{} (\sigma \underset{stream\_url = <User X>.personal\_stream\_url}{}(Propose))
 		\end{equation}
 		\begin{equation}
-		PU \leftarrow \pi \underset{*}{} (\sigma \underset{(stream\_url = personal\_stream\_url) \wedge (stream\_url != <user>.personal\_stream\_url)}{}(Propose*User))
+		PU \leftarrow \pi \underset{*}{} (\sigma \underset{(stream\_url = personal\_stream\_url) \wedge (stream\_url != <User X>.personal\_stream\_url)}{}(Propose*User))
 		\end{equation}
 	         \begin{equation}
 		Result \leftarrow \pi \underset{*}{} (mail \  \  \  \sigma \underset{COUNT(*) >= 3}{}(PP \cap PU))
@@ -412,19 +471,19 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 	         \wedge Subscribe(\underset{\ \ 3}{sub}) \wedge Subscribe(\underset{\ \ 4}{sub}) \wedge Stream(\underset{\ \ 2}{s}) \wedge Stream(\underset{\ \ 3}{s}) ) \rightarrow ( ( (\underset{\ \ 4}{sub}.stream\_url = s.url  
 	         \end{equation} 
 	         \begin{equation}
-	         \wedge \underset{\ \ 4}{sub}.user\_mail) \cap ((\underset{\ \ 2}{sub}.user\_mail \ != <user>.mail \wedge \underset{\ \ 2}{sub}.user\_mail = u.mail 
+	         \wedge \underset{\ \ 4}{sub}.user\_mail) \cap ((\underset{\ \ 2}{sub}.user\_mail \ != <User X>.mail \wedge \underset{\ \ 2}{sub}.user\_mail = u.mail 
 	         \end{equation} 
 	         \begin{equation}
-	         \wedge \underset{\ \ 2}{sub}.stream\_url =  \underset{\ \ 2}{s}.url \wedge \underset{\ \ 2}{sub}.stream\_url) \cap (\underset{\ \ 1}{sub}.user\_mail = <user>.mail))
+	         \wedge \underset{\ \ 2}{sub}.stream\_url =  \underset{\ \ 2}{s}.url \wedge \underset{\ \ 2}{sub}.stream\_url) \cap (\underset{\ \ 1}{sub}.user\_mail = <User X>.mail))
 	         \end{equation} 
 	         \begin{equation}
-	         \wedge (\underset{\ \ 4}{sub}.stream\_url = s.url \wedge \underset{\ \ 4}{sub}.user\_mail) \cap ((\underset{\ \ 3}{sub}.user\_mail \ != <user>.mail
+	         \wedge (\underset{\ \ 4}{sub}.stream\_url = s.url \wedge \underset{\ \ 4}{sub}.user\_mail) \cap ((\underset{\ \ 3}{sub}.user\_mail \ != <User X>.mail
 	         \end{equation}
 	         \begin{equation}
 	         \wedge \underset{\ \ 3}{sub}.user\_mail = u.mail \wedge \underset{\ \ 3}{sub}.stream\_url =  \underset{\ \ 3}{s}.url \wedge \underset{\ \ 3}{sub}.stream\_url)
 	         \end{equation}
 	         \begin{equation}
-	         \cap (\underset{\ \ 1}{sub}.user\_mail = <user>.mail)) \wedge (\underset{\ \ 3}{sub} \ != \underset{\ \ 4}{sub}) \wedge (\underset{\ \ 2}{s} \ != \underset{\ \ 3}{s})))]
+	         \cap (\underset{\ \ 1}{sub}.user\_mail = <User X>.mail)) \wedge (\underset{\ \ 3}{sub} \ != \underset{\ \ 4}{sub}) \wedge (\underset{\ \ 2}{s} \ != \underset{\ \ 3}{s})))]
 	         \end{equation}  
 	         \end{minipage}}
 	    \item
@@ -433,13 +492,13 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 		[s.* | \ Stream(s) \ \wedge \forall u \ \forall f \ \forall \underset{\ \ 2}{s} \ \forall \underset{\ \ 3}{s} ((Friendship(f) \wedge Subscribe(\underset{\ \ 2}{s}) \wedge Subscribe(\underset{\ \ 3}{s}) \wedge User(u)) \rightarrow
 		\end{equation} 
 		\begin{equation}
-		( ( (u.mail = f.mail\_sender \wedge <user>.mail = f.mail\_receiver \wedge f.status = TRUE ) \vee 
+		( ( (u.mail = f.mail\_sender \wedge <User X>.mail = f.mail\_receiver \wedge f.status = TRUE ) \vee 
 		\end{equation} 
 		\begin{equation}
-		(u.mail = f.mail\_receiver \wedge <user>.mail = f.mail\_sender \wedge f.status = TRUE ) ) \wedge 
+		(u.mail = f.mail\_receiver \wedge <User X>.mail = f.mail\_sender \wedge f.status = TRUE ) ) \wedge 
 		\end{equation} 
 		\begin{equation}
-		( \underset{\ \ 2}{s}.user\_mail = <user>.mail ) \wedge ( \underset{\ \ 3}{s}.user\_mail = u.mail ) \wedge ( s \cap \underset{\ \ 2}{s} = \varnothing ) \wedge ( s \cap \underset{\ \ 3}{s} = \varnothing )))]
+		( \underset{\ \ 2}{s}.user\_mail = <User X>.mail ) \wedge ( \underset{\ \ 3}{s}.user\_mail = u.mail ) \wedge ( s \cap \underset{\ \ 2}{s} = \varnothing ) \wedge ( s \cap \underset{\ \ 3}{s} = \varnothing )))]
 		\end{equation} 
              \end{minipage}}
 	    \item
@@ -448,10 +507,10 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 		[u.* | \ User(u) \ \wedge \forall \underset{\ \ 2}{u} (User(\underset{\ \ 2}{u}) \rightarrow ( \exists \underset{\ \ 1}{p} \underset{\ \ 2}{p} \underset{\ \ 3}{p} \underset{\ \ 4}{p} \underset{\ \ 5}{p} \underset{\ \ 6}{p} (Proposition(\underset{\ \ 1}{p}) \wedge Proposition(\underset{\ \ 2}{p})  \wedge Proposition(\underset{\ \ 3}{p})
 		\end{equation}
 		\begin{equation}
-                  \wedge Proposition(\underset{\ \ 4}{p}) \wedge Proposition(\underset{\ \ 5}{p}) \wedge Proposition(\underset{\ \ 6}{p}) \wedge \underset{\ \ 1}{p}.stream\_url = <user>.personal\_stream\_url 
+                  \wedge Proposition(\underset{\ \ 4}{p}) \wedge Proposition(\underset{\ \ 5}{p}) \wedge Proposition(\underset{\ \ 6}{p}) \wedge \underset{\ \ 1}{p}.stream\_url = <User X>.personal\_stream\_url 
 		\end{equation}
 		\begin{equation}
-                   \wedge \underset{\ \ 2}{p}.stream\_url = <user>.personal\_stream\_url \wedge \underset{\ \ 3}{p}.stream\_url = <user>.personal\_stream\_url
+                   \wedge \underset{\ \ 2}{p}.stream\_url = <User X>.personal\_stream\_url \wedge \underset{\ \ 3}{p}.stream\_url = <User X>.personal\_stream\_url
 		\end{equation}
 		\begin{equation}
                    \wedge \underset{\ \ 4}{p}.stream\_url = u.personal\_stream\_url \wedge \underset{\ \ 5}{p}.stream\_url = u.personal\_stream\_url 
@@ -463,17 +522,17 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 		\wedge \underset{\ \ 2}{p}.publication\_url =  \underset{\ \ 5}{p}.publication\_url \wedge \underset{\ \ 3}{p}.publication\_url =  \underset{\ \ 6}{p}.publication\_url 
 		\end{equation}
 		\begin{equation}
-		\wedge \underset{\ \ 4}{p}.stream\_url  \ !=  <user>.personal\_stream\_url \wedge \underset{\ \ 5}{p}.stream\_url  \ !=  <user>.personal\_stream\_url
+		\wedge \underset{\ \ 4}{p}.stream\_url  \ !=  <User X>.personal\_stream\_url \wedge \underset{\ \ 5}{p}.stream\_url  \ !=  
 		\end{equation}
 		\begin{equation}
-		\wedge \underset{\ \ 6}{p}.stream\_url  \ !=  <user>.personal\_stream\_url)))]
+		<User X>.personal\_stream\_url \wedge \underset{\ \ 6}{p}.stream\_url  \ !=  <User X>.personal\_stream\_url)))]
 		\end{equation}
          \end{minipage}}
 	\end{enumerate}
 
 \section{Instructions d'exécution du programme}
 
-Concernant les détails techniques, notre programme est codé en Java, utilise des fonctionnalité de la version 1.7, l'interface utilise la librairie Swing de Java et nous employons MySQL comme base de données. Nous avons dû adjoindre un connecteur pour Mysql afin d'obtenir une connexion au serveur MySQL. Il nécessite donc de lancer le serveur mysql avant l'utilisation de l'application (nous avons choisi un nom d'utilisateur et un mot de passe par défaut dans l'application). Nous avons généré un exécutable jar de notre application qui se lance selon l'action désirée :
+Concernant les détails techniques, notre programme est codé en Java, utilise des fonctionnalité de la version 1.7, l'interface utilise la librairie Swing de Java et nous employons MySQL comme base de données. Nous avons dû adjoindre un connecteur pour Mysql afin d'obtenir une connexion au serveur MySQL. Il nécessite donc de lancer le serveur mysql avant l'utilisation de l'application (nous avons choisi un nom d'utilisateur et un mot de passe par défaut dans l'application, voir section suivante). Nous avons généré un exécutable jar de notre application qui se lance selon l'action désirée :
 
 \begin{itemize}
 \item \begin{verbatim}
@@ -481,7 +540,7 @@ java -jar rss-manager
 \end{verbatim}
 pour démarrer en mode normal
 \item \begin{verbatim}
-java -jar rss-manager add populate-db.xml 
+java -jar rss-manager add <fichier .xml de peuplement>
 \end{verbatim}
 pour peupler la base de données
 \item \begin{verbatim}
@@ -489,5 +548,22 @@ java -jar rss-manager delete
 \end{verbatim}
 pour supprimer les tables existantes
 \end{itemize}
+
+\subsection{Connexion à la base de données}
+
+Pour se connecter à la base de données MySQL \textsl{bdd} créée dans la section 6, nous avons utilisé l'adresse \textsl{localhost} avec un utilisateur nommé \textsl{projet\_bdd} ayant pour mot de passe \textsl{projet\_bdd}. Il faut donc que cet utilisateur \textsl{projet\_bdd} ait les droit nécessaires sur la base de données \textsl{bdd}. Ceci peut s'effectuer grâce aux lignes suivantes écrites dans MySQL :
+
+\begin{verbatim}
+-- Création de l'utilisateur "projet_bdd" ayant pour mot de passe "projet_bdd"
+CREATE USER projet_bdd IDENTIFIED BY 'projet_bdd'; 
+
+-- Permet à l'utilisateur "projet_bdd" ayant pour mot de passe 
+-- "projet_bdd" d'utiliser la base de données "projet_bdd"
+grant usage on *.* to projet_bdd@localhost identified by 'projet_bdd';
+
+-- Permet à l'utilisateur "projet_bdd" ayant pour mot de passe 
+-- "projet_bdd" de manipuler la base de données "projet_bdd"
+grant all privileges on bdd.* to projet_bdd@localhost; 
+\end{verbatim}
 
 \end{document}
