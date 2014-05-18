@@ -81,9 +81,9 @@ public class DataParser {
 		streamDAO.insert(stream);
 
 		List<Publication> publications = rssParser.getPulications();
-		for (int j = 0; i < 10 && i < publications.size(); ++i) {
+		for (int j = 0; j < 10 && j < publications.size(); ++j) {
 
-		    Publication publication = publications.get(i);
+		    Publication publication = publications.get(j);
 		    PublicationDAOImpl publicationDAO = new PublicationDAOImpl();
 
 		    // Si la publication n'existe pas en bdd, on l'ajoute
