@@ -67,7 +67,7 @@ Pour cette démonstration, nous possédons une base de données contenant déjà
 Une fois dans l'application, nous montrons l'inscription à un flux en entrant l'adresse url de ce dernier. Il est également possible d'ajouter un flux qui existe déjà en base de données à sa liste de souscription, pour cela il faut entrer l'url de ce flux. Une fois un flux ajouté et ses publications s'affichant dans la fenêtre correspondante, nous pouvons consulter les 10 dernières publications de ce flux soit dans l'application soit dans le navigateur internet par défaut.
 \
 
-Lorsqu'une publication a été lue, la case correspondante \textsl{lue} est cochée afin de se souvenir quelles publications ont été consultées. L'utilisateur peut aussi, en faisant un clic-droit sur la publication, partager la publication dans son flux personnel et la commenter s'il le désire (mais une seule fois seulement).
+Lorsqu'une publication a été lue, la case correspondante \textsl{lue} est cochée afin de se souvenir quelles publications ont été consultées. L'utilisateur peut aussi, en faisant un clic-droit sur la publication, partager la publication dans son flux personnel et la commenter s'il le désire (mais une seule fois seulement). Enfin, il est possible de télécharger les nouvelles publications d'un flux en cliquant sur le bouton correspondant. 
 \
 
 Nous envoyons une demande en ami à un utilisateur existant (il n'est cependant pas pas possible de se demander soi-même en ami). On ferme l'application et on se connecte avec le récepteur de la demande d'ami. Si nous essayons d'envoyer à notre tour une demande à l'émetteur, l'application nous signale que c'est impossible. On accepte la demande en effectuant un clic droit sur la demande en attente pour l'accepter. Une fois la fenêtre principale de l'application rafraichie, on voit apparaître le flux du nouvel ami, nous pouvons à présent commenter ses publications. 
@@ -473,6 +473,21 @@ Cette section présente les six requêtes obligatoires écrites respectivement e
 
 \section{Instructions d'exécution du programme}
 
-Concernant les détails techniques, notre programme est codé en Java, l'interface utilise la librairie Swing de Java et utilise MySQL comme base de données. Nous avons dû adjoindre un connecteur pour Mysql afin d'obtenir une connexion à MySQL. Il nécessite donc de lancer le serveur mysql avant l'utilisation de l'application (nous avons choisi un nom d'utilisateur et un mot de passe par défaut dans l'application).
+Concernant les détails techniques, notre programme est codé en Java, utilise des fonctionnalité de la version 1.7, l'interface utilise la librairie Swing de Java et nous employons MySQL comme base de données. Nous avons dû adjoindre un connecteur pour Mysql afin d'obtenir une connexion au serveur MySQL. Il nécessite donc de lancer le serveur mysql avant l'utilisation de l'application (nous avons choisi un nom d'utilisateur et un mot de passe par défaut dans l'application). Nous avons généré un exécutable jar de notre application qui se lance selon l'action désirée :
+
+\begin{itemize}
+\item \begin{verbatim}
+java -jar rss-manager
+\end{verbatim}
+pour démarrer en mode normal
+\item \begin{verbatim}
+java -jar rss-manager add populate-db.xml 
+\end{verbatim}
+pour peupler la base de données
+\item \begin{verbatim}
+java -jar rss-manager delete
+\end{verbatim}
+pour supprimer les tables existantes
+\end{itemize}
 
 \end{document}

@@ -1,31 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <populate version="1.0">
     <stream>
-        <url>/home/arnaud/Documents/ulb/3eme-2013-2014/base-de-donnees/enonce/rss_dh.xml</url>
-        <name>Flux perso de arosette</name>
-        <description>Flux perso de arosette</description>
-        <webLink>http://personal_stream/</webLink>
+        <url>/rss_dh.xml</url>
     </stream>
     
     <stream>
-        <url>/home/nicolas/ulb/BA3/base-de-donnees/enonce/rss_dh.xml</url>
-        <name>Flux perso de nomer</name>
-        <description>Flux perso de nomer</description>
-        <weblink>http://personal_stream/</weblink>
+        <url>/rss_lalibre.xml</url>
     </stream>
     
     <stream>
-        <url>/home/lois/Documents/BA3/base-de-donnees/enonce/rss_dh.xml</url>
-        <name>Flux perso de lpostula</name>
-        <description>Flux perso de lpostula</description>
-        <weblink>http://personal_stream/</weblink>
+        <url>/rss_ulb.xml</url>
     </stream>
     
     <stream>
-        <url>/home/philippe/ulb/3eme-2013-2014/base-de-donnees/enonce/rss_dh.xml</url>
-        <name>Flux perso de pveranneman</name>
-        <description>Flux perso de pveranneman</description>
-        <weblink>http://personal_stream/</weblink>
+        <url>/lesoirmonde.xml</url>
+    </stream>
+    
+    <stream>
+        <url>/rss_tomshardware.xml</url>
+    </stream>
+    
+    <stream>
+        <url>/rss_xkcd.xml</url>
     </stream>
     
     <user>
@@ -118,19 +114,25 @@
     
     <subscription>
         <usermail>arosette@ulb.ac.be</usermail>
-        <streamurl>/home/arnaud/Documents/ulb/3eme-2013-2014/base-de-donnees/enonce/rss_dh.xml</streamurl>
+        <streamurl>/rss_dh.xml</streamurl>
         <date>2014-05-16</date>
     </subscription>
     
     <subscription>
         <usermail>lpostula@ulb.ac.be</usermail>
-        <streamurl>/home/arnaud/Documents/ulb/3eme-2013-2014/base-de-donnees/enonce/rss_dh.xml</streamurl>
+        <streamurl>/rss_lesoirmonde.xml</streamurl>
         <date>2014-05-16</date>
     </subscription>
     
     <subscription>
         <usermail>nomer@ulb.ac.be</usermail>
-        <streamurl>/home/arnaud/Documents/ulb/3eme-2013-2014/base-de-donnees/enonce/rss_dh.xml</streamurl>
+        <streamurl>/rss_lalibre.xml</streamurl>
+        <date>2014-05-16</date>
+    </subscription>
+    
+    <subscription>
+        <usermail>pveranneman@ulb.ac.be</usermail>
+        <streamurl>/rss_tomshardware.xml</streamurl>
         <date>2014-05-16</date>
     </subscription>
     
